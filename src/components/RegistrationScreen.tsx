@@ -30,11 +30,8 @@ export default function RegistrationScreen({ onLogin }: Props) {
 
   return (
     <div className="p-4 pt-12">
-      {/* Title - без VK Сервис */}
+      {/* Title */}
       <div className="center-content mb-8">
-        <div className="icon-circle glow-violet mb-4" style={{ background: 'linear-gradient(135deg, #8b5cf6, #6b21a8)' }}>
-          <span className="text-white">✦</span>
-        </div>
         <h1 className="text-3xl text-gradient-violet tracking-wider mb-2 font-bold">
           Система баллов
         </h1>
@@ -50,7 +47,7 @@ export default function RegistrationScreen({ onLogin }: Props) {
           className="w-full flex items-center justify-between text-left"
         >
           <span className="text-base text-violet-primary font-semibold tracking-wide">
-            ✧ Доступные ID пользователей
+            Доступные ID пользователей
           </span>
           <span className="text-2xl text-violet-light">{showQRInfo ? '▾' : '▸'}</span>
         </button>
@@ -58,7 +55,7 @@ export default function RegistrationScreen({ onLogin }: Props) {
         {showQRInfo && (
           <div className="mt-4 space-y-4 pt-4" style={{ borderTop: '1.5px solid #c4b5fd' }}>
             <div>
-              <p className="text-sm text-violet-primary font-semibold tracking-wider mb-3">✦ Участники:</p>
+              <p className="text-sm text-violet-primary font-semibold tracking-wider mb-3">Участники:</p>
               {participants.map(p => (
                 <div key={p.id} className="flex justify-between items-center bg-white rounded-2xl px-4 py-3 mb-2">
                   <span className="text-sm text-violet-dark font-medium">{p.fullName}</span>
@@ -67,7 +64,7 @@ export default function RegistrationScreen({ onLogin }: Props) {
               ))}
             </div>
             <div>
-              <p className="text-sm text-violet-primary font-semibold tracking-wider mb-3">✦ Кураторы:</p>
+              <p className="text-sm text-violet-primary font-semibold tracking-wider mb-3">Кураторы:</p>
               {curators.map(c => (
                 <div key={c.id} className="flex justify-between items-center bg-white rounded-2xl px-4 py-3 mb-2">
                   <span className="text-sm text-violet-dark font-medium">{c.fullName}</span>
@@ -76,7 +73,7 @@ export default function RegistrationScreen({ onLogin }: Props) {
               ))}
             </div>
             <div>
-              <p className="text-sm text-violet-primary font-semibold tracking-wider mb-3">✦ Админ:</p>
+              <p className="text-sm text-violet-primary font-semibold tracking-wider mb-3">Админ:</p>
               {admins.map(a => (
                 <div key={a.id} className="flex justify-between items-center bg-white rounded-2xl px-4 py-3 mb-2">
                   <span className="text-sm text-violet-dark font-medium">{a.fullName}</span>
@@ -91,7 +88,7 @@ export default function RegistrationScreen({ onLogin }: Props) {
       {/* Manual ID Input */}
       <div className="card-violet p-5 mb-4">
         <label className="block text-base text-violet-primary font-semibold tracking-wide mb-3">
-          ✧ Введите ID пользователя
+          Введите ID пользователя
         </label>
         <div className="flex gap-3">
           <input
@@ -115,9 +112,6 @@ export default function RegistrationScreen({ onLogin }: Props) {
       {showError && (
         <div className="modal-overlay">
           <div className="card-violet p-6 w-full max-w-sm center-content">
-            <div className="icon-circle mb-4" style={{ background: 'linear-gradient(135deg, #fbbf24, #f59e0b)' }}>
-              <span>⚠</span>
-            </div>
             <p className="text-base text-violet-dark tracking-wide mb-6 font-medium">{showError}</p>
             <button
               onClick={() => setShowError('')}
@@ -132,50 +126,38 @@ export default function RegistrationScreen({ onLogin }: Props) {
       {/* Quick Access */}
       <div className="mb-6">
         <p className="center-content text-sm text-violet-muted tracking-wider mb-4 font-medium">
-          ✧ Быстрый доступ ✧
+          Быстрый доступ
         </p>
         <div className="grid grid-cols-3 gap-3">
           <button
             onClick={() => onLogin('P001')}
             className="btn-violet btn-violet-primary py-4 text-sm tracking-wider"
           >
-            ✦ Участник
+            Участник
           </button>
           <button
             onClick={() => onLogin('C001')}
             className="btn-violet btn-violet-success py-4 text-sm tracking-wider"
           >
-            ✦ Куратор
+            Куратор
           </button>
           <button
             onClick={() => onLogin('A001')}
             className="btn-violet btn-violet-danger py-4 text-sm tracking-wider"
           >
-            ✦ Админ
+            Админ
           </button>
         </div>
       </div>
 
       {/* Info */}
       <div className="card-violet p-5">
-        <h3 className="text-base text-violet-primary font-semibold tracking-wider mb-4 center-content">✧ Как это работает ✧</h3>
+        <h3 className="text-base text-violet-primary font-semibold tracking-wider mb-4 center-content">Как это работает</h3>
         <ul className="text-sm text-violet-dark space-y-3 tracking-wide">
-          <li className="flex items-start gap-3">
-            <span className="text-violet-light text-lg">✦</span>
-            <span className="font-medium">Участники показывают QR-код кураторам</span>
-          </li>
-          <li className="flex items-start gap-3">
-            <span className="text-violet-light text-lg">✦</span>
-            <span className="font-medium">Кураторы сканируют QR и начисляют/списывают баллы</span>
-          </li>
-          <li className="flex items-start gap-3">
-            <span className="text-violet-light text-lg">✦</span>
-            <span className="font-medium">Администратор отслеживает рейтинг групп</span>
-          </li>
-          <li className="flex items-start gap-3">
-            <span className="text-violet-light text-lg">✦</span>
-            <span className="font-medium">Каждый пользователь имеет уникальный ID</span>
-          </li>
+          <li className="font-medium">Участники показывают QR-код кураторам</li>
+          <li className="font-medium">Кураторы сканируют QR и начисляют/списывают баллы</li>
+          <li className="font-medium">Администратор отслеживает рейтинг групп</li>
+          <li className="font-medium">Каждый пользователь имеет уникальный ID</li>
         </ul>
       </div>
     </div>

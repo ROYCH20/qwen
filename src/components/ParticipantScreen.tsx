@@ -17,22 +17,14 @@ export default function ParticipantScreen({ user, onLogout }: Props) {
     <div className="p-4 pt-10">
       {/* Title */}
       <div className="center-content mb-6">
-        <div className="icon-circle glow-violet mb-3" style={{ background: 'linear-gradient(135deg, #8b5cf6, #6b21a8)' }}>
-          <span className="text-white text-3xl">✦</span>
-        </div>
         <h1 className="text-2xl text-gradient-violet tracking-wider font-bold">Профиль участника</h1>
       </div>
 
       {/* Profile Card */}
       <div className="card-violet p-5 mb-4">
-        <div className="flex items-center gap-4 mb-5">
-          <div className="icon-circle-sm" style={{ background: 'linear-gradient(135deg, #8b5cf6, #6b21a8)' }}>
-            <span className="text-white">👤</span>
-          </div>
-          <div className="text-left">
-            <h2 className="text-lg text-violet-dark font-semibold tracking-wide">{user.fullName}</h2>
-            <p className="text-sm text-violet-muted tracking-wider font-medium">ID: {user.id}</p>
-          </div>
+        <div className="mb-5">
+          <h2 className="text-lg text-violet-dark font-semibold tracking-wide">{user.fullName}</h2>
+          <p className="text-sm text-violet-muted tracking-wider font-medium">ID: {user.id}</p>
         </div>
         
         <div className="grid grid-cols-2 gap-3">
@@ -42,7 +34,7 @@ export default function ParticipantScreen({ user, onLogout }: Props) {
           </div>
           <div className="rounded-2xl p-4 text-center" style={{ background: '#fef3c7', border: '1.5px solid #fcd34d' }}>
             <p className="text-xs tracking-wider mb-1 font-medium" style={{ color: '#92400e' }}>Баллы</p>
-            <p className="text-xl font-bold tracking-wider" style={{ color: '#d97706' }}>{user.points} ★</p>
+            <p className="text-xl font-bold tracking-wider" style={{ color: '#d97706' }}>{user.points}</p>
           </div>
         </div>
       </div>
@@ -50,7 +42,7 @@ export default function ParticipantScreen({ user, onLogout }: Props) {
       {/* QR Code Section */}
       <div className="card-violet-accent p-5 mb-4 center-content">
         <h3 className="text-base text-violet-primary font-semibold tracking-wider mb-4">
-          ✧ QR-код для куратора ✧
+          QR-код для куратора
         </h3>
         <div className="inline-block rounded-3xl p-4 relative" style={{ background: '#fff', border: '2.5px solid #8b5cf6', boxShadow: '0 4px 20px rgba(139, 92, 246, 0.2)' }}>
           <QRCodeSVG
@@ -61,20 +53,15 @@ export default function ParticipantScreen({ user, onLogout }: Props) {
             fgColor="#2d1b4e"
             bgColor="#ffffff"
           />
-          {/* Corner decorations */}
-          <div className="absolute -top-1.5 -left-1.5 w-4 h-4 rounded-full" style={{ background: 'linear-gradient(135deg, #8b5cf6, #6b21a8)' }}></div>
-          <div className="absolute -top-1.5 -right-1.5 w-4 h-4 rounded-full" style={{ background: 'linear-gradient(135deg, #a78bfa, #8b5cf6)' }}></div>
-          <div className="absolute -bottom-1.5 -left-1.5 w-4 h-4 rounded-full" style={{ background: 'linear-gradient(135deg, #c4b5fd, #a78bfa)' }}></div>
-          <div className="absolute -bottom-1.5 -right-1.5 w-4 h-4 rounded-full" style={{ background: 'linear-gradient(135deg, #ddd6fe, #c4b5fd)' }}></div>
         </div>
         <p className="text-sm text-violet-muted mt-4 tracking-wide font-medium">
-          ♡ Покажите этот код куратору ♡
+          Покажите этот код куратору
         </p>
       </div>
 
       {/* Info */}
       <div className="card-violet p-5 mb-4">
-        <h4 className="text-base text-violet-primary font-semibold tracking-wider mb-4 center-content">✧ Информация ✧</h4>
+        <h4 className="text-base text-violet-primary font-semibold tracking-wider mb-4 center-content">Информация</h4>
         <div className="space-y-4">
           <div className="flex justify-between items-center pb-3" style={{ borderBottom: '1.5px solid #ede9fe' }}>
             <span className="text-sm text-violet-muted tracking-wider font-medium">ФИО:</span>
@@ -95,12 +82,12 @@ export default function ParticipantScreen({ user, onLogout }: Props) {
         </div>
       </div>
 
-      {/* Logout button - after info block */}
+      {/* Logout button */}
       <button
         onClick={onLogout}
         className="btn-violet btn-violet-dark w-full py-4 text-base tracking-wider shadow-lg mt-6"
       >
-        ← Выйти из аккаунта
+        Выйти из аккаунта
       </button>
     </div>
   );

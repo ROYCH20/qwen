@@ -30,22 +30,14 @@ export default function AdminScreen({ user, onLogout }: Props) {
     <div className="p-4 pt-10">
       {/* Title */}
       <div className="center-content mb-6">
-        <div className="icon-circle glow-violet mb-3" style={{ background: 'linear-gradient(135deg, #8b5cf6, #6b21a8)' }}>
-          <span className="text-white text-3xl">✦</span>
-        </div>
         <h1 className="text-2xl text-gradient-violet tracking-wider font-bold">Панель администратора</h1>
       </div>
 
       {/* Admin Header */}
       <div className="card-violet p-5 mb-4">
-        <div className="flex items-center gap-4 mb-5">
-          <div className="icon-circle-sm" style={{ background: 'linear-gradient(135deg, #8b5cf6, #6b21a8)' }}>
-            <span className="text-white">👑</span>
-          </div>
-          <div className="text-left">
-            <h2 className="text-base text-violet-dark font-semibold tracking-wide">{user.fullName}</h2>
-            <p className="text-sm text-violet-muted tracking-wider font-medium">ID: {user.id}</p>
-          </div>
+        <div className="mb-5">
+          <h2 className="text-base text-violet-dark font-semibold tracking-wide">{user.fullName}</h2>
+          <p className="text-sm text-violet-muted tracking-wider font-medium">ID: {user.id}</p>
         </div>
 
         <div className="grid grid-cols-3 gap-3">
@@ -69,16 +61,13 @@ export default function AdminScreen({ user, onLogout }: Props) {
         onClick={() => setShowResetConfirm(true)}
         className="btn-violet btn-violet-danger w-full py-4 text-base tracking-wider mb-5 font-semibold"
       >
-        ✦ Сбросить баллы всех участников ✦
+        Сбросить баллы всех участников
       </button>
 
       {/* Reset Success Modal */}
       {showResetSuccess && (
         <div className="modal-overlay">
           <div className="card-violet p-6 w-full max-w-sm center-content">
-            <div className="icon-circle mb-4" style={{ background: 'linear-gradient(135deg, #a78bfa, #8b5cf6)' }}>
-              <span className="text-white">✓</span>
-            </div>
             <p className="text-base text-violet-dark tracking-wide mb-6 font-medium text-center">Баллы всех участников сброшены до 300!</p>
             <button
               onClick={() => setShowResetSuccess(false)}
@@ -94,9 +83,6 @@ export default function AdminScreen({ user, onLogout }: Props) {
       {showResetConfirm && (
         <div className="modal-overlay">
           <div className="card-violet p-6 w-full max-w-sm center-content">
-            <div className="icon-circle mb-4" style={{ background: 'linear-gradient(135deg, #fbbf24, #f59e0b)' }}>
-              <span>⚠</span>
-            </div>
             <h3 className="text-lg text-violet-dark tracking-wider mb-3 font-bold">Подтверждение</h3>
             <p className="text-base text-violet-muted tracking-wide mb-6 font-medium text-center">
               Сбросить баллы всех участников до 300? Это действие нельзя отменить.
@@ -129,7 +115,7 @@ export default function AdminScreen({ user, onLogout }: Props) {
               : 'text-violet-muted bg-transparent'
           }`}
         >
-          ✦ По группам
+          По группам
         </button>
         <button
           onClick={() => setActiveTab('participants')}
@@ -139,18 +125,17 @@ export default function AdminScreen({ user, onLogout }: Props) {
               : 'text-violet-muted bg-transparent'
           }`}
         >
-          ✦ Участники
+          Участники
         </button>
       </div>
 
       {/* Group Summary */}
       {activeTab === 'groups' && (
         <div className="space-y-3 mb-6">
-          <h3 className="text-base text-violet-primary font-semibold tracking-wider center-content">✧ Рейтинг академических групп ✧</h3>
+          <h3 className="text-base text-violet-primary font-semibold tracking-wider center-content">Рейтинг академических групп</h3>
           
           {groupSummary.length === 0 ? (
             <div className="card-violet p-8 center-content">
-              <p className="text-4xl mb-3">✦</p>
               <p className="text-base text-violet-muted tracking-wider font-medium">Нет данных</p>
             </div>
           ) : (
@@ -193,7 +178,7 @@ export default function AdminScreen({ user, onLogout }: Props) {
       {/* Participants List */}
       {activeTab === 'participants' && (
         <div className="space-y-2 mb-6">
-          <h3 className="text-base text-violet-primary font-semibold tracking-wider center-content mb-4">✧ Все участники ✧</h3>
+          <h3 className="text-base text-violet-primary font-semibold tracking-wider center-content mb-4">Все участники</h3>
           
           {participants.map((p, index) => (
             <div key={p.id} className="card-violet p-4 flex items-center justify-between">
@@ -215,12 +200,12 @@ export default function AdminScreen({ user, onLogout }: Props) {
         </div>
       )}
 
-      {/* Logout button - after tabs content */}
+      {/* Logout button */}
       <button
         onClick={onLogout}
         className="btn-violet btn-violet-dark w-full py-4 text-base tracking-wider shadow-lg mt-6 mb-4 font-semibold"
       >
-        ← Выйти из аккаунта
+        Выйти из аккаунта
       </button>
     </div>
   );

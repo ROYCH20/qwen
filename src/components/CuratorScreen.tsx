@@ -147,28 +147,20 @@ export default function CuratorScreen({ user, onLogout }: Props) {
     <div className="p-4 pt-10">
       {/* Title */}
       <div className="center-content mb-6">
-        <div className="icon-circle glow-violet mb-3" style={{ background: 'linear-gradient(135deg, #8b5cf6, #6b21a8)' }}>
-          <span className="text-white text-3xl">✦</span>
-        </div>
         <h1 className="text-2xl text-gradient-violet tracking-wider font-bold">Панель куратора</h1>
       </div>
 
       {/* Curator Header */}
       <div className="card-violet p-4 mb-4">
-        <div className="flex items-center gap-3">
-          <div className="icon-circle-sm" style={{ background: 'linear-gradient(135deg, #8b5cf6, #6b21a8)' }}>
-            <span className="text-white">🎓</span>
-          </div>
-          <div className="text-left">
-            <h2 className="text-base text-violet-dark font-semibold tracking-wide">{user.fullName}</h2>
-            <p className="text-sm text-violet-muted tracking-wider font-medium">ID: {user.id}</p>
-          </div>
+        <div>
+          <h2 className="text-base text-violet-dark font-semibold tracking-wide">{user.fullName}</h2>
+          <p className="text-sm text-violet-muted tracking-wider font-medium">ID: {user.id}</p>
         </div>
       </div>
 
       {/* Scanner Section */}
       <div className="card-violet-accent p-5 mb-4">
-        <h3 className="text-base text-violet-primary font-semibold tracking-wider mb-4 center-content">✧ Сканирование QR-кода ✧</h3>
+        <h3 className="text-base text-violet-primary font-semibold tracking-wider mb-4 center-content">Сканирование QR-кода</h3>
         
         {!isScanning ? (
           <div className="space-y-4">
@@ -176,7 +168,7 @@ export default function CuratorScreen({ user, onLogout }: Props) {
               onClick={startScanner}
               className="btn-violet btn-violet-primary w-full py-4 text-base tracking-wider"
             >
-              ✦ Открыть камеру
+              Открыть камеру
             </button>
             
             <div className="flex items-center gap-3 py-1">
@@ -218,9 +210,6 @@ export default function CuratorScreen({ user, onLogout }: Props) {
       {showError && (
         <div className="modal-overlay">
           <div className="card-violet p-6 w-full max-w-sm center-content">
-            <div className="icon-circle mb-4" style={{ background: 'linear-gradient(135deg, #fbbf24, #f59e0b)' }}>
-              <span>⚠</span>
-            </div>
             <p className="text-base text-violet-dark tracking-wide mb-6 font-medium text-center">{showError}</p>
             <button
               onClick={() => setShowError('')}
@@ -236,9 +225,6 @@ export default function CuratorScreen({ user, onLogout }: Props) {
       {showSuccess && (
         <div className="modal-overlay">
           <div className="card-violet p-6 w-full max-w-sm center-content">
-            <div className="icon-circle mb-4" style={{ background: 'linear-gradient(135deg, #a78bfa, #8b5cf6)' }}>
-              <span className="text-white">✓</span>
-            </div>
             <p className="text-base text-violet-dark tracking-wide mb-6 font-medium text-center">{showSuccess}</p>
             <button
               onClick={() => setShowSuccess('')}
@@ -253,11 +239,11 @@ export default function CuratorScreen({ user, onLogout }: Props) {
       {/* Scanned User Info */}
       {scannedUser && (
         <div className="card-violet p-5 mb-4">
-          <h3 className="text-base text-violet-primary font-semibold tracking-wider mb-4 center-content">✧ Участник найден ✧</h3>
+          <h3 className="text-base text-violet-primary font-semibold tracking-wider mb-4 center-content">Участник найден</h3>
           <div className="rounded-2xl p-4 mb-5" style={{ background: '#ede9fe', border: '1.5px solid #c4b5fd' }}>
             <p className="text-base text-violet-dark font-semibold tracking-wide mb-1">{scannedUser.fullName}</p>
             <p className="text-sm text-violet-muted tracking-wider font-medium">Группа: {scannedUser.group} • ID: {scannedUser.id}</p>
-            <p className="text-base text-violet-primary tracking-wider mt-2 font-bold">Баланс: {scannedUser.points} ★</p>
+            <p className="text-base text-violet-primary tracking-wider mt-2 font-bold">Баланс: {scannedUser.points}</p>
           </div>
 
           {/* Action Selection */}
@@ -272,7 +258,7 @@ export default function CuratorScreen({ user, onLogout }: Props) {
                     : 'btn-violet btn-violet-light'
                 }`}
               >
-                ✦ Зачисление
+                Зачисление
               </button>
               <button
                 onClick={() => { setAction('debit'); setShowError(''); }}
@@ -282,7 +268,7 @@ export default function CuratorScreen({ user, onLogout }: Props) {
                     : 'btn-violet btn-violet-light'
                 }`}
               >
-                ✦ Списание
+                Списание
               </button>
             </div>
           </div>
@@ -337,7 +323,7 @@ export default function CuratorScreen({ user, onLogout }: Props) {
         onClick={onLogout}
         className="btn-violet btn-violet-dark w-full py-4 text-base tracking-wider shadow-lg mt-6 mb-4 font-semibold"
       >
-        ← Выйти из аккаунта
+        Выйти из аккаунта
       </button>
     </div>
   );
