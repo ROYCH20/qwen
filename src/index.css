@@ -21,6 +21,13 @@
   --c-text: #F5F2FF;
   --c-text-muted: #B9B0E6;
   --c-text-dim: #8A82C4;
+
+  /* Единая система отступов */
+  --gap-block: 20px;
+  --gap-inner: 20px;
+  --gap-btn: 12px;
+  --gap-title: 16px;
+  --pad-screen: 16px;
 }
 
 /* ═══════════════════════════════════════════
@@ -53,9 +60,11 @@
     font-family: 'Grafmassa', sans-serif !important;
   }
 
-  p, span, h1, h2, h3, h4, li, a, label {
-    overflow-wrap: anywhere;
+  /* Убираем truncate везде — только перенос */
+  p, span, h1, h2, h3, h4, li, a, label, div {
+    overflow-wrap: break-word;
     word-break: break-word;
+    text-wrap: balance;
   }
 
   ::-webkit-scrollbar {
@@ -65,11 +74,10 @@
 }
 
 /* ═══════════════════════════════════════════
-   ФОН СТРАНИЦЫ — ночное небо + звёзды + сканлайны
+   ФОН СТРАНИЦЫ
    ═══════════════════════════════════════════ */
 .bg-night-sky {
   background:
-    /* звёзды */
     radial-gradient(1px 1px at 10% 15%, rgba(255,255,255,.7), transparent),
     radial-gradient(1px 1px at 25% 40%, rgba(255,255,255,.5), transparent),
     radial-gradient(1.5px 1.5px at 45% 10%, rgba(255,255,255,.8), transparent),
@@ -85,7 +93,6 @@
     radial-gradient(1.5px 1.5px at 30% 50%, rgba(255,255,255,.5), transparent),
     radial-gradient(1px 1px at 50% 25%, rgba(255,255,255,.6), transparent),
     radial-gradient(1px 1px at 80% 45%, rgba(255,255,255,.4), transparent),
-    /* основной градиент */
     linear-gradient(180deg,
       #120F38 0%,
       #1a1550 15%,
@@ -101,7 +108,6 @@
   background-attachment: fixed;
 }
 
-/* CRT-сканлайны поверх всего */
 .crt-scanlines::after {
   content: '';
   position: fixed;
@@ -118,11 +124,10 @@
 }
 
 /* ═══════════════════════════════════════════
-   ХРОМ-ГРАДИЕНТ ДЛЯ ЗАГОЛОВКОВ
+   ХРОМ-ГРАДИЕНТ
    ═══════════════════════════════════════════ */
 .text-chrome {
   background:
-    /* полосатый паттерн отражений */
     repeating-linear-gradient(
       0deg,
       transparent,
@@ -130,7 +135,6 @@
       rgba(255,255,255,.15) 3px,
       rgba(255,255,255,.15) 4px
     ),
-    /* вертикальный хром-градиент */
     linear-gradient(180deg,
       #ffffff 0%,
       #f5f2ff 20%,
@@ -155,83 +159,135 @@
 }
 
 /* ═══════════════════════════════════════════
-   ЛУННЫЕ ПАНЕЛИ (стеклянные карточки)
+   КОНТЕЙНЕРЫ: func-zone / panel-glass / qr-frame
    ═══════════════════════════════════════════ */
-.glass-panel {
-  background: linear-gradient(135deg,
-    rgba(108, 99, 201, 0.18) 0%,
-    rgba(142, 134, 228, 0.12) 50%,
-    rgba(183, 143, 242, 0.08) 100%);
-  backdrop-filter: blur(16px) saturate(1.4);
-  -webkit-backdrop-filter: blur(16px) saturate(1.4);
-  border: 1.5px solid rgba(223, 183, 239, 0.28);
-  border-radius: 24px;
-  box-shadow:
-    0 0 24px rgba(247, 155, 227, 0.12),
-    0 0 48px rgba(111, 227, 236, 0.06),
-    inset 0 1px 0 rgba(255, 255, 255, 0.1);
-  overflow: hidden;
-  padding: 16px;
+
+/* Функциональная зона — без бабла, только ярлык + линии + свечение */
+.func-zone {
+  position: relative;
+  padding: var(--gap-inner);
+  margin-bottom: var(--gap-block);
+  box-shadow: 0 0 24px rgba(111, 227, 236, 0.10);
 }
 
-.glass-panel-strong {
-  background: linear-gradient(135deg,
-    rgba(108, 99, 201, 0.28) 0%,
-    rgba(142, 134, 228, 0.2) 50%,
-    rgba(183, 143, 242, 0.15) 100%);
-  backdrop-filter: blur(20px) saturate(1.5);
-  -webkit-backdrop-filter: blur(20px) saturate(1.5);
-  border: 1.5px solid rgba(247, 155, 227, 0.35);
-  border-radius: 24px;
-  box-shadow:
-    0 0 32px rgba(247, 155, 227, 0.18),
-    0 0 64px rgba(111, 227, 236, 0.08),
-    inset 0 1px 0 rgba(255, 255, 255, 0.12);
-  overflow: hidden;
-  padding: 16px;
-}
-
-/* Декоративные уголки */
-.glass-panel::before,
-.glass-panel::after {
+.func-zone::before,
+.func-zone::after {
   content: '';
+  display: block;
+  height: 1px;
+  background: linear-gradient(90deg,
+    transparent,
+    rgba(111, 227, 236, 0.55),
+    transparent);
+  margin: 0 auto;
+  width: 100%;
+}
+
+.func-zone::before {
+  margin-bottom: 14px;
+}
+
+.func-zone::after {
+  margin-top: 14px;
+}
+
+.func-zone-label {
+  display: block;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: #6FE3EC;
+  text-shadow: 0 0 10px rgba(111, 227, 236, 0.6);
+  text-align: center;
+  margin-bottom: 12px;
+  line-height: 1.25;
+}
+
+/* Полупрозрачная панель для статических данных */
+.panel-glass {
+  background: rgba(142, 134, 228, 0.10);
+  border: 1px solid rgba(223, 183, 239, 0.18);
+  border-radius: 20px;
+  padding: var(--gap-inner);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  margin-bottom: var(--gap-block);
+}
+
+/* Рамка-сканер для QR */
+.qr-frame {
+  position: relative;
+  padding: 12px;
+  border-radius: 14px;
+  background: rgba(18, 15, 56, 0.35);
+  box-shadow: 0 0 24px rgba(111, 227, 236, 0.18);
+  display: inline-block;
+}
+
+.qr-frame-corner {
   position: absolute;
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  opacity: 0.4;
-  pointer-events: none;
+  width: 18px;
+  height: 18px;
+  border-color: #6FE3EC;
+  border-style: solid;
+  border-width: 0;
+  box-shadow: 0 0 8px rgba(111, 227, 236, 0.6);
 }
 
-.glass-panel::before {
-  top: 8px;
-  right: 8px;
-  background: radial-gradient(circle, #F79BE3, transparent 70%);
+.qr-frame-corner.tl {
+  top: 4px;
+  left: 4px;
+  border-top-width: 2px;
+  border-left-width: 2px;
+  border-top-left-radius: 6px;
 }
 
-.glass-panel::after {
-  bottom: 8px;
-  left: 8px;
-  background: radial-gradient(circle, #6FE3EC, transparent 70%);
+.qr-frame-corner.tr {
+  top: 4px;
+  right: 4px;
+  border-top-width: 2px;
+  border-right-width: 2px;
+  border-top-right-radius: 6px;
+}
+
+.qr-frame-corner.bl {
+  bottom: 4px;
+  left: 4px;
+  border-bottom-width: 2px;
+  border-left-width: 2px;
+  border-bottom-left-radius: 6px;
+}
+
+.qr-frame-corner.br {
+  bottom: 4px;
+  right: 4px;
+  border-bottom-width: 2px;
+  border-right-width: 2px;
+  border-bottom-right-radius: 6px;
 }
 
 /* ═══════════════════════════════════════════
-   КНОПКИ — неоновые пилюли
+   КНОПКИ
    ═══════════════════════════════════════════ */
 .btn-neon {
   min-height: 44px;
   border-radius: 999px;
   border: 1.5px solid rgba(255, 255, 255, 0.3);
-  padding: 10px 20px;
+  padding: 10px 14px;
   font-weight: 500;
   letter-spacing: 0.03em;
+  line-height: 1.25;
   transition: all 0.15s ease;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   text-align: center;
-  max-width: 100%;
+  width: 100%;
+  font-size: clamp(13px, 3.6vw, 15px);
+  white-space: normal;
+  overflow: visible;
+  text-overflow: clip;
 }
 
 .btn-neon:active {
@@ -290,7 +346,6 @@
   background: rgba(108, 99, 201, 0.25);
 }
 
-/* Y2K-акцент — жидкохромовая кнопка */
 .btn-chrome {
   background: linear-gradient(135deg,
     rgba(255,255,255,.9) 0%,
@@ -339,7 +394,9 @@
   min-height: 44px;
   transition: all 0.2s ease;
   width: 100%;
-  max-width: 100%;
+  min-width: 0;
+  font-size: clamp(14px, 3.8vw, 16px);
+  line-height: 1.25;
 }
 
 .input-neon::placeholder {
@@ -362,13 +419,16 @@
   align-items: center;
   padding: 4px 12px;
   border-radius: 999px;
-  font-size: 12px;
+  font-size: clamp(11px, 3vw, 13px);
   font-weight: 500;
   letter-spacing: 0.03em;
+  line-height: 1.25;
   background: linear-gradient(135deg, #8E86E4, #B78FF2);
   color: #120F38;
   box-shadow: 0 0 12px rgba(142, 134, 228, 0.4);
   border: 1px solid rgba(255, 255, 255, 0.2);
+  white-space: normal;
+  overflow: visible;
 }
 
 .badge-chrome {
@@ -376,8 +436,9 @@
   align-items: center;
   padding: 4px 12px;
   border-radius: 999px;
-  font-size: 12px;
+  font-size: clamp(11px, 3vw, 13px);
   font-weight: 500;
+  line-height: 1.25;
   background: linear-gradient(135deg,
     rgba(255,255,255,.9),
     #DFB7EF 40%,
@@ -386,6 +447,8 @@
   color: #120F38;
   box-shadow: 0 0 12px rgba(247, 155, 227, 0.3);
   border: 1px solid rgba(255, 255, 255, 0.4);
+  white-space: normal;
+  overflow: visible;
 }
 
 /* ═══════════════════════════════════════════
@@ -423,8 +486,43 @@
 }
 
 /* ═══════════════════════════════════════════
-   УТИЛИТЫ
+   ТИПОГРАФИКА — clamp для всех размеров
    ═══════════════════════════════════════════ */
+.h-screen {
+  font-size: clamp(22px, 6vw, 28px);
+  line-height: 1.2;
+  letter-spacing: 0.05em;
+}
+
+.h-section {
+  font-size: clamp(16px, 4.5vw, 20px);
+  line-height: 1.25;
+  letter-spacing: 0.04em;
+}
+
+.h-card {
+  font-size: clamp(15px, 4.2vw, 18px);
+  line-height: 1.25;
+}
+
+.t-body {
+  font-size: clamp(13px, 3.6vw, 15px);
+  line-height: 1.3;
+}
+
+.t-small {
+  font-size: clamp(11px, 3vw, 13px);
+  line-height: 1.3;
+}
+
+.t-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  line-height: 1.25;
+}
+
+/* Цветовые утилиты */
 .text-neon-pink {
   color: var(--c-pink-neon);
   text-shadow: 0 0 8px rgba(247, 155, 227, 0.5);
@@ -440,16 +538,53 @@
   text-shadow: 0 0 8px rgba(183, 143, 242, 0.5);
 }
 
-.neon-glow-pink {
-  box-shadow: 0 0 20px rgba(247, 155, 227, 0.4), 0 0 40px rgba(247, 155, 227, 0.2);
+/* Разделитель */
+.neon-divider {
+  height: 1px;
+  background: linear-gradient(90deg,
+    transparent,
+    rgba(247, 155, 227, 0.5),
+    rgba(111, 227, 236, 0.5),
+    transparent);
 }
 
-.neon-glow-cyan {
-  box-shadow: 0 0 20px rgba(111, 227, 236, 0.4), 0 0 40px rgba(111, 227, 236, 0.2);
+/* QR Scanner */
+#qr-scanner-container video {
+  border-radius: 10px;
+  width: 100% !important;
 }
 
-.neon-glow-lilac {
-  box-shadow: 0 0 20px rgba(183, 143, 242, 0.4), 0 0 40px rgba(183, 143, 242, 0.2);
+#qr-scanner-container img {
+  display: none;
+}
+
+#qr-scanner-container {
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1.5px solid rgba(111, 227, 236, 0.4);
+  box-shadow: 0 0 20px rgba(111, 227, 236, 0.2);
+}
+
+/* Прогресс-бары */
+.progress-bar {
+  height: 8px;
+  border-radius: 999px;
+  background: rgba(18, 15, 56, 0.5);
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  border-radius: 999px;
+  transition: width 0.5s ease;
+}
+
+/* Центрирование */
+.center-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
 }
 
 /* CRT-рамка */
@@ -481,27 +616,7 @@
   border-radius: 24px;
 }
 
-/* Звёздочки-искры (Y2K) */
-.sparkle {
-  position: relative;
-  display: inline-block;
-}
-
-.sparkle::before {
-  content: '✦';
-  position: absolute;
-  font-size: 10px;
-  color: #fff;
-  text-shadow: 0 0 4px #fff, 0 0 8px #F79BE3;
-  animation: sparkle-pulse 2s ease-in-out infinite;
-}
-
-@keyframes sparkle-pulse {
-  0%, 100% { opacity: 0.4; transform: scale(0.8); }
-  50% { opacity: 1; transform: scale(1.2); }
-}
-
-/* Анимация мерцания */
+/* Мерцание */
 @keyframes flicker {
   0%, 100% { opacity: 1; }
   50% { opacity: 0.95; }
@@ -512,72 +627,10 @@
   animation: flicker 4s ease-in-out infinite;
 }
 
-/* Разделитель */
-.neon-divider {
-  height: 1px;
-  background: linear-gradient(90deg,
-    transparent,
-    rgba(247, 155, 227, 0.5),
-    rgba(111, 227, 236, 0.5),
-    transparent);
-}
-
-/* QR Scanner */
-#qr-scanner-container video {
-  border-radius: 16px;
-  width: 100% !important;
-}
-
-#qr-scanner-container img {
-  display: none;
-}
-
-#qr-scanner-container {
-  border-radius: 16px;
-  overflow: hidden;
-  border: 1.5px solid rgba(111, 227, 236, 0.4);
-  box-shadow: 0 0 20px rgba(111, 227, 236, 0.2);
-}
-
-/* Прогресс-бары */
-.progress-bar {
-  height: 8px;
-  border-radius: 999px;
-  background: rgba(18, 15, 56, 0.5);
-  overflow: hidden;
-}
-
-.progress-fill {
-  height: 100%;
-  border-radius: 999px;
-  transition: width 0.5s ease;
-}
-
-/* Сетки */
-.grid-auto {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
-  gap: 8px;
-}
-
-/* Центрирование */
-.center-col {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-}
-
 /* Адаптив */
 @media (max-width: 360px) {
-  .glass-panel,
-  .glass-panel-strong {
-    padding: 12px;
-  }
-
-  .btn-neon {
-    min-height: 40px;
-    padding: 8px 14px;
-    font-size: 13px;
+  .func-zone,
+  .panel-glass {
+    padding: 16px;
   }
 }
