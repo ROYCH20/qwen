@@ -1,7 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { Html5Qrcode } from 'html5-qrcode';
 import { getUserById, updatePoints, User } from '../database';
-import FitText from '../FitText';
 
 interface Props {
   user: User;
@@ -18,8 +17,6 @@ export default function CuratorScreen({ user, onLogout }: Props) {
   const [manualScan, setManualScan] = useState('');
   const scannerRef = useRef<Html5Qrcode | null>(null);
   const scannerContainerId = 'qr-scanner-container';
-
-  const isLongName = user.fullName.length > 24;
 
   useEffect(() => {
     return () => {
@@ -149,45 +146,35 @@ export default function CuratorScreen({ user, onLogout }: Props) {
   return (
     <div style={{ paddingTop: '24px' }}>
       {/* Заголовок */}
-      <div className="center-col" style={{ marginBottom: 'var(--gap-title)' }}>
-        <h1 className="screen-title text-chrome">
-          <FitText max={28} min={14}>КУРАТОР</FitText>
-        </h1>
-        <p className="text-neon-cyan screen-subtitle" style={{ marginTop: '4px' }}>
-          <FitText max={16} min={10}>Панель управления</FitText>
+      <div className="center-col screen-head" style={{ marginBottom: 'var(--gap-title)' }}>
+        <h1 className="screen-title text-chrome">КУРАТОР</h1>
+        <p className="text-neon-cyan fit-flow fit-sub" style={{ marginTop: '4px' }}>
+          Панель управления
         </p>
       </div>
 
-      {/* Шапка — ВНЕ контейнера */}
+      {/* Шапка */}
       <div className="center-col" style={{ marginBottom: 'var(--gap-block)' }}>
-        {isLongName ? (
-          <h2 className="text-chrome-soft text-center user-name user-name--long">
-            {user.fullName}
-          </h2>
-        ) : (
-          <h2 className="text-chrome-soft text-center user-name">
-            <FitText max={20} min={10}>{user.fullName}</FitText>
-          </h2>
-        )}
+        <h2 className="text-chrome-soft text-center user-name fit-flow">
+          {user.fullName}
+        </h2>
         <span className="badge-neon" style={{ marginTop: '10px' }}>
-          <FitText max={13} min={9}>ID: {user.id}</FitText>
+          <span className="fit-nowrap" style={{ fontSize: 'clamp(10px, 3vw, 13px)' }}>ID: {user.id}</span>
         </span>
       </div>
 
-      {/* Сканирование — hud-box */}
+      {/* Сканирование */}
       <div className="hud-box">
-        <span className="hud-label">
-          <FitText max={16} min={9}>СКАНИРОВАНИЕ QR-КОДА</FitText>
-        </span>
+        <span className="hud-label fit-flow fit-title">СКАНИРОВАНИЕ QR-КОДА</span>
         
         {!isScanning ? (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
             <button onClick={startScanner} className="btn-neon btn-cyan">
-              <FitText max={15} min={10}>Открыть камеру</FitText>
+              <span className="fit-nowrap fit-btn3">Открыть камеру</span>
             </button>
             
-            <p className="text-neon-lilac screen-subtitle text-center" style={{ margin: '0' }}>
-              <FitText max={16} min={10}>или введите ID</FitText>
+            <p className="text-neon-lilac fit-flow fit-sub text-center" style={{ margin: '0' }}>
+              или введите ID
             </p>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
@@ -198,13 +185,10 @@ export default function CuratorScreen({ user, onLogout }: Props) {
                 placeholder="Например: P001 участника"
                 className="input-neon"
               />
-              <button
-                onClick={handleManualScan}
-                className="btn-neon btn-lilac"
-              >
-                <FitText max={15} min={10}>Найти участника</FitText>
+              <button onClick={handleManualScan} className="btn-neon btn-lilac">
+                <span className="fit-nowrap fit-btn3">Найти участника</span>
               </button>
-              <p style={{ fontSize: '10px', color: '#B9B0E6', textAlign: 'center', lineHeight: 1.3, whiteSpace: 'normal', textWrap: 'balance' }}>
+              <p style={{ fontSize: '10px', color: '#B9B0E6', textAlign: 'center', lineHeight: 1.3 }}>
                 ID участника, которому начисляются или списываются баллы
               </p>
             </div>
@@ -215,7 +199,7 @@ export default function CuratorScreen({ user, onLogout }: Props) {
               <div id={scannerContainerId} className="overflow-hidden"></div>
             </div>
             <button onClick={stopScanner} className="btn-neon btn-danger">
-              <FitText max={15} min={10}>Остановить сканирование</FitText>
+              <span className="fit-nowrap fit-btn3">Остановить сканирование</span>
             </button>
           </div>
         )}
@@ -224,23 +208,15 @@ export default function CuratorScreen({ user, onLogout }: Props) {
       {/* Информация о найденном участнике */}
       {scannedUser && (
         <div className="hud-box">
-          <span className="hud-label">
-            <FitText max={16} min={9}>УЧАСТНИК НАЙДЕН</FitText>
-          </span>
+          <span className="hud-label fit-flow fit-title">УЧАСТНИК НАЙДЕН</span>
           
           <div className="center-col" style={{ padding: '10px 0', marginBottom: '10px' }}>
-            {scannedUser.fullName.length > 24 ? (
-              <p className="user-name text-white text-center user-name--long">{scannedUser.fullName}</p>
-            ) : (
-              <p className="user-name text-white text-center">
-                <FitText max={20} min={10}>{scannedUser.fullName}</FitText>
-              </p>
-            )}
-            <p className="screen-subtitle text-neon-lilac" style={{ marginTop: '4px' }}>
-              <FitText max={13} min={9}>Группа: {scannedUser.group} • ID: {scannedUser.id}</FitText>
+            <p className="user-name text-white text-center fit-flow">{scannedUser.fullName}</p>
+            <p className="fit-flow fit-sub text-neon-lilac" style={{ marginTop: '4px' }}>
+              Группа: {scannedUser.group} • ID: {scannedUser.id}
             </p>
-            <p className="stat-value text-neon-cyan" style={{ marginTop: '8px' }}>
-              <FitText max={20} min={12}>Баланс: {scannedUser.points}</FitText>
+            <p className="fit-nowrap fit-stat-v text-neon-cyan" style={{ marginTop: '8px' }}>
+              Баланс: {scannedUser.points}
             </p>
           </div>
 
@@ -248,41 +224,39 @@ export default function CuratorScreen({ user, onLogout }: Props) {
 
           {/* Действие */}
           <div style={{ marginTop: '10px', marginBottom: '14px' }}>
-            <p className="stat-label text-neon-lilac text-center" style={{ marginBottom: '10px' }}>
-              <FitText max={12} min={7}>Действие</FitText>
+            <p className="fit-nowrap fit-stat-l text-neon-lilac text-center" style={{ marginBottom: '10px' }}>
+              Действие
             </p>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: 'var(--gap-btn)' }}>
+            <div className="btn-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: 'var(--gap-btn)' }}>
               <button
                 onClick={() => { setAction('credit'); setShowError(''); }}
-                className={`btn-neon btn-grid ${action === 'credit' ? 'btn-cyan' : 'btn-ghost'}`}
-                style={{ paddingInline: 'clamp(8px, 2.5vw, 14px)' }}
+                className={`btn-neon ${action === 'credit' ? 'btn-cyan' : 'btn-ghost'}`}
               >
-                <FitText max={14} min={8}>Зачисление</FitText>
+                <span className="fit-nowrap fit-btn2">Зачисление</span>
               </button>
               <button
                 onClick={() => { setAction('debit'); setShowError(''); }}
-                className={`btn-neon btn-grid ${action === 'debit' ? 'btn-danger' : 'btn-ghost'}`}
-                style={{ paddingInline: 'clamp(8px, 2.5vw, 14px)' }}
+                className={`btn-neon ${action === 'debit' ? 'btn-danger' : 'btn-ghost'}`}
               >
-                <FitText max={14} min={8}>Списание</FitText>
+                <span className="fit-nowrap fit-btn2">Списание</span>
               </button>
             </div>
           </div>
 
           {/* Количество баллов */}
           <div style={{ marginBottom: '14px' }}>
-            <p className="stat-label text-neon-lilac text-center" style={{ marginBottom: '10px' }}>
-              <FitText max={12} min={7}>Количество баллов</FitText>
+            <p className="fit-flow fit-stat-l text-neon-lilac text-center" style={{ marginBottom: '10px' }}>
+              Количество баллов
             </p>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0, 1fr))', gap: 'var(--gap-btn)' }}>
+            <div className="btn-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0, 1fr))', gap: 'var(--gap-btn)' }}>
               {[50, 100, 150].map(p => (
                 <button
                   key={p}
                   onClick={() => { setPoints(p); setShowError(''); }}
-                  className={`btn-neon btn-grid ${points === p ? 'btn-chrome' : 'btn-ghost'}`}
-                  style={{ fontWeight: 700, paddingInline: 'clamp(8px, 2.5vw, 14px)' }}
+                  className={`btn-neon ${points === p ? 'btn-chrome' : 'btn-ghost'}`}
+                  style={{ fontWeight: 700 }}
                 >
-                  <FitText max={18} min={10}>{p}</FitText>
+                  <span className="fit-nowrap fit-stat-v">{p}</span>
                 </button>
               ))}
             </div>
@@ -291,21 +265,21 @@ export default function CuratorScreen({ user, onLogout }: Props) {
           <div className="hud-divider"></div>
 
           {/* Подтверждение */}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: 'var(--gap-btn)', marginTop: '10px' }}>
+          <div className="btn-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: 'var(--gap-btn)', marginTop: '10px' }}>
             <button
               onClick={handleSubmit}
               disabled={points === null}
-              className={`btn-neon btn-grid ${
+              className={`btn-neon ${
                 points !== null
                   ? action === 'credit' ? 'btn-cyan' : 'btn-danger'
                   : 'btn-ghost'
               }`}
-              style={points === null ? { opacity: 0.4, cursor: 'not-allowed' } : { paddingInline: 'clamp(8px, 2.5vw, 14px)' }}
+              style={points === null ? { opacity: 0.4, cursor: 'not-allowed' } : {}}
             >
-              <FitText max={14} min={8}>{action === 'credit' ? `+${points || 0}` : `-${points || 0}`}</FitText>
+              <span className="fit-nowrap fit-btn2">{action === 'credit' ? `+${points || 0}` : `-${points || 0}`}</span>
             </button>
-            <button onClick={handleReset} className="btn-neon btn-grid btn-ghost" style={{ paddingInline: 'clamp(8px, 2.5vw, 14px)' }}>
-              <FitText max={14} min={8}>Сброс</FitText>
+            <button onClick={handleReset} className="btn-neon btn-ghost">
+              <span className="fit-nowrap fit-btn2">Сброс</span>
             </button>
           </div>
         </div>
@@ -315,13 +289,13 @@ export default function CuratorScreen({ user, onLogout }: Props) {
       {showError && (
         <div className="modal-overlay">
           <div className="modal-card center-col">
-            <p className="text-white font-medium text-center text-wrap-balance" style={{ marginBottom: '24px', fontSize: 'clamp(13px, 3.6vw, 15px)' }}>{showError}</p>
+            <p className="text-white font-medium text-center fit-flow" style={{ marginBottom: '24px', fontSize: 'clamp(13px, 3.6vw, 15px)' }}>{showError}</p>
             <button
               onClick={() => setShowError('')}
               className="btn-neon btn-pink"
               style={{ width: 'auto', paddingInline: '32px' }}
             >
-              <FitText max={15} min={10}>Понятно</FitText>
+              <span className="fit-nowrap fit-btn3">Понятно</span>
             </button>
           </div>
         </div>
@@ -331,13 +305,13 @@ export default function CuratorScreen({ user, onLogout }: Props) {
       {showSuccess && (
         <div className="modal-overlay">
           <div className="modal-card center-col">
-            <p className="text-white font-medium text-center text-wrap-balance" style={{ marginBottom: '24px', fontSize: 'clamp(13px, 3.6vw, 15px)' }}>{showSuccess}</p>
+            <p className="text-white font-medium text-center fit-flow" style={{ marginBottom: '24px', fontSize: 'clamp(13px, 3.6vw, 15px)' }}>{showSuccess}</p>
             <button
               onClick={() => setShowSuccess('')}
               className="btn-neon btn-cyan"
               style={{ width: 'auto', paddingInline: '32px' }}
             >
-              <FitText max={15} min={10}>Отлично</FitText>
+              <span className="fit-nowrap fit-btn3">Отлично</span>
             </button>
           </div>
         </div>
@@ -349,7 +323,7 @@ export default function CuratorScreen({ user, onLogout }: Props) {
         className="btn-neon btn-danger"
         style={{ marginTop: 'var(--gap-block)' }}
       >
-        <FitText max={15} min={10}>Выйти из аккаунта</FitText>
+        <span className="fit-nowrap fit-btn3">Выйти из аккаунта</span>
       </button>
     </div>
   );

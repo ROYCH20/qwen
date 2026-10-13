@@ -1,6 +1,5 @@
 import { QRCodeSVG } from 'qrcode.react';
 import { User } from '../database';
-import FitText from '../FitText';
 
 interface Props {
   user: User;
@@ -14,63 +13,43 @@ export default function ParticipantScreen({ user, onLogout }: Props) {
     type: 'participant_qr'
   });
 
-  const isLongName = user.fullName.length > 24;
-
   return (
     <div style={{ paddingTop: '24px' }}>
       {/* Заголовок экрана */}
-      <div className="center-col" style={{ marginBottom: 'var(--gap-title)' }}>
-        <h1 className="screen-title text-chrome">
-          <FitText max={28} min={14}>ПРОФИЛЬ</FitText>
-        </h1>
-        <p className="text-neon-lilac screen-subtitle" style={{ marginTop: '4px' }}>
-          <FitText max={16} min={10}>Участник</FitText>
+      <div className="center-col screen-head" style={{ marginBottom: 'var(--gap-title)' }}>
+        <h1 className="screen-title text-chrome">ПРОФИЛЬ</h1>
+        <p className="text-neon-lilac fit-flow fit-sub" style={{ marginTop: '4px' }}>
+          Участник
         </p>
       </div>
 
-      {/* Шапка профиля — ВНЕ контейнера */}
+      {/* Шапка профиля */}
       <div className="center-col" style={{ marginBottom: 'var(--gap-block)' }}>
-        {isLongName ? (
-          <h2 className="text-chrome-soft text-center user-name user-name--long">
-            {user.fullName}
-          </h2>
-        ) : (
-          <h2 className="text-chrome-soft text-center user-name">
-            <FitText max={20} min={10}>{user.fullName}</FitText>
-          </h2>
-        )}
+        <h2 className="text-chrome-soft text-center user-name fit-flow">
+          {user.fullName}
+        </h2>
         <span className="badge-neon" style={{ marginTop: '10px' }}>
-          <FitText max={13} min={9}>ID: {user.id}</FitText>
+          <span className="fit-nowrap" style={{ fontSize: 'clamp(10px, 3vw, 13px)' }}>ID: {user.id}</span>
         </span>
       </div>
 
-      {/* Группа / Баллы — hud-box с двумя stat-cell */}
+      {/* Группа / Баллы */}
       <div className="hud-box">
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', columnGap: '10px' }}>
+        <div className="stat-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', columnGap: '10px' }}>
           <div className="stat-cell">
-            <p className="stat-label text-neon-lilac" style={{ marginBottom: '6px' }}>
-              <FitText max={12} min={7}>Группа</FitText>
-            </p>
-            <p className="stat-value text-white">
-              <FitText max={16} min={9}>{user.group}</FitText>
-            </p>
+            <p className="fit-nowrap fit-stat-l text-neon-lilac" style={{ marginBottom: '6px' }}>Группа</p>
+            <p className="fit-nowrap fit-stat-v text-white">{user.group}</p>
           </div>
           <div className="stat-cell" style={{ borderLeft: '1px solid rgba(223,183,239,.25)' }}>
-            <p className="stat-label text-neon-pink" style={{ marginBottom: '6px' }}>
-              <FitText max={12} min={7}>Баллы</FitText>
-            </p>
-            <p className="stat-value text-white">
-              <FitText max={16} min={9}>{user.points}</FitText>
-            </p>
+            <p className="fit-nowrap fit-stat-l text-neon-pink" style={{ marginBottom: '6px' }}>Баллы</p>
+            <p className="fit-nowrap fit-stat-v text-white">{user.points}</p>
           </div>
         </div>
       </div>
 
-      {/* QR-код — hud-box */}
+      {/* QR-код */}
       <div className="hud-box">
-        <span className="hud-label">
-          <FitText max={16} min={9}>QR-КОД УЧАСТНИКА</FitText>
-        </span>
+        <span className="hud-label fit-flow fit-title">QR-КОД УЧАСТНИКА</span>
         <div className="center-col">
           <div className="qr-frame">
             <QRCodeSVG
@@ -83,47 +62,37 @@ export default function ParticipantScreen({ user, onLogout }: Props) {
               style={{ width: '100%', height: 'auto', maxWidth: '220px', display: 'block' }}
             />
           </div>
-          <p className="text-neon-cyan screen-subtitle" style={{ marginTop: '12px' }}>
-            <FitText max={13} min={9}>Покажите этот код куратору</FitText>
+          <p className="text-neon-cyan fit-flow fit-cap" style={{ marginTop: '12px' }}>
+            Покажите этот код куратору
           </p>
         </div>
       </div>
 
-      {/* Информация — hud-box */}
+      {/* Информация */}
       <div className="hud-box">
-        <span className="hud-label">
-          <FitText max={16} min={9}>ИНФОРМАЦИЯ</FitText>
-        </span>
-        <div className="flex justify-between items-center" style={{ padding: '4px 0', gap: '10px' }}>
-          <span className="info-label text-neon-lilac flex-shrink-0">ФИО</span>
-          <div className="flex-1 min-w-0 text-right">
-            {isLongName ? (
-              <span className="info-value text-white text-wrap-balance">{user.fullName}</span>
-            ) : (
-              <FitText max={14} min={11}>{user.fullName}</FitText>
-            )}
+        <span className="hud-label fit-flow fit-title">ИНФОРМАЦИЯ</span>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+          <div className="kv-row" style={{ padding: '4px 0' }}>
+            <span className="k text-neon-lilac">ФИО</span>
+            <span className="v text-white fit-flow">{user.fullName}</span>
           </div>
-        </div>
-        <div className="hud-divider"></div>
-        <div className="flex justify-between items-center" style={{ padding: '4px 0', gap: '10px' }}>
-          <span className="info-label text-neon-lilac flex-shrink-0">Группа</span>
-          <span className="info-value text-white">
-            <FitText max={13} min={9}>{user.group}</FitText>
-          </span>
-        </div>
-        <div className="hud-divider"></div>
-        <div className="flex justify-between items-center" style={{ padding: '4px 0', gap: '10px' }}>
-          <span className="info-label text-neon-lilac flex-shrink-0">Баллы</span>
-          <span className="info-value text-neon-pink">
-            <FitText max={13} min={9}>{user.points}</FitText>
-          </span>
-        </div>
-        <div className="hud-divider"></div>
-        <div className="flex justify-between items-center" style={{ padding: '4px 0', gap: '10px' }}>
-          <span className="info-label text-neon-lilac flex-shrink-0">Роль</span>
-          <span className="badge-neon">
-            <FitText max={13} min={9}>Участник</FitText>
-          </span>
+          <div className="hud-divider"></div>
+          <div className="kv-row" style={{ padding: '4px 0' }}>
+            <span className="k text-neon-lilac">Группа</span>
+            <span className="v text-white fit-nowrap fit-stat-v">{user.group}</span>
+          </div>
+          <div className="hud-divider"></div>
+          <div className="kv-row" style={{ padding: '4px 0' }}>
+            <span className="k text-neon-lilac">Баллы</span>
+            <span className="v text-neon-pink fit-nowrap fit-stat-v">{user.points}</span>
+          </div>
+          <div className="hud-divider"></div>
+          <div className="kv-row" style={{ padding: '4px 0' }}>
+            <span className="k text-neon-lilac">Роль</span>
+            <span className="badge-neon" style={{ justifySelf: 'end' }}>
+              <span className="fit-nowrap" style={{ fontSize: 'clamp(10px, 3vw, 13px)' }}>Участник</span>
+            </span>
+          </div>
         </div>
       </div>
 
@@ -133,7 +102,7 @@ export default function ParticipantScreen({ user, onLogout }: Props) {
         className="btn-neon btn-danger"
         style={{ marginTop: 'var(--gap-block)' }}
       >
-        <FitText max={15} min={10}>Выйти из аккаунта</FitText>
+        <span className="fit-nowrap fit-btn3">Выйти из аккаунта</span>
       </button>
     </div>
   );

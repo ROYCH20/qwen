@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { getGroupSummary, getUsersByRole, resetAllPoints, User } from '../database';
-import FitText from '../FitText';
 
 interface Props {
   user: User;
@@ -27,62 +26,40 @@ export default function AdminScreen({ user, onLogout }: Props) {
     setTimeout(() => setShowResetSuccess(false), 3000);
   };
 
-  const isLongName = user.fullName.length > 24;
-
   return (
     <div style={{ paddingTop: '24px' }}>
       {/* Заголовок */}
-      <div className="center-col" style={{ marginBottom: 'var(--gap-title)' }}>
-        <h1 className="screen-title text-chrome">
-          <FitText max={28} min={14}>АДМИН</FitText>
-        </h1>
-        <p className="text-neon-cyan screen-subtitle" style={{ marginTop: '4px' }}>
-          <FitText max={16} min={10}>Панель управления</FitText>
+      <div className="center-col screen-head" style={{ marginBottom: 'var(--gap-title)' }}>
+        <h1 className="screen-title text-chrome">АДМИН</h1>
+        <p className="text-neon-cyan fit-flow fit-sub" style={{ marginTop: '4px' }}>
+          Панель управления
         </p>
       </div>
 
-      {/* Шапка — ВНЕ контейнера */}
+      {/* Шапка */}
       <div className="center-col" style={{ marginBottom: 'var(--gap-block)' }}>
-        {isLongName ? (
-          <h2 className="text-chrome-soft text-center user-name user-name--long">
-            {user.fullName}
-          </h2>
-        ) : (
-          <h2 className="text-chrome-soft text-center user-name">
-            <FitText max={20} min={10}>{user.fullName}</FitText>
-          </h2>
-        )}
+        <h2 className="text-chrome-soft text-center user-name fit-flow">
+          {user.fullName}
+        </h2>
         <span className="badge-neon" style={{ marginTop: '10px' }}>
-          <FitText max={13} min={9}>ID: {user.id}</FitText>
+          <span className="fit-nowrap" style={{ fontSize: 'clamp(10px, 3vw, 13px)' }}>ID: {user.id}</span>
         </span>
       </div>
 
-      {/* Статистика — ОДИН hud-box с тремя stat-cell */}
+      {/* Статистика */}
       <div className="hud-box">
-        <div key={refreshKey} style={{ display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0, 1fr))', columnGap: '10px' }}>
+        <div key={refreshKey} className="stat-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0, 1fr))', columnGap: '10px' }}>
           <div className="stat-cell">
-            <p className="stat-value text-white">
-              <FitText max={20} min={10}>{totalParticipants}</FitText>
-            </p>
-            <p className="stat-label text-neon-lilac" style={{ marginTop: '4px' }}>
-              <FitText max={12} min={7}>Участников</FitText>
-            </p>
+            <p className="fit-nowrap fit-stat-v text-white">{totalParticipants}</p>
+            <p className="fit-nowrap fit-stat-l text-neon-lilac" style={{ marginTop: '4px' }}>Участников</p>
           </div>
           <div className="stat-cell" style={{ borderLeft: '1px solid rgba(223,183,239,.25)' }}>
-            <p className="stat-value text-white">
-              <FitText max={20} min={10}>{groupSummary.length}</FitText>
-            </p>
-            <p className="stat-label text-neon-lilac" style={{ marginTop: '4px' }}>
-              <FitText max={12} min={7}>Групп</FitText>
-            </p>
+            <p className="fit-nowrap fit-stat-v text-white">{groupSummary.length}</p>
+            <p className="fit-nowrap fit-stat-l text-neon-lilac" style={{ marginTop: '4px' }}>Групп</p>
           </div>
           <div className="stat-cell" style={{ borderLeft: '1px solid rgba(223,183,239,.25)' }}>
-            <p className="stat-value text-neon-pink">
-              <FitText max={20} min={10}>{totalPoints}</FitText>
-            </p>
-            <p className="stat-label text-neon-pink" style={{ marginTop: '4px' }}>
-              <FitText max={12} min={7}>Баллов</FitText>
-            </p>
+            <p className="fit-nowrap fit-stat-v text-neon-pink">{totalPoints}</p>
+            <p className="fit-nowrap fit-stat-l text-neon-pink" style={{ marginTop: '4px' }}>Баллов</p>
           </div>
         </div>
       </div>
@@ -90,35 +67,33 @@ export default function AdminScreen({ user, onLogout }: Props) {
       {/* Кнопка сброса */}
       <button
         onClick={() => setShowResetConfirm(true)}
-        className="btn-neon btn-danger btn-wide text-wrap-balance"
+        className="btn-neon btn-danger fit-flow"
         style={{ marginTop: 'var(--gap-block)' }}
       >
         Сбросить баллы всех участников
       </button>
 
-      {/* Тумблер — grid 2 колонки */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: 'var(--gap-btn)', marginTop: 'var(--gap-btn)' }}>
+      {/* Тумблер */}
+      <div className="btn-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: 'var(--gap-btn)', marginTop: 'var(--gap-btn)' }}>
         <button
           onClick={() => setActiveTab('groups')}
-          className={`btn-neon btn-grid ${activeTab === 'groups' ? 'btn-cyan' : 'btn-ghost'}`}
-          style={{ paddingInline: 'clamp(8px, 2.5vw, 14px)' }}
+          className={`btn-neon ${activeTab === 'groups' ? 'btn-cyan' : 'btn-ghost'}`}
         >
-          <FitText max={14} min={8}>По группам</FitText>
+          <span className="fit-nowrap fit-btn2">По группам</span>
         </button>
         <button
           onClick={() => setActiveTab('participants')}
-          className={`btn-neon btn-grid ${activeTab === 'participants' ? 'btn-cyan' : 'btn-ghost'}`}
-          style={{ paddingInline: 'clamp(8px, 2.5vw, 14px)' }}
+          className={`btn-neon ${activeTab === 'participants' ? 'btn-cyan' : 'btn-ghost'}`}
         >
-          <FitText max={14} min={8}>Участники</FitText>
+          <span className="fit-nowrap fit-btn2">Участники</span>
         </button>
       </div>
 
       {/* Рейтинг групп */}
       {activeTab === 'groups' && (
         <div style={{ marginTop: 'var(--gap-block)' }}>
-          <p className="stat-label text-neon-pink text-center" style={{ marginBottom: '14px' }}>
-            <FitText max={12} min={7}>Рейтинг академических групп</FitText>
+          <p className="fit-flow fit-stat-l text-neon-pink text-center" style={{ marginBottom: '14px' }}>
+            Рейтинг академических групп
           </p>
           
           {groupSummary.length === 0 ? (
@@ -137,19 +112,19 @@ export default function AdminScreen({ user, onLogout }: Props) {
                   <div key={item.group} className="hud-box" style={{ marginBottom: 0 }}>
                     <div className="flex items-center justify-between" style={{ gap: '12px', marginBottom: '12px' }}>
                       <div className="flex-1 min-w-0">
-                        <p className="stat-value text-center" style={{ color }}>
-                          <FitText max={20} min={12}>{item.group}</FitText>
+                        <p className="fit-nowrap fit-stat-v text-center" style={{ color }}>
+                          {item.group}
                         </p>
-                        <p className="stat-label text-neon-lilac text-center" style={{ marginTop: '2px' }}>
-                          <FitText max={12} min={7}>{item.participants} участников</FitText>
+                        <p className="fit-nowrap fit-stat-l text-neon-lilac text-center" style={{ marginTop: '2px' }}>
+                          {item.participants} участников
                         </p>
                       </div>
                       <div className="text-right flex-shrink-0">
-                        <p className="stat-value text-right" style={{ color }}>
-                          <FitText max={20} min={12}>{item.totalPoints}</FitText>
+                        <p className="fit-nowrap fit-stat-v text-right" style={{ color }}>
+                          {item.totalPoints}
                         </p>
-                        <p className="stat-label text-neon-lilac text-right" style={{ marginTop: '2px' }}>
-                          <FitText max={12} min={7}>баллов</FitText>
+                        <p className="fit-nowrap fit-stat-l text-neon-lilac text-right" style={{ marginTop: '2px' }}>
+                          баллов
                         </p>
                       </div>
                     </div>
@@ -170,31 +145,23 @@ export default function AdminScreen({ user, onLogout }: Props) {
       {/* Список участников */}
       {activeTab === 'participants' && (
         <div style={{ marginTop: 'var(--gap-block)' }}>
-          <p className="stat-label text-neon-pink text-center" style={{ marginBottom: '14px' }}>
-            <FitText max={12} min={7}>Все участники</FitText>
+          <p className="fit-flow fit-stat-l text-neon-pink text-center" style={{ marginBottom: '14px' }}>
+            Все участники
           </p>
           
           <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--gap-btn)' }}>
             {participants.map((p) => (
-              <div key={p.id} className="hud-box flex items-center justify-between" style={{ gap: '12px', marginBottom: 0 }}>
-                <div className="flex-1 min-w-0">
-                  {p.fullName.length > 24 ? (
-                    <p className="user-name text-white user-name--long">{p.fullName}</p>
-                  ) : (
-                    <p className="user-name text-white">
-                      <FitText max={16} min={11}>{p.fullName}</FitText>
-                    </p>
-                  )}
-                  <p className="stat-label text-neon-lilac" style={{ marginTop: '2px' }}>
-                    <FitText max={13} min={9}>{p.group} • {p.id}</FitText>
+              <div key={p.id} className="hud-box list-row" style={{ marginBottom: 0 }}>
+                <div className="name">
+                  <p className="text-white" style={{ fontWeight: 600 }}>{p.fullName}</p>
+                  <p className="fit-nowrap fit-stat-l text-neon-lilac" style={{ marginTop: '2px' }}>
+                    {p.group} • {p.id}
                   </p>
                 </div>
-                <div className="text-right flex-shrink-0">
-                  <p className="stat-value text-neon-pink">
-                    <FitText max={20} min={12}>{p.points}</FitText>
-                  </p>
-                  <p className="stat-label text-neon-lilac" style={{ marginTop: '2px' }}>
-                    <FitText max={12} min={7}>баллов</FitText>
+                <div className="text-right">
+                  <p className="fit-nowrap fit-stat-v text-neon-pink">{p.points}</p>
+                  <p className="fit-nowrap fit-stat-l text-neon-lilac" style={{ marginTop: '2px' }}>
+                    баллов
                   </p>
                 </div>
               </div>
@@ -207,13 +174,13 @@ export default function AdminScreen({ user, onLogout }: Props) {
       {showResetSuccess && (
         <div className="modal-overlay">
           <div className="modal-card center-col">
-            <p className="text-white font-medium text-center text-wrap-balance" style={{ marginBottom: '24px', fontSize: 'clamp(13px, 3.6vw, 15px)' }}>Баллы всех участников сброшены до 300!</p>
+            <p className="text-white font-medium text-center fit-flow" style={{ marginBottom: '24px', fontSize: 'clamp(13px, 3.6vw, 15px)' }}>Баллы всех участников сброшены до 300!</p>
             <button
               onClick={() => setShowResetSuccess(false)}
               className="btn-neon btn-cyan"
               style={{ width: 'auto', paddingInline: '32px' }}
             >
-              <FitText max={15} min={10}>Отлично</FitText>
+              <span className="fit-nowrap fit-btn3">Отлично</span>
             </button>
           </div>
         </div>
@@ -223,18 +190,18 @@ export default function AdminScreen({ user, onLogout }: Props) {
       {showResetConfirm && (
         <div className="modal-overlay">
           <div className="modal-card center-col">
-            <h3 className="screen-subtitle text-white font-bold text-center" style={{ marginBottom: '12px' }}>
-              <FitText max={15} min={10}>Подтверждение</FitText>
+            <h3 className="text-white font-bold text-center fit-flow fit-sub" style={{ marginBottom: '12px' }}>
+              Подтверждение
             </h3>
-            <p className="text-white/80 font-medium text-center text-wrap-balance" style={{ marginBottom: '24px', fontSize: 'clamp(13px, 3.6vw, 15px)' }}>
+            <p className="text-white/80 font-medium text-center fit-flow" style={{ marginBottom: '24px', fontSize: 'clamp(13px, 3.6vw, 15px)' }}>
               Сбросить баллы всех участников до 300? Это действие нельзя отменить.
             </p>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: 'var(--gap-btn)', width: '100%' }}>
-              <button onClick={() => setShowResetConfirm(false)} className="btn-neon btn-ghost btn-grid" style={{ paddingInline: 'clamp(8px, 2.5vw, 14px)' }}>
-                <FitText max={14} min={8}>Отмена</FitText>
+            <div className="btn-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: 'var(--gap-btn)', width: '100%' }}>
+              <button onClick={() => setShowResetConfirm(false)} className="btn-neon btn-ghost">
+                <span className="fit-nowrap fit-btn2">Отмена</span>
               </button>
-              <button onClick={handleResetPoints} className="btn-neon btn-danger btn-grid" style={{ paddingInline: 'clamp(8px, 2.5vw, 14px)' }}>
-                <FitText max={14} min={8}>Сбросить</FitText>
+              <button onClick={handleResetPoints} className="btn-neon btn-danger">
+                <span className="fit-nowrap fit-btn2">Сбросить</span>
               </button>
             </div>
           </div>
@@ -247,7 +214,7 @@ export default function AdminScreen({ user, onLogout }: Props) {
         className="btn-neon btn-danger"
         style={{ marginTop: 'var(--gap-block)' }}
       >
-        <FitText max={15} min={10}>Выйти из аккаунта</FitText>
+        <span className="fit-nowrap fit-btn3">Выйти из аккаунта</span>
       </button>
     </div>
   );
