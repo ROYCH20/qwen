@@ -27,28 +27,17 @@ function App() {
   };
 
   return (
-    <div className="min-h-screen bg-[#edeef0] flex justify-center">
-      <div className="w-full max-w-[430px] min-h-screen bg-white shadow-xl relative">
-        {/* VK Header */}
-        <div className="bg-[#0077ff] text-white px-4 py-3 flex items-center justify-between sticky top-0 z-50">
-          <div className="flex items-center gap-2">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="white">
-              <path d="M12.785 16.241s.288-.032.436-.194c.136-.148.132-.427.132-.427s-.02-1.304.587-1.496c.598-.188 1.368 1.259 2.184 1.814.616.42 1.084.328 1.084.328l2.178-.03s1.14-.07.6-.964c-.044-.073-.314-.661-1.618-1.869-1.366-1.265-1.183-1.06.462-3.246.998-1.33 1.398-2.142 1.273-2.489-.12-.331-.856-.244-.856-.244l-2.45.015s-.182-.025-.316.056c-.132.079-.216.263-.216.263s-.388 1.032-.906 1.91c-1.094 1.856-1.531 1.953-1.71 1.838-.416-.268-.312-1.075-.312-1.65 0-1.79.272-2.542-.53-2.736-.266-.064-.462-.107-1.142-.114-.872-.009-1.61.003-2.028.208-.278.136-.492.44-.362.457.162.022.528.099.722.363.25.341.241 1.107.241 1.107s.144 2.11-.336 2.372c-.33.18-.782-.188-1.75-1.87-.496-.862-.87-1.814-.87-1.814s-.072-.176-.2-.27c-.156-.114-.374-.15-.374-.15l-2.328.015s-.35.01-.478.162c-.114.135-.01.414-.01.414s1.827 4.272 3.894 6.426c1.894 1.976 4.044 1.849 4.044 1.849h.974z"/>
-            </svg>
-            <span className="font-semibold text-lg">VK Сервис</span>
-          </div>
-          {currentUser && (
-            <button
-              onClick={handleLogout}
-              className="text-sm bg-white/20 px-3 py-1 rounded-full hover:bg-white/30 transition"
-            >
-              Выйти
-            </button>
-          )}
+    <div className="min-h-screen bg-retro-dark flex justify-center">
+      <div className="w-full max-w-[430px] min-h-screen relative retro-grid overflow-hidden">
+        {/* Background decorations */}
+        <div className="absolute top-0 left-0 w-full h-full pointer-events-none overflow-hidden">
+          <div className="absolute top-10 left-5 text-4xl opacity-20 float-animation">★</div>
+          <div className="absolute top-32 right-8 text-3xl opacity-15 float-animation" style={{ animationDelay: '1s' }}>✦</div>
+          <div className="absolute top-60 left-12 text-2xl opacity-10 float-animation" style={{ animationDelay: '2s' }}>◆</div>
         </div>
 
         {/* Content */}
-        <div className="pb-6">
+        <div className="relative z-10 pb-20">
           {currentScreen === 'registration' && (
             <RegistrationScreen onLogin={handleLogin} />
           )}
@@ -62,6 +51,18 @@ function App() {
             <AdminScreen user={currentUser} />
           )}
         </div>
+
+        {/* Logout button at bottom */}
+        {currentUser && (
+          <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[430px] p-4 z-50">
+            <button
+              onClick={handleLogout}
+              className="btn-retro btn-retro-red w-full py-3 text-sm tracking-widest"
+            >
+              ◄ ВЫЙТИ ►
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );

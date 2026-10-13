@@ -2,31 +2,236 @@
 @tailwind components;
 @tailwind utilities;
 
-* {
-  -webkit-tap-highlight-color: transparent;
-  -webkit-touch-callout: none;
+@layer base {
+  * {
+    -webkit-tap-highlight-color: transparent;
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    font-family: 'Grafmassa', sans-serif;
+    background: #0a0a2e;
+    color: #fff;
+    -webkit-font-smoothing: antialiased;
+    overscroll-behavior: none;
+  }
+
+  ::-webkit-scrollbar {
+    width: 0;
+    display: none;
+  }
 }
 
-html {
-  scroll-behavior: smooth;
+/* ===== RETROWAVE / Y2K / COMICS STYLES ===== */
+
+/* Neon glow effects */
+.neon-pink {
+  text-shadow: 0 0 7px #ff00ff, 0 0 10px #ff00ff, 0 0 21px #ff00ff;
 }
 
-body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  overscroll-behavior: none;
+.neon-cyan {
+  text-shadow: 0 0 7px #00ffff, 0 0 10px #00ffff, 0 0 21px #00ffff;
 }
 
-/* Hide scrollbar for cleaner mobile look */
-::-webkit-scrollbar {
-  width: 0;
-  display: none;
+.neon-yellow {
+  text-shadow: 0 0 7px #ffff00, 0 0 10px #ffff00, 0 0 21px #ffff00;
 }
 
-/* QR Scanner styles */
+.neon-green {
+  text-shadow: 0 0 7px #39ff14, 0 0 10px #39ff14, 0 0 21px #39ff14;
+}
+
+/* Comic-style borders */
+.comic-border {
+  border: 3px solid #000;
+  box-shadow: 4px 4px 0px #000;
+}
+
+.comic-border-pink {
+  border: 3px solid #000;
+  box-shadow: 4px 4px 0px #ff00ff;
+}
+
+.comic-border-cyan {
+  border: 3px solid #000;
+  box-shadow: 4px 4px 0px #00ffff;
+}
+
+.comic-border-yellow {
+  border: 3px solid #000;
+  box-shadow: 4px 4px 0px #ffff00;
+}
+
+/* Retrowave grid background */
+.retro-grid {
+  background-image: 
+    linear-gradient(rgba(255, 0, 255, 0.1) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 0, 255, 0.1) 1px, transparent 1px);
+  background-size: 30px 30px;
+}
+
+/* Gradient backgrounds */
+.bg-retro-sunset {
+  background: linear-gradient(180deg, #0a0a2e 0%, #1a0533 30%, #2d1b69 50%, #ff006e 80%, #ff8c00 100%);
+}
+
+.bg-retro-dark {
+  background: linear-gradient(180deg, #0a0a2e 0%, #1a0533 50%, #0d0d3b 100%);
+}
+
+.bg-retro-neon {
+  background: linear-gradient(135deg, #0a0a2e 0%, #1a0533 25%, #2d1b69 50%, #0a0a2e 75%, #1a0533 100%);
+}
+
+/* Button styles */
+.btn-retro {
+  position: relative;
+  border: 3px solid #000;
+  box-shadow: 4px 4px 0px #000;
+  transition: all 0.1s ease;
+  font-family: 'Grafmassa', sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.btn-retro:active {
+  box-shadow: 1px 1px 0px #000;
+  transform: translate(3px, 3px);
+}
+
+.btn-retro-pink {
+  background: #ff00ff;
+  color: #fff;
+  text-shadow: 2px 2px 0px #000;
+}
+
+.btn-retro-cyan {
+  background: #00ffff;
+  color: #000;
+}
+
+.btn-retro-yellow {
+  background: #ffff00;
+  color: #000;
+}
+
+.btn-retro-green {
+  background: #39ff14;
+  color: #000;
+}
+
+.btn-retro-red {
+  background: #ff3131;
+  color: #fff;
+  text-shadow: 2px 2px 0px #000;
+}
+
+/* Card styles */
+.card-retro {
+  background: rgba(20, 10, 60, 0.9);
+  border: 3px solid #ff00ff;
+  box-shadow: 0 0 15px rgba(255, 0, 255, 0.3), 4px 4px 0px #000;
+  backdrop-filter: blur(10px);
+}
+
+.card-retro-cyan {
+  background: rgba(20, 10, 60, 0.9);
+  border: 3px solid #00ffff;
+  box-shadow: 0 0 15px rgba(0, 255, 255, 0.3), 4px 4px 0px #000;
+  backdrop-filter: blur(10px);
+}
+
+.card-retro-yellow {
+  background: rgba(20, 10, 60, 0.9);
+  border: 3px solid #ffff00;
+  box-shadow: 0 0 15px rgba(255, 255, 0, 0.3), 4px 4px 0px #000;
+  backdrop-filter: blur(10px);
+}
+
+/* Modal overlay */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(5px);
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+/* Input styles */
+.input-retro {
+  background: rgba(10, 10, 46, 0.8);
+  border: 3px solid #ff00ff;
+  color: #fff;
+  font-family: 'Grafmassa', sans-serif;
+  box-shadow: inset 0 0 10px rgba(255, 0, 255, 0.2);
+}
+
+.input-retro::placeholder {
+  color: rgba(255, 0, 255, 0.5);
+}
+
+.input-retro:focus {
+  outline: none;
+  border-color: #00ffff;
+  box-shadow: inset 0 0 10px rgba(0, 255, 255, 0.3), 0 0 15px rgba(0, 255, 255, 0.3);
+}
+
+/* Glitch animation */
+@keyframes glitch {
+  0% { transform: translate(0); }
+  20% { transform: translate(-2px, 2px); }
+  40% { transform: translate(-2px, -2px); }
+  60% { transform: translate(2px, 2px); }
+  80% { transform: translate(2px, -2px); }
+  100% { transform: translate(0); }
+}
+
+.glitch-text {
+  animation: glitch 0.3s infinite;
+}
+
+/* Scanline effect */
+.scanlines::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0, 0, 0, 0.1) 2px,
+    rgba(0, 0, 0, 0.1) 4px
+  );
+  pointer-events: none;
+}
+
+/* Star decoration */
+.star-decoration {
+  position: relative;
+}
+
+.star-decoration::before {
+  content: '★';
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  color: #ffff00;
+  font-size: 14px;
+  text-shadow: 0 0 5px #ffff00;
+}
+
+/* QR Scanner */
 #qr-scanner-container video {
-  border-radius: 12px;
+  border-radius: 0;
+  border: 3px solid #00ffff;
   width: 100% !important;
 }
 
@@ -34,21 +239,33 @@ body {
   display: none;
 }
 
-/* Smooth transitions */
-.transition-all {
-  transition-property: all;
-  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-  transition-duration: 200ms;
+#qr-scanner-container {
+  border: 3px solid #00ffff;
+  box-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
 }
 
-/* Active state for buttons */
-button:active {
-  transform: scale(0.97);
+/* Pulse animation */
+@keyframes neon-pulse {
+  0%, 100% { box-shadow: 0 0 5px #ff00ff, 0 0 10px #ff00ff, 0 0 15px #ff00ff; }
+  50% { box-shadow: 0 0 10px #ff00ff, 0 0 20px #ff00ff, 0 0 30px #ff00ff, 0 0 40px #ff00ff; }
 }
 
-/* Safe area for mobile */
-@supports (padding: env(safe-area-inset-bottom)) {
-  .pb-safe {
-    padding-bottom: env(safe-area-inset-bottom);
-  }
+.neon-pulse {
+  animation: neon-pulse 2s infinite;
+}
+
+/* Float animation */
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-5px); }
+}
+
+.float-animation {
+  animation: float 3s ease-in-out infinite;
+}
+
+/* Utility border-3 */
+.border-3 {
+  border-width: 3px;
+  border-style: solid;
 }

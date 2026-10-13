@@ -36,20 +36,17 @@ export default function CuratorScreen({ user }: Props) {
       
       await scanner.start(
         { facingMode: 'environment' },
-        {
-          fps: 10,
-          qrbox: { width: 250, height: 250 },
-        },
+        { fps: 10, qrbox: { width: 250, height: 250 } },
         (decodedText) => {
           handleScanResult(decodedText);
           scanner.stop().catch(() => {});
           setIsScanning(false);
         },
-        () => {} // ignore errors during scanning
+        () => {}
       );
     } catch (err) {
       console.error('Camera error:', err);
-      setShowError('Не удалось получить доступ к камере. Используйте ручной ввод ID.');
+      setShowError('Нет доступа к камере. Используйте ручной ввод ID.');
       setIsScanning(false);
     }
   };
@@ -88,7 +85,6 @@ export default function CuratorScreen({ user }: Props) {
 
       setScannedUser(foundUser);
     } catch {
-      // Если не JSON, пробуем как простой ID
       const foundUser = getUserById(data.trim());
       if (!foundUser) {
         setShowError(`Пользователь с ID "${data.trim()}" не найден в системе!`);
@@ -117,7 +113,7 @@ export default function CuratorScreen({ user }: Props) {
     }
 
     if (action === 'debit' && scannedUser.points < points) {
-      setShowError(`Недостаточно баллов на счету участника! У участника только ${scannedUser.points} баллов.`);
+      setShowError(`Недостаточно баллов! У участника только ${scannedUser.points} баллов.`);
       return;
     }
 
@@ -128,7 +124,7 @@ export default function CuratorScreen({ user }: Props) {
     const success = updatePoints(scannedUser.id, newPoints);
     if (success) {
       setShowSuccess(
-        `${action === 'credit' ? 'Зачислено' : 'Списано'} ${points} баллов. Новый баланс: ${newPoints}`
+        `${action === 'credit' ? 'ЗАЧИСЛЕНО' : 'СПИСАНО'} ${points} БАЛЛОВ. БАЛАНС: ${newPoints}`
       );
       setShowError('');
       setScannedUser({ ...scannedUser, points: newPoints });
@@ -147,43 +143,43 @@ export default function CuratorScreen({ user }: Props) {
   };
 
   return (
-    <div className="p-4">
+    <div className="p-4 pt-8">
+      {/* Title */}
+      <div className="text-center mb-6">
+        <h1 className="text-3xl neon-green tracking-wider">КУРАТОР</h1>
+        <div className="w-20 h-1 bg-[#39ff14] mx-auto mt-2 shadow-[0_0_10px_#39ff14]"></div>
+      </div>
+
       {/* Curator Header */}
-      <div className="bg-gradient-to-br from-green-500 to-green-700 rounded-2xl p-4 mb-4 text-white shadow-lg">
+      <div className="card-retro rounded-none p-4 mb-4 relative" style={{ borderColor: '#39ff14', boxShadow: '0 0 15px rgba(57, 255, 20, 0.3), 4px 4px 0px #000' }}>
         <div className="flex items-center gap-3">
-          <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center text-xl">
+          <div className="w-14 h-14 border-2 border-[#39ff14] flex items-center justify-center text-2xl bg-black/50">
             🎓
           </div>
           <div>
-            <h2 className="text-lg font-bold">{user.fullName}</h2>
-            <p className="text-white/80 text-sm">Куратор • ID: {user.id}</p>
+            <h2 className="text-base text-[#39ff14] tracking-wide">{user.fullName}</h2>
+            <p className="text-[#39ff14]/60 text-sm tracking-wider">ID: {user.id}</p>
           </div>
         </div>
       </div>
 
       {/* Scanner Section */}
-      <div className="bg-white border border-gray-200 rounded-2xl p-4 mb-4">
-        <h3 className="text-sm font-semibold text-gray-700 mb-3">📷 Сканирование QR-кода участника</h3>
+      <div className="card-retro-cyan rounded-none p-4 mb-4">
+        <h3 className="text-sm text-[#00ffff] tracking-wider mb-3">◆ СКАНИРОВАНИЕ QR ◆</h3>
         
         {!isScanning ? (
           <div className="space-y-3">
             <button
               onClick={startScanner}
-              className="w-full bg-[#0077ff] text-white py-3 rounded-xl text-sm font-medium hover:bg-[#0066dd] transition active:scale-95 flex items-center justify-center gap-2"
+              className="btn-retro btn-retro-cyan w-full py-3 text-sm tracking-wider"
             >
-              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z" />
-              </svg>
-              Открыть камеру для сканирования
+              ◄ КАМЕРА ►
             </button>
             
-            <div className="relative">
-              <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-gray-200"></div>
-              </div>
-              <div className="relative flex justify-center">
-                <span className="bg-white px-3 text-xs text-gray-400">или введите ID вручную</span>
-              </div>
+            <div className="flex items-center gap-3">
+              <div className="flex-1 h-px bg-[#ff00ff]/30"></div>
+              <span className="text-xs text-[#ff00ff]/50 tracking-wider">ИЛИ ВВЕДИТЕ ID</span>
+              <div className="flex-1 h-px bg-[#ff00ff]/30"></div>
             </div>
 
             <div className="flex gap-2">
@@ -191,95 +187,115 @@ export default function CuratorScreen({ user }: Props) {
                 type="text"
                 value={manualScan}
                 onChange={(e) => { setManualScan(e.target.value); setShowError(''); }}
-                placeholder="ID участника (напр. P001)"
-                className="flex-1 border border-gray-300 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-[#0077ff] focus:ring-2 focus:ring-[#0077ff]/20"
+                placeholder="ID участника (P001)"
+                className="input-retro flex-1 px-4 py-3 text-sm"
               />
               <button
                 onClick={handleManualScan}
-                className="bg-green-500 text-white px-4 py-3 rounded-xl text-sm font-medium hover:bg-green-600 transition active:scale-95"
+                className="btn-retro btn-retro-green px-4 py-3 text-sm"
               >
-                Найти
+                НАЙТИ
               </button>
             </div>
           </div>
         ) : (
           <div className="space-y-3">
-            <div id={scannerContainerId} className="rounded-xl overflow-hidden border-2 border-gray-200"></div>
+            <div id={scannerContainerId} className="overflow-hidden"></div>
             <button
               onClick={stopScanner}
-              className="w-full bg-red-500 text-white py-3 rounded-xl text-sm font-medium hover:bg-red-600 transition"
+              className="btn-retro btn-retro-red w-full py-3 text-sm tracking-wider"
             >
-              Остановить сканирование
+              СТОП
             </button>
           </div>
         )}
       </div>
 
-      {/* Error/Success Messages */}
+      {/* Error Modal */}
       {showError && (
-        <div className="bg-red-50 border border-red-200 rounded-2xl p-4 mb-4 flex items-start gap-2">
-          <span className="text-red-500 text-lg">❌</span>
-          <p className="text-red-600 text-sm">{showError}</p>
+        <div className="modal-overlay">
+          <div className="card-retro-yellow rounded-none p-6 w-full max-w-sm text-center">
+            <div className="text-4xl mb-3">⚠</div>
+            <p className="text-[#ffff00] text-sm tracking-wider mb-4">{showError}</p>
+            <button
+              onClick={() => setShowError('')}
+              className="btn-retro btn-retro-yellow px-6 py-2 text-sm"
+            >
+              OK
+            </button>
+          </div>
         </div>
       )}
 
+      {/* Success Modal */}
       {showSuccess && (
-        <div className="bg-green-50 border border-green-200 rounded-2xl p-4 mb-4 flex items-start gap-2">
-          <span className="text-green-500 text-lg">✅</span>
-          <p className="text-green-600 text-sm">{showSuccess}</p>
+        <div className="modal-overlay">
+          <div className="card-retro rounded-none p-6 w-full max-w-sm text-center" style={{ borderColor: '#39ff14', boxShadow: '0 0 15px rgba(57, 255, 20, 0.3), 4px 4px 0px #000' }}>
+            <div className="text-4xl mb-3">✓</div>
+            <p className="text-[#39ff14] text-sm tracking-wider mb-4">{showSuccess}</p>
+            <button
+              onClick={() => setShowSuccess('')}
+              className="btn-retro btn-retro-green px-6 py-2 text-sm"
+            >
+              OK
+            </button>
+          </div>
         </div>
       )}
 
       {/* Scanned User Info */}
       {scannedUser && (
-        <div className="bg-white border border-gray-200 rounded-2xl p-4 mb-4">
-          <h3 className="text-sm font-semibold text-gray-700 mb-3">👤 Найденный участник</h3>
-          <div className="bg-blue-50 rounded-xl p-3 mb-4">
-            <p className="text-sm font-bold text-gray-800">{scannedUser.fullName}</p>
-            <p className="text-xs text-gray-500">Группа: {scannedUser.group} • ID: {scannedUser.id}</p>
-            <p className="text-sm font-semibold text-[#0077ff] mt-1">Баланс: {scannedUser.points} баллов</p>
+        <div className="card-retro rounded-none p-4 mb-4">
+          <h3 className="text-sm text-[#ff00ff] tracking-wider mb-3">◆ УЧАСТНИК НАЙДЕН ◆</h3>
+          <div className="border-2 border-[#00ffff] p-3 bg-black/30 mb-4">
+            <p className="text-sm text-[#00ffff] tracking-wide">{scannedUser.fullName}</p>
+            <p className="text-xs text-[#00ffff]/60 tracking-wider">Группа: {scannedUser.group} • ID: {scannedUser.id}</p>
+            <p className="text-sm text-[#ffff00] tracking-wider mt-1">БАЛАНС: {scannedUser.points} ★</p>
           </div>
 
           {/* Action Selection */}
           <div className="mb-4">
-            <p className="text-xs font-medium text-gray-600 mb-2">Действие:</p>
+            <p className="text-xs text-[#ff00ff]/70 tracking-wider mb-2">ДЕЙСТВИЕ:</p>
             <div className="grid grid-cols-2 gap-2">
               <button
                 onClick={() => { setAction('credit'); setShowError(''); }}
-                className={`py-3 rounded-xl text-sm font-medium transition ${
+                className={`py-3 text-sm tracking-wider border-3 transition ${
                   action === 'credit'
-                    ? 'bg-green-500 text-white shadow-md'
-                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                    ? 'btn-retro bg-[#39ff14] text-black'
+                    : 'border-2 border-[#39ff14]/30 text-[#39ff14]/50 bg-black/30'
                 }`}
+                style={{ borderWidth: action === 'credit' ? '3px' : '2px' }}
               >
-                ✅ Зачисление
+                + ЗАЧИСЛЕНИЕ
               </button>
               <button
                 onClick={() => { setAction('debit'); setShowError(''); }}
-                className={`py-3 rounded-xl text-sm font-medium transition ${
+                className={`py-3 text-sm tracking-wider border-3 transition ${
                   action === 'debit'
-                    ? 'bg-red-500 text-white shadow-md'
-                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                    ? 'btn-retro bg-[#ff3131] text-white'
+                    : 'border-2 border-[#ff3131]/30 text-[#ff3131]/50 bg-black/30'
                 }`}
+                style={{ borderWidth: action === 'debit' ? '3px' : '2px' }}
               >
-                ❌ Списание
+                - СПИСАНИЕ
               </button>
             </div>
           </div>
 
           {/* Points Selection */}
           <div className="mb-4">
-            <p className="text-xs font-medium text-gray-600 mb-2">Количество баллов:</p>
+            <p className="text-xs text-[#ff00ff]/70 tracking-wider mb-2">КОЛ-ВО БАЛЛОВ:</p>
             <div className="grid grid-cols-3 gap-2">
               {[50, 100, 150].map(p => (
                 <button
                   key={p}
                   onClick={() => { setPoints(p); setShowError(''); }}
-                  className={`py-3 rounded-xl text-sm font-bold transition ${
+                  className={`py-4 text-lg tracking-wider border-3 transition ${
                     points === p
-                      ? 'bg-[#0077ff] text-white shadow-md scale-105'
-                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                      ? 'btn-retro bg-[#ffff00] text-black'
+                      : 'border-2 border-[#ffff00]/30 text-[#ffff00]/50 bg-black/30'
                   }`}
+                  style={{ borderWidth: points === p ? '3px' : '2px' }}
                 >
                   {p}
                 </button>
@@ -292,21 +308,22 @@ export default function CuratorScreen({ user }: Props) {
             <button
               onClick={handleSubmit}
               disabled={points === null}
-              className={`py-3 rounded-xl text-sm font-bold transition ${
+              className={`py-3 text-sm tracking-wider border-3 transition ${
                 points !== null
                   ? action === 'credit'
-                    ? 'bg-green-500 text-white hover:bg-green-600 active:scale-95'
-                    : 'bg-red-500 text-white hover:bg-red-600 active:scale-95'
-                  : 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                    ? 'btn-retro bg-[#39ff14] text-black'
+                    : 'btn-retro bg-[#ff3131] text-white'
+                  : 'border-2 border-gray-600 text-gray-600 bg-black/30 cursor-not-allowed'
               }`}
+              style={{ borderWidth: points !== null ? '3px' : '2px' }}
             >
-              {action === 'credit' ? `+${points || 0} баллов` : `-${points || 0} баллов`}
+              {action === 'credit' ? `+${points || 0}` : `-${points || 0}`}
             </button>
             <button
               onClick={handleReset}
-              className="py-3 rounded-xl text-sm font-medium bg-gray-100 text-gray-600 hover:bg-gray-200 transition active:scale-95"
+              className="btn-retro border-2 border-[#ff00ff]/50 text-[#ff00ff]/70 py-3 text-sm tracking-wider bg-black/30"
             >
-              Сброс
+              СБРОС
             </button>
           </div>
         </div>

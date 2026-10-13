@@ -5,10 +5,10 @@ interface Props {
   user: User;
 }
 
-export default function AdminScreen({ user: _user } : Props) {
+export default function AdminScreen({ user }: Props) {
   const [activeTab, setActiveTab] = useState<'groups' | 'participants'>('groups');
   const [showResetConfirm, setShowResetConfirm] = useState(false);
-  const [resetSuccess, setResetSuccess] = useState(false);
+  const [showResetSuccess, setShowResetSuccess] = useState(false);
   const [refreshKey, setRefreshKey] = useState(0);
   
   const groupSummary = getGroupSummary();
@@ -20,93 +20,95 @@ export default function AdminScreen({ user: _user } : Props) {
   const handleResetPoints = () => {
     resetAllPoints();
     setShowResetConfirm(false);
-    setResetSuccess(true);
+    setShowResetSuccess(true);
     setRefreshKey(k => k + 1);
-    setTimeout(() => setResetSuccess(false), 3000);
+    setTimeout(() => setShowResetSuccess(false), 3000);
   };
 
   return (
-    <div className="p-4">
+    <div className="p-4 pt-8">
+      {/* Title */}
+      <div className="text-center mb-6">
+        <h1 className="text-3xl neon-yellow tracking-wider">АДМИН</h1>
+        <div className="w-20 h-1 bg-[#ffff00] mx-auto mt-2 shadow-[0_0_10px_#ffff00]"></div>
+      </div>
+
       {/* Admin Header */}
-      <div className="bg-gradient-to-br from-purple-600 to-purple-800 rounded-2xl p-4 mb-4 text-white shadow-lg">
+      <div className="card-retro-yellow rounded-none p-4 mb-4 relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-12 h-12 border-l-2 border-b-2 border-[#ffff00]/30"></div>
+        <div className="absolute bottom-0 left-0 w-12 h-12 border-r-2 border-t-2 border-[#ffff00]/30"></div>
+        
         <div className="flex items-center gap-3 mb-4">
-          <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center text-xl">
+          <div className="w-14 h-14 border-2 border-[#ffff00] flex items-center justify-center text-2xl bg-black/50">
             👑
           </div>
           <div>
-            <h2 className="text-lg font-bold">{_user.fullName}</h2>
-            <p className="text-white/80 text-sm">Администратор • ID: {_user.id}</p>
+            <h2 className="text-base text-[#ffff00] tracking-wide">{user.fullName}</h2>
+            <p className="text-[#ffff00]/60 text-sm tracking-wider">ID: {user.id}</p>
           </div>
         </div>
 
         <div className="grid grid-cols-3 gap-2">
-          <div className="bg-white/15 rounded-xl p-3 text-center">
-            <p className="text-2xl font-bold">{totalParticipants}</p>
-            <p className="text-white/70 text-xs">Участников</p>
+          <div className="border-2 border-[#ff00ff] p-2 text-center bg-black/30">
+            <p className="text-xl text-[#ff00ff] tracking-wider">{totalParticipants}</p>
+            <p className="text-[#ff00ff]/60 text-xs tracking-wider">УЧАСТНИКОВ</p>
           </div>
-          <div className="bg-white/15 rounded-xl p-3 text-center">
-            <p className="text-2xl font-bold">{groupSummary.length}</p>
-            <p className="text-white/70 text-xs">Групп</p>
+          <div className="border-2 border-[#00ffff] p-2 text-center bg-black/30">
+            <p className="text-xl text-[#00ffff] tracking-wider">{groupSummary.length}</p>
+            <p className="text-[#00ffff]/60 text-xs tracking-wider">ГРУПП</p>
           </div>
-          <div className="bg-white/15 rounded-xl p-3 text-center">
-            <p className="text-2xl font-bold">{totalPoints}</p>
-            <p className="text-white/70 text-xs">Всего баллов</p>
+          <div className="border-2 border-[#ffff00] p-2 text-center bg-black/30">
+            <p className="text-xl text-[#ffff00] tracking-wider">{totalPoints}</p>
+            <p className="text-[#ffff00]/60 text-xs tracking-wider">БАЛЛОВ</p>
           </div>
         </div>
       </div>
 
-      {/* Reset Success Message */}
-      {resetSuccess && (
-        <div className="bg-green-50 border border-green-200 rounded-2xl p-4 mb-4 flex items-center gap-2 animate-pulse">
-          <span className="text-green-500 text-lg">✅</span>
-          <p className="text-green-600 text-sm font-medium">Баллы всех участников успешно сброшены до 300!</p>
-        </div>
-      )}
-
       {/* Reset Button */}
       <button
         onClick={() => setShowResetConfirm(true)}
-        className="w-full bg-red-50 border border-red-200 text-red-600 rounded-2xl p-4 mb-4 flex items-center justify-between hover:bg-red-100 transition active:scale-95"
+        className="btn-retro btn-retro-red w-full py-4 text-sm tracking-widest mb-4"
       >
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center text-lg">
-            🔄
-          </div>
-          <div className="text-left">
-            <p className="text-sm font-bold">Сбросить баллы</p>
-            <p className="text-xs text-red-400">Вернуть всем участникам 300 баллов</p>
+        ◄ СБРОСИТЬ БАЛЛЫ ►
+      </button>
+
+      {/* Reset Success Modal */}
+      {showResetSuccess && (
+        <div className="modal-overlay">
+          <div className="card-retro rounded-none p-6 w-full max-w-sm text-center" style={{ borderColor: '#39ff14', boxShadow: '0 0 15px rgba(57, 255, 20, 0.3), 4px 4px 0px #000' }}>
+            <div className="text-4xl mb-3">✓</div>
+            <p className="text-[#39ff14] text-sm tracking-wider mb-4">БАЛЛЫ ВСЕХ УЧАСТНИКОВ СБРОШЕНЫ ДО 300!</p>
+            <button
+              onClick={() => setShowResetSuccess(false)}
+              className="btn-retro btn-retro-green px-6 py-2 text-sm"
+            >
+              OK
+            </button>
           </div>
         </div>
-        <svg className="w-5 h-5 text-red-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-        </svg>
-      </button>
+      )}
 
       {/* Reset Confirmation Modal */}
       {showResetConfirm && (
-        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl p-6 w-full max-w-sm shadow-2xl">
-            <div className="text-center mb-4">
-              <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center text-3xl mx-auto mb-3">
-                ⚠️
-              </div>
-              <h3 className="text-lg font-bold text-gray-800">Подтверждение</h3>
-              <p className="text-sm text-gray-500 mt-2">
-                Вы уверены, что хотите сбросить баллы всех участников до 300? Это действие нельзя отменить.
-              </p>
-            </div>
+        <div className="modal-overlay">
+          <div className="card-retro-yellow rounded-none p-6 w-full max-w-sm text-center">
+            <div className="text-4xl mb-3">⚠</div>
+            <h3 className="text-lg text-[#ffff00] tracking-wider mb-3">ПОДТВЕРЖДЕНИЕ</h3>
+            <p className="text-sm text-white/80 tracking-wide mb-5">
+              Сбросить баллы всех участников до 300? Действие нельзя отменить.
+            </p>
             <div className="grid grid-cols-2 gap-3">
               <button
                 onClick={() => setShowResetConfirm(false)}
-                className="py-3 rounded-xl text-sm font-medium bg-gray-100 text-gray-600 hover:bg-gray-200 transition active:scale-95"
+                className="btn-retro border-2 border-[#ff00ff]/50 text-[#ff00ff] py-3 text-sm tracking-wider bg-black/30"
               >
-                Отмена
+                ОТМЕНА
               </button>
               <button
                 onClick={handleResetPoints}
-                className="py-3 rounded-xl text-sm font-bold bg-red-500 text-white hover:bg-red-600 transition active:scale-95"
+                className="btn-retro btn-retro-red py-3 text-sm tracking-wider"
               >
-                Сбросить
+                СБРОС
               </button>
             </div>
           </div>
@@ -114,75 +116,67 @@ export default function AdminScreen({ user: _user } : Props) {
       )}
 
       {/* Tabs */}
-      <div key={refreshKey} className="flex bg-gray-100 rounded-xl p-1 mb-4">
+      <div key={refreshKey} className="flex border-2 border-[#ff00ff] mb-4">
         <button
           onClick={() => setActiveTab('groups')}
-          className={`flex-1 py-2.5 rounded-lg text-sm font-medium transition ${
+          className={`flex-1 py-3 text-sm tracking-wider transition ${
             activeTab === 'groups'
-              ? 'bg-white text-[#0077ff] shadow-sm'
-              : 'text-gray-500'
+              ? 'bg-[#ff00ff] text-white'
+              : 'bg-black/30 text-[#ff00ff]/50'
           }`}
         >
-          📊 По группам
+          ◆ ПО ГРУППАМ
         </button>
         <button
           onClick={() => setActiveTab('participants')}
-          className={`flex-1 py-2.5 rounded-lg text-sm font-medium transition ${
+          className={`flex-1 py-3 text-sm tracking-wider transition border-l-2 border-[#ff00ff] ${
             activeTab === 'participants'
-              ? 'bg-white text-[#0077ff] shadow-sm'
-              : 'text-gray-500'
+              ? 'bg-[#ff00ff] text-white'
+              : 'bg-black/30 text-[#ff00ff]/50'
           }`}
         >
-          👥 Участники
+          ◆ УЧАСТНИКИ
         </button>
       </div>
 
       {/* Group Summary */}
       {activeTab === 'groups' && (
         <div className="space-y-3">
-          <h3 className="text-sm font-semibold text-gray-700">Рейтинг академических групп</h3>
+          <h3 className="text-sm text-[#00ffff] tracking-wider">◆ РЕЙТИНГ ГРУПП ◆</h3>
           
           {groupSummary.length === 0 ? (
-            <div className="text-center py-8 text-gray-400">
-              <p className="text-4xl mb-2">📊</p>
-              <p className="text-sm">Нет данных</p>
+            <div className="card-retro rounded-none p-8 text-center">
+              <p className="text-4xl mb-2">◆</p>
+              <p className="text-sm text-[#ff00ff]/60 tracking-wider">НЕТ ДАННЫХ</p>
             </div>
           ) : (
             groupSummary.map((item, index) => {
               const maxPoints = groupSummary[0]?.totalPoints || 1;
               const percentage = (item.totalPoints / maxPoints) * 100;
+              const colors = ['#ffff00', '#c0c0c0', '#ff8c00', '#00ffff'];
+              const color = colors[index] || '#ff00ff';
               
               return (
-                <div key={item.group} className="bg-white border border-gray-200 rounded-2xl p-4">
-                  <div className="flex items-center justify-between mb-2">
+                <div key={item.group} className="card-retro rounded-none p-4" style={{ borderColor: color, boxShadow: `0 0 10px ${color}33, 4px 4px 0px #000` }}>
+                  <div className="flex items-center justify-between mb-3">
                     <div className="flex items-center gap-3">
-                      <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${
-                        index === 0 ? 'bg-yellow-100 text-yellow-600' :
-                        index === 1 ? 'bg-gray-100 text-gray-600' :
-                        index === 2 ? 'bg-orange-100 text-orange-600' :
-                        'bg-blue-50 text-blue-500'
-                      }`}>
+                      <div className="w-8 h-8 border-2 flex items-center justify-center text-sm tracking-wider" style={{ borderColor: color, color: color }}>
                         {index + 1}
                       </div>
                       <div>
-                        <p className="text-sm font-bold text-gray-800">{item.group}</p>
-                        <p className="text-xs text-gray-400">{item.participants} участников</p>
+                        <p className="text-sm tracking-wider" style={{ color }}>{item.group}</p>
+                        <p className="text-xs text-white/40 tracking-wider">{item.participants} УЧАСТНИКОВ</p>
                       </div>
                     </div>
                     <div className="text-right">
-                      <p className="text-lg font-bold text-[#0077ff]">{item.totalPoints}</p>
-                      <p className="text-xs text-gray-400">баллов</p>
+                      <p className="text-xl tracking-wider" style={{ color }}>{item.totalPoints}</p>
+                      <p className="text-xs text-white/40 tracking-wider">БАЛЛОВ</p>
                     </div>
                   </div>
-                  <div className="w-full bg-gray-100 rounded-full h-2">
+                  <div className="w-full h-2 bg-black/50 border border-white/10">
                     <div
-                      className={`h-2 rounded-full transition-all duration-500 ${
-                        index === 0 ? 'bg-yellow-400' :
-                        index === 1 ? 'bg-gray-400' :
-                        index === 2 ? 'bg-orange-400' :
-                        'bg-[#0077ff]'
-                      }`}
-                      style={{ width: `${percentage}%` }}
+                      className="h-full transition-all duration-500"
+                      style={{ width: `${percentage}%`, background: color, boxShadow: `0 0 8px ${color}` }}
                     ></div>
                   </div>
                 </div>
@@ -195,22 +189,22 @@ export default function AdminScreen({ user: _user } : Props) {
       {/* Participants List */}
       {activeTab === 'participants' && (
         <div className="space-y-2">
-          <h3 className="text-sm font-semibold text-gray-700">Все участники</h3>
+          <h3 className="text-sm text-[#00ffff] tracking-wider">◆ ВСЕ УЧАСТНИКИ ◆</h3>
           
           {participants.map((p, index) => (
-            <div key={p.id} className="bg-white border border-gray-200 rounded-xl p-3 flex items-center justify-between">
+            <div key={p.id} className="card-retro-cyan rounded-none p-3 flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="w-8 h-8 bg-blue-50 rounded-full flex items-center justify-center text-xs font-bold text-blue-500">
+                <div className="w-8 h-8 border-2 border-[#00ffff] flex items-center justify-center text-xs text-[#00ffff] tracking-wider">
                   {index + 1}
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-gray-800">{p.fullName}</p>
-                  <p className="text-xs text-gray-400">{p.group} • ID: {p.id}</p>
+                  <p className="text-sm text-[#00ffff] tracking-wide">{p.fullName}</p>
+                  <p className="text-xs text-[#00ffff]/40 tracking-wider">{p.group} • {p.id}</p>
                 </div>
               </div>
               <div className="text-right">
-                <p className="text-sm font-bold text-[#0077ff]">{p.points}</p>
-                <p className="text-xs text-gray-400">баллов</p>
+                <p className="text-sm text-[#ffff00] tracking-wider">{p.points}</p>
+                <p className="text-xs text-[#ffff00]/40 tracking-wider">БАЛЛОВ</p>
               </div>
             </div>
           ))}
