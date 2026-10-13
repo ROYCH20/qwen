@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { getUserById } from '../database';
+import FitText from '../FitText';
 
 interface Props {
   onLogin: (userId: string) => void;
@@ -27,39 +28,53 @@ export default function RegistrationScreen({ onLogin }: Props) {
     <div style={{ paddingTop: '24px' }}>
       {/* Заголовок */}
       <div className="center-col" style={{ marginBottom: 'var(--gap-title)' }}>
-        <h1 className="screen-title text-chrome flicker">СИСТЕМА</h1>
-        <h2 className="text-chrome-soft" style={{ fontSize: 'clamp(16px, 5vw, 22px)', letterSpacing: '0.08em', lineHeight: 1.2, fontWeight: 700 }}>БАЛЛОВ</h2>
+        <h1 className="screen-title text-chrome flicker">
+          <FitText max={28} min={16}>СИСТЕМА</FitText>
+        </h1>
+        <h2 className="text-chrome-soft" style={{ fontSize: 'clamp(16px, 5vw, 22px)', letterSpacing: '0.08em', lineHeight: 1.2, fontWeight: 700 }}>
+          <FitText max={22} min={14}>БАЛЛОВ</FitText>
+        </h2>
       </div>
 
       {/* Вход в систему — hud-box */}
       <div className="hud-box">
         <span className="hud-label">Вход в систему</span>
-        <div className="flex items-stretch" style={{ gap: '10px' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
           <input
             type="text"
             value={manualId}
             onChange={(e) => { setManualId(e.target.value); setShowError(''); }}
             placeholder="Например: P001"
-            className="input-neon flex-1"
+            className="input-neon"
             onKeyDown={(e) => e.key === 'Enter' && handleManualLogin()}
           />
           <button
             onClick={handleManualLogin}
             className="btn-neon btn-chrome"
-            style={{ width: 'auto', paddingInline: '18px', flexShrink: 0 }}
           >
-            START
+            <FitText max={15} min={10}>START / ВОЙТИ</FitText>
           </button>
+          <p style={{ fontSize: '10px', color: '#B9B0E6', textAlign: 'center', lineHeight: 1.3 }}>
+            Формат ID: буква роли и номер, например: P001
+          </p>
         </div>
       </div>
 
       {/* Быстрый доступ */}
       <div style={{ marginBottom: 'var(--gap-block)' }}>
-        <p className="center-col text-neon-lilac screen-subtitle" style={{ marginBottom: '12px' }}>Быстрый доступ</p>
+        <p className="center-col text-neon-lilac screen-subtitle" style={{ marginBottom: '12px' }}>
+          <FitText max={15} min={10}>Быстрый доступ</FitText>
+        </p>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0, 1fr))', gap: 'var(--gap-btn)' }}>
-          <button onClick={() => onLogin('P001')} className="btn-neon btn-cyan btn-grid">Участник</button>
-          <button onClick={() => onLogin('C001')} className="btn-neon btn-lilac btn-grid">Куратор</button>
-          <button onClick={() => onLogin('A001')} className="btn-neon btn-danger btn-grid">Админ</button>
+          <button onClick={() => onLogin('P001')} className="btn-neon btn-cyan btn-grid">
+            <FitText max={14} min={8}>Участник</FitText>
+          </button>
+          <button onClick={() => onLogin('C001')} className="btn-neon btn-lilac btn-grid">
+            <FitText max={14} min={8}>Куратор</FitText>
+          </button>
+          <button onClick={() => onLogin('A001')} className="btn-neon btn-danger btn-grid">
+            <FitText max={14} min={8}>Админ</FitText>
+          </button>
         </div>
       </div>
 
@@ -67,13 +82,13 @@ export default function RegistrationScreen({ onLogin }: Props) {
       {showError && (
         <div className="modal-overlay">
           <div className="modal-card center-col">
-            <p className="text-white font-medium text-center" style={{ marginBottom: '24px', fontSize: 'clamp(13px, 3.6vw, 15px)', lineHeight: 1.3 }}>{showError}</p>
+            <p className="text-white font-medium text-center text-wrap-balance" style={{ marginBottom: '24px', fontSize: 'clamp(13px, 3.6vw, 15px)' }}>{showError}</p>
             <button
               onClick={() => setShowError('')}
               className="btn-neon btn-pink"
               style={{ width: 'auto', paddingInline: '32px' }}
             >
-              Понятно
+              <FitText max={15} min={10}>Понятно</FitText>
             </button>
           </div>
         </div>

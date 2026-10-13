@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { Html5Qrcode } from 'html5-qrcode';
 import { getUserById, updatePoints, User } from '../database';
+import FitText from '../FitText';
 
 interface Props {
   user: User;
@@ -149,16 +150,28 @@ export default function CuratorScreen({ user, onLogout }: Props) {
     <div style={{ paddingTop: '24px' }}>
       {/* Заголовок */}
       <div className="center-col" style={{ marginBottom: 'var(--gap-title)' }}>
-        <h1 className="screen-title text-chrome">КУРАТОР</h1>
-        <p className="text-neon-cyan screen-subtitle" style={{ marginTop: '4px' }}>Панель управления</p>
+        <h1 className="screen-title text-chrome">
+          <FitText max={28} min={16}>КУРАТОР</FitText>
+        </h1>
+        <p className="text-neon-cyan screen-subtitle" style={{ marginTop: '4px' }}>
+          <FitText max={15} min={10}>Панель управления</FitText>
+        </p>
       </div>
 
       {/* Шапка — ВНЕ контейнера */}
       <div className="center-col" style={{ marginBottom: 'var(--gap-block)' }}>
-        <h2 className={`text-chrome-soft text-center ${isLongName ? 'user-name user-name--long' : 'user-name'}`}>
-          {user.fullName}
-        </h2>
-        <span className="badge-neon" style={{ marginTop: '10px' }}>ID: {user.id}</span>
+        {isLongName ? (
+          <h2 className="text-chrome-soft text-center user-name user-name--long">
+            {user.fullName}
+          </h2>
+        ) : (
+          <h2 className="text-chrome-soft text-center user-name">
+            <FitText max={20} min={10}>{user.fullName}</FitText>
+          </h2>
+        )}
+        <span className="badge-neon" style={{ marginTop: '10px' }}>
+          <FitText max={13} min={9}>ID: {user.id}</FitText>
+        </span>
       </div>
 
       {/* Сканирование — hud-box */}
@@ -168,29 +181,30 @@ export default function CuratorScreen({ user, onLogout }: Props) {
         {!isScanning ? (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
             <button onClick={startScanner} className="btn-neon btn-cyan">
-              Открыть камеру
+              <FitText max={15} min={10}>Открыть камеру</FitText>
             </button>
             
             <p className="text-neon-lilac screen-subtitle text-center" style={{ margin: '0' }}>
-              или введите ID
+              <FitText max={15} min={10}>или введите ID</FitText>
             </p>
 
-            <div className="flex items-stretch" style={{ gap: '10px' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
               <input
                 type="text"
                 value={manualScan}
                 onChange={(e) => { setManualScan(e.target.value); setShowError(''); }}
-                placeholder="ID участника (P001)"
-                className="input-neon flex-1"
-                style={{ minWidth: 0 }}
+                placeholder="Например: P001 участника"
+                className="input-neon"
               />
               <button
                 onClick={handleManualScan}
                 className="btn-neon btn-lilac"
-                style={{ width: 'auto', paddingInline: '16px', flexShrink: 0 }}
               >
-                Найти
+                <FitText max={15} min={10}>Найти участника</FitText>
               </button>
+              <p style={{ fontSize: '10px', color: '#B9B0E6', textAlign: 'center', lineHeight: 1.3 }}>
+                ID участника, которому начисляются или списываются баллы
+              </p>
             </div>
           </div>
         ) : (
@@ -199,7 +213,7 @@ export default function CuratorScreen({ user, onLogout }: Props) {
               <div id={scannerContainerId} className="overflow-hidden"></div>
             </div>
             <button onClick={stopScanner} className="btn-neon btn-danger">
-              Остановить сканирование
+              <FitText max={15} min={10}>Остановить сканирование</FitText>
             </button>
           </div>
         )}
@@ -211,12 +225,18 @@ export default function CuratorScreen({ user, onLogout }: Props) {
           <span className="hud-label">Участник найден</span>
           
           <div className="center-col" style={{ padding: '10px 0', marginBottom: '10px' }}>
-            <p className="user-name text-white text-center">{scannedUser.fullName}</p>
+            {scannedUser.fullName.length > 24 ? (
+              <p className="user-name text-white text-center user-name--long">{scannedUser.fullName}</p>
+            ) : (
+              <p className="user-name text-white text-center">
+                <FitText max={20} min={10}>{scannedUser.fullName}</FitText>
+              </p>
+            )}
             <p className="screen-subtitle text-neon-lilac" style={{ marginTop: '4px' }}>
-              Группа: {scannedUser.group} • ID: {scannedUser.id}
+              <FitText max={15} min={9}>Группа: {scannedUser.group} • ID: {scannedUser.id}</FitText>
             </p>
             <p className="stat-value text-neon-cyan" style={{ marginTop: '8px' }}>
-              Баланс: {scannedUser.points}
+              <FitText max={20} min={12}>Баланс: {scannedUser.points}</FitText>
             </p>
           </div>
 
@@ -224,35 +244,39 @@ export default function CuratorScreen({ user, onLogout }: Props) {
 
           {/* Действие */}
           <div style={{ marginTop: '10px', marginBottom: '14px' }}>
-            <p className="stat-label text-neon-lilac text-center" style={{ marginBottom: '10px' }}>Действие</p>
+            <p className="stat-label text-neon-lilac text-center" style={{ marginBottom: '10px' }}>
+              <FitText max={12} min={7}>Действие</FitText>
+            </p>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: 'var(--gap-btn)' }}>
               <button
                 onClick={() => { setAction('credit'); setShowError(''); }}
                 className={`btn-neon btn-grid ${action === 'credit' ? 'btn-cyan' : 'btn-ghost'}`}
               >
-                Зачисление
+                <FitText max={14} min={8}>Зачисление</FitText>
               </button>
               <button
                 onClick={() => { setAction('debit'); setShowError(''); }}
                 className={`btn-neon btn-grid ${action === 'debit' ? 'btn-danger' : 'btn-ghost'}`}
               >
-                Списание
+                <FitText max={14} min={8}>Списание</FitText>
               </button>
             </div>
           </div>
 
           {/* Количество баллов */}
           <div style={{ marginBottom: '14px' }}>
-            <p className="stat-label text-neon-lilac text-center" style={{ marginBottom: '10px' }}>Количество баллов</p>
+            <p className="stat-label text-neon-lilac text-center" style={{ marginBottom: '10px' }}>
+              <FitText max={12} min={7}>Количество баллов</FitText>
+            </p>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0, 1fr))', gap: 'var(--gap-btn)' }}>
               {[50, 100, 150].map(p => (
                 <button
                   key={p}
                   onClick={() => { setPoints(p); setShowError(''); }}
                   className={`btn-neon btn-grid ${points === p ? 'btn-chrome' : 'btn-ghost'}`}
-                  style={{ fontSize: 'clamp(14px, 4vw, 18px)', fontWeight: 700 }}
+                  style={{ fontWeight: 700 }}
                 >
-                  {p}
+                  <FitText max={18} min={10}>{p}</FitText>
                 </button>
               ))}
             </div>
@@ -272,10 +296,10 @@ export default function CuratorScreen({ user, onLogout }: Props) {
               }`}
               style={points === null ? { opacity: 0.4, cursor: 'not-allowed' } : {}}
             >
-              {action === 'credit' ? `+${points || 0}` : `-${points || 0}`}
+              <FitText max={14} min={8}>{action === 'credit' ? `+${points || 0}` : `-${points || 0}`}</FitText>
             </button>
             <button onClick={handleReset} className="btn-neon btn-grid btn-ghost">
-              Сброс
+              <FitText max={14} min={8}>Сброс</FitText>
             </button>
           </div>
         </div>
@@ -285,13 +309,13 @@ export default function CuratorScreen({ user, onLogout }: Props) {
       {showError && (
         <div className="modal-overlay">
           <div className="modal-card center-col">
-            <p className="text-white font-medium text-center" style={{ marginBottom: '24px', fontSize: 'clamp(13px, 3.6vw, 15px)', lineHeight: 1.3 }}>{showError}</p>
+            <p className="text-white font-medium text-center text-wrap-balance" style={{ marginBottom: '24px', fontSize: 'clamp(13px, 3.6vw, 15px)' }}>{showError}</p>
             <button
               onClick={() => setShowError('')}
               className="btn-neon btn-pink"
               style={{ width: 'auto', paddingInline: '32px' }}
             >
-              Понятно
+              <FitText max={15} min={10}>Понятно</FitText>
             </button>
           </div>
         </div>
@@ -301,13 +325,13 @@ export default function CuratorScreen({ user, onLogout }: Props) {
       {showSuccess && (
         <div className="modal-overlay">
           <div className="modal-card center-col">
-            <p className="text-white font-medium text-center" style={{ marginBottom: '24px', fontSize: 'clamp(13px, 3.6vw, 15px)', lineHeight: 1.3 }}>{showSuccess}</p>
+            <p className="text-white font-medium text-center text-wrap-balance" style={{ marginBottom: '24px', fontSize: 'clamp(13px, 3.6vw, 15px)' }}>{showSuccess}</p>
             <button
               onClick={() => setShowSuccess('')}
               className="btn-neon btn-cyan"
               style={{ width: 'auto', paddingInline: '32px' }}
             >
-              Отлично
+              <FitText max={15} min={10}>Отлично</FitText>
             </button>
           </div>
         </div>
@@ -319,7 +343,7 @@ export default function CuratorScreen({ user, onLogout }: Props) {
         className="btn-neon btn-danger"
         style={{ marginTop: 'var(--gap-block)' }}
       >
-        Выйти из аккаунта
+        <FitText max={15} min={10}>Выйти из аккаунта</FitText>
       </button>
     </div>
   );

@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { getGroupSummary, getUsersByRole, resetAllPoints, User } from '../database';
+import FitText from '../FitText';
 
 interface Props {
   user: User;
@@ -32,34 +33,58 @@ export default function AdminScreen({ user, onLogout }: Props) {
     <div style={{ paddingTop: '24px' }}>
       {/* Заголовок */}
       <div className="center-col" style={{ marginBottom: 'var(--gap-title)' }}>
-        <h1 className="screen-title text-chrome">АДМИН</h1>
-        <p className="text-neon-cyan screen-subtitle" style={{ marginTop: '4px' }}>Панель управления</p>
+        <h1 className="screen-title text-chrome">
+          <FitText max={28} min={16}>АДМИН</FitText>
+        </h1>
+        <p className="text-neon-cyan screen-subtitle" style={{ marginTop: '4px' }}>
+          <FitText max={15} min={10}>Панель управления</FitText>
+        </p>
       </div>
 
       {/* Шапка — ВНЕ контейнера */}
       <div className="center-col" style={{ marginBottom: 'var(--gap-block)' }}>
-        <h2 className={`text-chrome-soft text-center ${isLongName ? 'user-name user-name--long' : 'user-name'}`}>
-          {user.fullName}
-        </h2>
-        <span className="badge-neon" style={{ marginTop: '10px' }}>ID: {user.id}</span>
+        {isLongName ? (
+          <h2 className="text-chrome-soft text-center user-name user-name--long">
+            {user.fullName}
+          </h2>
+        ) : (
+          <h2 className="text-chrome-soft text-center user-name">
+            <FitText max={20} min={10}>{user.fullName}</FitText>
+          </h2>
+        )}
+        <span className="badge-neon" style={{ marginTop: '10px' }}>
+          <FitText max={13} min={9}>ID: {user.id}</FitText>
+        </span>
       </div>
 
       {/* Статистика — ОДИН hud-box с тремя колонками через hud-vdiv */}
       <div className="hud-box">
         <div key={refreshKey} className="flex items-stretch justify-around" style={{ gap: '8px' }}>
-          <div className="flex-1 center-col" style={{ padding: '6px 0' }}>
-            <p className="stat-value text-white">{totalParticipants}</p>
-            <p className="stat-label text-neon-lilac" style={{ marginTop: '4px' }}>Участников</p>
+          <div className="flex-1 center-col" style={{ padding: '6px 10px' }}>
+            <p className="stat-value text-white">
+              <FitText max={20} min={12}>{totalParticipants}</FitText>
+            </p>
+            <p className="stat-label text-neon-lilac" style={{ marginTop: '4px' }}>
+              <FitText max={12} min={7}>Участников</FitText>
+            </p>
           </div>
           <div className="hud-vdiv"></div>
-          <div className="flex-1 center-col" style={{ padding: '6px 0' }}>
-            <p className="stat-value text-white">{groupSummary.length}</p>
-            <p className="stat-label text-neon-lilac" style={{ marginTop: '4px' }}>Групп</p>
+          <div className="flex-1 center-col" style={{ padding: '6px 10px' }}>
+            <p className="stat-value text-white">
+              <FitText max={20} min={12}>{groupSummary.length}</FitText>
+            </p>
+            <p className="stat-label text-neon-lilac" style={{ marginTop: '4px' }}>
+              <FitText max={12} min={7}>Групп</FitText>
+            </p>
           </div>
           <div className="hud-vdiv"></div>
-          <div className="flex-1 center-col" style={{ padding: '6px 0' }}>
-            <p className="stat-value text-neon-pink">{totalPoints}</p>
-            <p className="stat-label text-neon-pink" style={{ marginTop: '4px' }}>Баллов</p>
+          <div className="flex-1 center-col" style={{ padding: '6px 10px' }}>
+            <p className="stat-value text-neon-pink">
+              <FitText max={20} min={12}>{totalPoints}</FitText>
+            </p>
+            <p className="stat-label text-neon-pink" style={{ marginTop: '4px' }}>
+              <FitText max={12} min={7}>Баллов</FitText>
+            </p>
           </div>
         </div>
       </div>
@@ -67,10 +92,10 @@ export default function AdminScreen({ user, onLogout }: Props) {
       {/* Кнопка сброса */}
       <button
         onClick={() => setShowResetConfirm(true)}
-        className="btn-neon btn-danger btn-wide"
+        className="btn-neon btn-danger btn-wide text-wrap-balance"
         style={{ marginTop: 'var(--gap-block)' }}
       >
-        Сбросить баллы всех участников
+        <FitText max={15} min={10}>Сбросить баллы всех участников</FitText>
       </button>
 
       {/* Тумблер — grid 2 колонки */}
@@ -79,20 +104,22 @@ export default function AdminScreen({ user, onLogout }: Props) {
           onClick={() => setActiveTab('groups')}
           className={`btn-neon btn-grid ${activeTab === 'groups' ? 'btn-cyan' : 'btn-ghost'}`}
         >
-          По группам
+          <FitText max={14} min={8}>По группам</FitText>
         </button>
         <button
           onClick={() => setActiveTab('participants')}
           className={`btn-neon btn-grid ${activeTab === 'participants' ? 'btn-cyan' : 'btn-ghost'}`}
         >
-          Участники
+          <FitText max={14} min={8}>Участники</FitText>
         </button>
       </div>
 
       {/* Рейтинг групп */}
       {activeTab === 'groups' && (
         <div style={{ marginTop: 'var(--gap-block)' }}>
-          <p className="stat-label text-neon-pink text-center" style={{ marginBottom: '14px' }}>Рейтинг академических групп</p>
+          <p className="stat-label text-neon-pink text-center" style={{ marginBottom: '14px' }}>
+            <FitText max={12} min={7}>Рейтинг академических групп</FitText>
+          </p>
           
           {groupSummary.length === 0 ? (
             <div className="hud-box center-col">
@@ -110,12 +137,20 @@ export default function AdminScreen({ user, onLogout }: Props) {
                   <div key={item.group} className="hud-box" style={{ marginBottom: 0 }}>
                     <div className="flex items-center justify-between" style={{ gap: '12px', marginBottom: '12px' }}>
                       <div className="flex-1 min-w-0">
-                        <p className="stat-value text-center" style={{ color }}>{item.group}</p>
-                        <p className="stat-label text-neon-lilac text-center" style={{ marginTop: '2px' }}>{item.participants} участников</p>
+                        <p className="stat-value text-center" style={{ color }}>
+                          <FitText max={20} min={12}>{item.group}</FitText>
+                        </p>
+                        <p className="stat-label text-neon-lilac text-center" style={{ marginTop: '2px' }}>
+                          <FitText max={12} min={7}>{item.participants} участников</FitText>
+                        </p>
                       </div>
                       <div className="text-right flex-shrink-0">
-                        <p className="stat-value text-right" style={{ color }}>{item.totalPoints}</p>
-                        <p className="stat-label text-neon-lilac text-right" style={{ marginTop: '2px' }}>баллов</p>
+                        <p className="stat-value text-right" style={{ color }}>
+                          <FitText max={20} min={12}>{item.totalPoints}</FitText>
+                        </p>
+                        <p className="stat-label text-neon-lilac text-right" style={{ marginTop: '2px' }}>
+                          <FitText max={12} min={7}>баллов</FitText>
+                        </p>
                       </div>
                     </div>
                     <div className="progress-bar">
@@ -135,18 +170,32 @@ export default function AdminScreen({ user, onLogout }: Props) {
       {/* Список участников */}
       {activeTab === 'participants' && (
         <div style={{ marginTop: 'var(--gap-block)' }}>
-          <p className="stat-label text-neon-pink text-center" style={{ marginBottom: '14px' }}>Все участники</p>
+          <p className="stat-label text-neon-pink text-center" style={{ marginBottom: '14px' }}>
+            <FitText max={12} min={7}>Все участники</FitText>
+          </p>
           
           <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--gap-btn)' }}>
             {participants.map((p) => (
               <div key={p.id} className="hud-box flex items-center justify-between" style={{ gap: '12px', marginBottom: 0 }}>
                 <div className="flex-1 min-w-0">
-                  <p className="user-name text-white">{p.fullName}</p>
-                  <p className="stat-label text-neon-lilac" style={{ marginTop: '2px' }}>{p.group} • {p.id}</p>
+                  {p.fullName.length > 24 ? (
+                    <p className="user-name text-white user-name--long">{p.fullName}</p>
+                  ) : (
+                    <p className="user-name text-white">
+                      <FitText max={18} min={10}>{p.fullName}</FitText>
+                    </p>
+                  )}
+                  <p className="stat-label text-neon-lilac" style={{ marginTop: '2px' }}>
+                    <FitText max={12} min={7}>{p.group} • {p.id}</FitText>
+                  </p>
                 </div>
                 <div className="text-right flex-shrink-0">
-                  <p className="stat-value text-neon-pink">{p.points}</p>
-                  <p className="stat-label text-neon-lilac" style={{ marginTop: '2px' }}>баллов</p>
+                  <p className="stat-value text-neon-pink">
+                    <FitText max={20} min={12}>{p.points}</FitText>
+                  </p>
+                  <p className="stat-label text-neon-lilac" style={{ marginTop: '2px' }}>
+                    <FitText max={12} min={7}>баллов</FitText>
+                  </p>
                 </div>
               </div>
             ))}
@@ -158,13 +207,13 @@ export default function AdminScreen({ user, onLogout }: Props) {
       {showResetSuccess && (
         <div className="modal-overlay">
           <div className="modal-card center-col">
-            <p className="text-white font-medium text-center" style={{ marginBottom: '24px', fontSize: 'clamp(13px, 3.6vw, 15px)', lineHeight: 1.3 }}>Баллы всех участников сброшены до 300!</p>
+            <p className="text-white font-medium text-center text-wrap-balance" style={{ marginBottom: '24px', fontSize: 'clamp(13px, 3.6vw, 15px)' }}>Баллы всех участников сброшены до 300!</p>
             <button
               onClick={() => setShowResetSuccess(false)}
               className="btn-neon btn-cyan"
               style={{ width: 'auto', paddingInline: '32px' }}
             >
-              Отлично
+              <FitText max={15} min={10}>Отлично</FitText>
             </button>
           </div>
         </div>
@@ -174,16 +223,18 @@ export default function AdminScreen({ user, onLogout }: Props) {
       {showResetConfirm && (
         <div className="modal-overlay">
           <div className="modal-card center-col">
-            <h3 className="screen-subtitle text-white font-bold text-center" style={{ marginBottom: '12px' }}>Подтверждение</h3>
-            <p className="text-white/80 font-medium text-center" style={{ marginBottom: '24px', fontSize: 'clamp(13px, 3.6vw, 15px)', lineHeight: 1.3 }}>
+            <h3 className="screen-subtitle text-white font-bold text-center" style={{ marginBottom: '12px' }}>
+              <FitText max={15} min={10}>Подтверждение</FitText>
+            </h3>
+            <p className="text-white/80 font-medium text-center text-wrap-balance" style={{ marginBottom: '24px', fontSize: 'clamp(13px, 3.6vw, 15px)' }}>
               Сбросить баллы всех участников до 300? Это действие нельзя отменить.
             </p>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: 'var(--gap-btn)', width: '100%' }}>
               <button onClick={() => setShowResetConfirm(false)} className="btn-neon btn-ghost btn-grid">
-                Отмена
+                <FitText max={14} min={8}>Отмена</FitText>
               </button>
               <button onClick={handleResetPoints} className="btn-neon btn-danger btn-grid">
-                Сбросить
+                <FitText max={14} min={8}>Сбросить</FitText>
               </button>
             </div>
           </div>
@@ -196,7 +247,7 @@ export default function AdminScreen({ user, onLogout }: Props) {
         className="btn-neon btn-danger"
         style={{ marginTop: 'var(--gap-block)' }}
       >
-        Выйти из аккаунта
+        <FitText max={15} min={10}>Выйти из аккаунта</FitText>
       </button>
     </div>
   );
