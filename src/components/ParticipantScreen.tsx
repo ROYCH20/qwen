@@ -1,7 +1,7 @@
 import { QRCodeSVG } from 'qrcode.react';
 import { User } from '../database';
 import { LogOut } from 'lucide-react';
-import { CipherText, SpeedingText, AnimatedList, AnimatedListItem, NeonReveal, SignalType, GlimmerWrap } from './animations';
+import { CipherText, SpeedingText, AnimatedList, AnimatedListItem, NeonReveal, SignalType } from './animations';
 
 interface Props {
   user: User;
@@ -18,7 +18,7 @@ export default function ParticipantScreen({ user, onLogout }: Props) {
   return (
     <div style={{ paddingTop: '24px' }}>
       {/* Заголовок */}
-      <div className="center-col screen-head" style={{ marginBottom: 'var(--gap-title)' }}>
+      <div className="center-col screen-head" style={{ marginBottom: '8px' }}>
         <h1 className="screen-title text-chrome">
           <SignalType>ПРОФИЛЬ</SignalType>
         </h1>
@@ -27,19 +27,53 @@ export default function ParticipantScreen({ user, onLogout }: Props) {
         </p>
       </div>
 
-      {/* Шапка с Glimmer Wrap */}
-      <GlimmerWrap className="center-col" style={{ marginBottom: 'var(--gap-block)' }}>
-        <h2 className="text-chrome-soft text-center user-name fit-flow">
-          {user.fullName}
-        </h2>
-        <span className="badge-neon" style={{ marginTop: '10px' }}>
-          <CipherText text={`ID: ${user.id}`} duration={600} />
-        </span>
-      </GlimmerWrap>
+      {/* ASCII-маркиза */}
+      <div className="ascii-marquee">
+        <div className="ascii-marquee-inner">
+          ░▒▓█▓▒░・アィウエオ・01 ░▒▓█▓▒░・アィウエオ・01 ░▒▓█▓▒░・アィウエオ・01 ░▒▓█▓▒░・アィウエオ・01
+        </div>
+      </div>
+
+      {/* Holo-card */}
+      <div className="holo-card">
+        <div className="holo-card-inner center-col" style={{ paddingInline: '16px' }}>
+          {/* 3D-хром-эмблема */}
+          <div className="holo-emblem-wrap">
+            <svg className="holo-circle-text" viewBox="0 0 120 120">
+              <defs>
+                <path id="circle-path" d="M 60, 60 m -45, 0 a 45,45 0 1,1 90,0 a 45,45 0 1,1 -90,0" />
+              </defs>
+              <text>
+                <textPath href="#circle-path">СИСТЕМА БАЛЛОВ • POSVYAT • 2026 •</textPath>
+              </text>
+            </svg>
+            <div className="holo-emblem">✦</div>
+          </div>
+
+          {/* Имя */}
+          <h2 className="text-center fit-flow" style={{ 
+            fontSize: 'clamp(14px, 4.5vw, 18px)', 
+            fontWeight: 700, 
+            color: '#221D5E',
+            lineHeight: 1.25,
+            maxWidth: '100%'
+          }}>
+            {user.fullName}
+          </h2>
+
+          {/* Моно-чипы */}
+          <div className="mono-chips">
+            <span className="mono-chip">[ID: {user.id}]</span>
+            <span className="mono-chip">[ГРУППА: {user.group}]</span>
+            <span className="mono-chip">[{user.points} PTS]</span>
+          </div>
+        </div>
+      </div>
 
       {/* Группа / Баллы */}
       <NeonReveal>
-        <div className="hud-box">
+        <div className="hud-box" style={{ position: 'relative' }}>
+          <span className="hud-tag">[SYS://STATS]</span>
           <div className="stat-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', columnGap: '10px' }}>
             <div className="stat-cell">
               <p className="fit-nowrap fit-stat-l text-neon-lilac" style={{ marginBottom: '6px' }}>Группа</p>
@@ -57,7 +91,8 @@ export default function ParticipantScreen({ user, onLogout }: Props) {
 
       {/* QR-код */}
       <NeonReveal>
-        <div className="hud-box">
+        <div className="hud-box" style={{ position: 'relative' }}>
+          <span className="hud-tag">[SYS://QR]</span>
           <span className="hud-label fit-flow fit-title">QR-КОД УЧАСТНИКА</span>
           <div className="center-col">
             <div className="qr-frame focus-glow">
@@ -79,7 +114,8 @@ export default function ParticipantScreen({ user, onLogout }: Props) {
 
       {/* Информация */}
       <NeonReveal>
-        <div className="hud-box">
+        <div className="hud-box" style={{ position: 'relative' }}>
+          <span className="hud-tag">[SYS://INFO]</span>
           <span className="hud-label fit-flow fit-title">ИНФОРМАЦИЯ</span>
           <AnimatedList style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
             <AnimatedListItem>

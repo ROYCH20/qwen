@@ -30,6 +30,9 @@
   --dur-1: 150ms;
   --dur-2: 300ms;
   --dur-3: 450ms;
+
+  /* Голоградиент */
+  --holo: linear-gradient(135deg, #F79BE3 0%, #B78FF2 20%, #6FE3EC 42%, #FFE3A0 62%, #8E86E4 82%, #F79BE3 100%);
 }
 
 /* ═══════════════════════════════════════════
@@ -120,7 +123,7 @@
 }
 
 /* ═══════════════════════════════════════════
-   ХРОМ-ГРАДИЕНТ
+   ХРОМ-ГРАДИЕНТ (без свечения)
    ═══════════════════════════════════════════ */
 .text-chrome {
   background:
@@ -140,7 +143,7 @@
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  filter: drop-shadow(0 0 16px rgba(247,155,227,.45)) drop-shadow(0 0 4px rgba(111,227,236,.3));
+  /* Без drop-shadow — матовый хром */
 }
 
 .text-chrome-soft {
@@ -151,7 +154,7 @@
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  filter: drop-shadow(0 0 10px rgba(247,155,227,.35));
+  /* Без drop-shadow — матовый хром */
 }
 
 /* ═══════════════════════════════════════════
@@ -188,7 +191,7 @@
   text-transform: uppercase;
   letter-spacing: 0.14em;
   color: #6FE3EC;
-  text-shadow: 0 0 10px rgba(111, 227, 236, 0.6);
+  /* Без text-shadow — матовый текст */
   text-align: center;
   margin-bottom: 12px;
   line-height: 1.25;
@@ -583,21 +586,21 @@
 }
 
 /* ═══════════════════════════════════════════
-   ЦВЕТА И УТИЛИТЫ
+   ЦВЕТА И УТИЛИТЫ (без свечения)
    ═══════════════════════════════════════════ */
 .text-neon-pink {
   color: var(--c-pink-neon);
-  text-shadow: 0 0 8px rgba(247, 155, 227, 0.5);
+  /* Без text-shadow — матовый текст */
 }
 
 .text-neon-cyan {
   color: var(--c-cyan-neon);
-  text-shadow: 0 0 8px rgba(111, 227, 236, 0.5);
+  /* Без text-shadow — матовый текст */
 }
 
 .text-neon-lilac {
   color: var(--c-lilac);
-  text-shadow: 0 0 8px rgba(183, 143, 242, 0.5);
+  /* Без text-shadow — матовый текст */
 }
 
 .neon-divider {
@@ -771,16 +774,16 @@
   to { background-position: 0 40px; }
 }
 
-/* Signal Type — неоновое разжигание */
+/* Signal Type — моргание (без text-shadow) */
 @keyframes signal-type {
-  0% { opacity: 0; text-shadow: none; }
-  8% { opacity: 0; text-shadow: none; }
-  10% { opacity: 1; text-shadow: 2px 0 8px currentColor; }
+  0% { opacity: 0; }
+  8% { opacity: 0; }
+  10% { opacity: 1; }
   14% { opacity: 0.2; }
-  22% { opacity: 1; text-shadow: 2px 0 8px currentColor, 4px 0 16px currentColor; }
+  22% { opacity: 1; }
   28% { opacity: 0.4; }
-  34% { opacity: 1; text-shadow: 2px 0 8px currentColor, 4px 0 16px currentColor; }
-  100% { opacity: 1; text-shadow: 2px 0 8px currentColor, 4px 0 16px currentColor; }
+  34% { opacity: 1; }
+  100% { opacity: 1; }
 }
 
 .signal-type {
@@ -824,14 +827,14 @@
   animation: twinkle-scale 2.4s ease-in-out infinite;
 }
 
-/* Glitch Text */
+/* Glitch Text (без text-shadow) */
 @keyframes glitch-jitter {
-  0% { transform: skewX(0deg); text-shadow: -2px 0 #6FE3EC, 2px 0 #F79BE3; }
+  0% { transform: skewX(0deg); }
   20% { transform: skewX(2deg); }
   40% { transform: skewX(-2deg); }
   60% { transform: skewX(1deg); }
   80% { transform: skewX(-1deg); }
-  100% { transform: skewX(0deg); text-shadow: none; }
+  100% { transform: skewX(0deg); }
 }
 
 .glitch-text {
@@ -881,4 +884,283 @@
   }
   .perspective-grid { animation: none; }
   .twinkle-star, .glimmer-spark { animation: none; opacity: 0.6; }
+  .boke-spot { animation: none; }
+  .holo-card { animation: none; }
+  .holo-emblem { animation: none; }
+  .holo-circle-text { animation: none; }
+  .ascii-marquee { animation: none; }
+}
+
+/* ═══════════════════════════════════════════
+   СЛОИ ГЛУБИНЫ v9
+   ═══════════════════════════════════════════ */
+
+/* Боке-слой (Aurora Blur) */
+.boke-spot {
+  position: fixed;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.boke-spot-1 {
+  width: 180px;
+  height: 180px;
+  background: radial-gradient(circle, #F79BE3 0%, transparent 70%);
+  opacity: 0.28;
+  top: 15%;
+  left: 10%;
+  animation: boke-drift-1 18s ease-in-out infinite alternate;
+}
+
+.boke-spot-2 {
+  width: 220px;
+  height: 220px;
+  background: radial-gradient(circle, #6FE3EC 0%, transparent 70%);
+  opacity: 0.25;
+  top: 45%;
+  right: 5%;
+  animation: boke-drift-2 16s ease-in-out infinite alternate;
+  animation-delay: 2s;
+}
+
+.boke-spot-3 {
+  width: 160px;
+  height: 160px;
+  background: radial-gradient(circle, #7E8FF2 0%, transparent 70%);
+  opacity: 0.3;
+  bottom: 25%;
+  left: 20%;
+  animation: boke-drift-3 20s ease-in-out infinite alternate;
+  animation-delay: 4s;
+}
+
+.boke-spot-4 {
+  width: 200px;
+  height: 200px;
+  background: radial-gradient(circle, #B78FF2 0%, transparent 70%);
+  opacity: 0.22;
+  top: 70%;
+  right: 15%;
+  animation: boke-drift-1 14s ease-in-out infinite alternate;
+  animation-delay: 6s;
+}
+
+.boke-spot-5 {
+  width: 140px;
+  height: 140px;
+  background: radial-gradient(circle, #F79BE3 0%, transparent 70%);
+  opacity: 0.35;
+  top: 30%;
+  right: 30%;
+  animation: boke-drift-2 19s ease-in-out infinite alternate;
+  animation-delay: 8s;
+}
+
+@keyframes boke-drift-1 {
+  from { transform: translate(0, 0); }
+  to { transform: translate(24px, -18px); }
+}
+
+@keyframes boke-drift-2 {
+  from { transform: translate(0, 0); }
+  to { transform: translate(-20px, 22px); }
+}
+
+@keyframes boke-drift-3 {
+  from { transform: translate(0, 0); }
+  to { transform: translate(18px, 16px); }
+}
+
+/* Lens-слой (размытые края) */
+.bg-lens {
+  position: fixed;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  background: inherit;
+  filter: blur(10px);
+  mask-image: radial-gradient(transparent 42%, #000 80%);
+  -webkit-mask-image: radial-gradient(transparent 42%, #000 80%);
+}
+
+@supports not (mask-image: radial-gradient(#000, #000)) {
+  .bg-lens { display: none; }
+}
+
+/* Усиленная виньетка */
+.vignette-strong {
+  position: fixed;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+  background: radial-gradient(ellipse at center, transparent 48%, rgba(8,6,26,.55) 100%);
+}
+
+/* ═══════════════════════════════════════════
+   ASCII-ШАРМ
+   ═══════════════════════════════════════════ */
+
+/* ASCII-маркиза */
+.ascii-marquee {
+  height: 14px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 10px;
+  letter-spacing: 4px;
+  color: rgba(223, 183, 239, 0.28);
+  white-space: nowrap;
+  overflow: hidden;
+  pointer-events: none;
+  margin: 8px 0;
+}
+
+.ascii-marquee-inner {
+  display: inline-block;
+  animation: ascii-scroll 24s linear infinite;
+}
+
+@keyframes ascii-scroll {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+/* ASCII-теги в углах hud-box */
+.hud-tag {
+  position: absolute;
+  top: 8px;
+  right: 12px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 9px;
+  letter-spacing: 0.08em;
+  color: rgba(111, 227, 236, 0.45);
+  pointer-events: none;
+}
+
+/* ═══════════════════════════════════════════
+   HOLO-CARD (голографический билет)
+   ═══════════════════════════════════════════ */
+
+.holo-card {
+  position: relative;
+  border-radius: 24px;
+  padding: 20px 16px;
+  background: var(--holo);
+  background-size: 220% 220%;
+  animation: holo-drift 10s ease-in-out infinite;
+  margin-bottom: var(--gap-block);
+  overflow: hidden;
+}
+
+.holo-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  opacity: 0.12;
+  pointer-events: none;
+  border-radius: 24px;
+}
+
+.holo-card-inner {
+  position: relative;
+  z-index: 1;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.5), inset 0 -12px 24px rgba(34,29,94,.18);
+  border-radius: 24px;
+  padding: 16px;
+}
+
+@keyframes holo-drift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* 3D-хром-эмблема */
+.holo-emblem-wrap {
+  perspective: 600px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 16px 0;
+  position: relative;
+}
+
+.holo-emblem {
+  font-size: 56px;
+  background: linear-gradient(180deg, #FFFFFF 0%, #DFB7EF 38%, #6FE3EC 78%, #221D5E 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-shadow: 
+    0 1px 0 rgba(34,29,94,.4),
+    0 2px 0 rgba(34,29,94,.35),
+    0 3px 0 rgba(34,29,94,.3),
+    0 4px 0 rgba(34,29,94,.25),
+    0 6px 12px rgba(34,29,94,.35);
+  animation: emblem-rotate 7s ease-in-out infinite;
+  position: relative;
+  z-index: 2;
+}
+
+@keyframes emblem-rotate {
+  0% { transform: rotateY(-10deg); }
+  50% { transform: rotateY(10deg); }
+  100% { transform: rotateY(-10deg); }
+}
+
+/* Круговой текст */
+.holo-circle-text {
+  position: absolute;
+  width: 120px;
+  height: 120px;
+  animation: circle-rotate 36s linear infinite;
+}
+
+.holo-circle-text text {
+  font-family: 'Grafmassa', sans-serif;
+  font-size: 8px;
+  letter-spacing: 2px;
+  fill: rgba(34, 29, 94, 0.55);
+}
+
+@keyframes circle-rotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Моно-чипы */
+.mono-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.mono-chip {
+  background: rgba(18, 15, 56, 0.85);
+  border-radius: 8px;
+  padding: 6px 10px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  color: #DFB7EF;
+  white-space: nowrap;
+}
+
+/* ═══════════════════════════════════════════
+   МОДАЛКА v9 (исправления)
+   ═══════════════════════════════════════════ */
+
+.modal-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: auto;
+  min-width: 140px;
+  height: 44px;
+  padding: 0 28px;
+}
+
+.modal-card-v9 {
+  padding: 24px 20px;
 }

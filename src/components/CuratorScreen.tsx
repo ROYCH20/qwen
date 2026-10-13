@@ -148,7 +148,7 @@ export default function CuratorScreen({ user, onLogout }: Props) {
   return (
     <div style={{ paddingTop: '24px' }}>
       {/* Заголовок */}
-      <div className="center-col screen-head" style={{ marginBottom: 'var(--gap-title)' }}>
+      <div className="center-col screen-head" style={{ marginBottom: '8px' }}>
         <h1 className="screen-title text-chrome">
           <SignalType>КУРАТОР</SignalType>
         </h1>
@@ -157,19 +157,52 @@ export default function CuratorScreen({ user, onLogout }: Props) {
         </p>
       </div>
 
-      {/* Шапка */}
-      <div className="center-col" style={{ marginBottom: 'var(--gap-block)' }}>
-        <h2 className="text-chrome-soft text-center user-name fit-flow">
-          {user.fullName}
-        </h2>
-        <span className="badge-neon" style={{ marginTop: '10px' }}>
-          <span className="fit-nowrap" style={{ fontSize: 'clamp(10px, 3vw, 13px)' }}>ID: {user.id}</span>
-        </span>
+      {/* ASCII-маркиза */}
+      <div className="ascii-marquee">
+        <div className="ascii-marquee-inner">
+          ░▒▓█▓▒░・アィウエオ・01 ░▒▓█▓▒░・アィウエオ・01 ░▒▓█▓▒░・アィウエオ・01 ░▒▓█▓▒░・アィウエオ・01
+        </div>
+      </div>
+
+      {/* Holo-card */}
+      <div className="holo-card">
+        <div className="holo-card-inner center-col" style={{ paddingInline: '16px' }}>
+          {/* 3D-хром-эмблема */}
+          <div className="holo-emblem-wrap">
+            <svg className="holo-circle-text" viewBox="0 0 120 120">
+              <defs>
+                <path id="circle-path" d="M 60, 60 m -45, 0 a 45,45 0 1,1 90,0 a 45,45 0 1,1 -90,0" />
+              </defs>
+              <text>
+                <textPath href="#circle-path">СИСТЕМА БАЛЛОВ • POSVYAT • 2026 •</textPath>
+              </text>
+            </svg>
+            <div className="holo-emblem">✦</div>
+          </div>
+
+          {/* Имя */}
+          <h2 className="text-center fit-flow" style={{ 
+            fontSize: 'clamp(14px, 4.5vw, 18px)', 
+            fontWeight: 700, 
+            color: '#221D5E',
+            lineHeight: 1.25,
+            maxWidth: '100%'
+          }}>
+            {user.fullName}
+          </h2>
+
+          {/* Моно-чипы */}
+          <div className="mono-chips">
+            <span className="mono-chip">[ID: {user.id}]</span>
+            <span className="mono-chip">[ROLE: CURATOR]</span>
+          </div>
+        </div>
       </div>
 
       {/* Сканирование */}
       <NeonReveal>
-        <div className="hud-box">
+        <div className="hud-box" style={{ position: 'relative' }}>
+          <span className="hud-tag">[SYS://SCAN]</span>
           <span className="hud-label fit-flow fit-title">СКАНИРОВАНИЕ QR-КОДА</span>
           
           {!isScanning ? (
@@ -215,7 +248,8 @@ export default function CuratorScreen({ user, onLogout }: Props) {
       {/* Информация о найденном участнике */}
       {scannedUser && (
         <NeonReveal>
-          <div className="hud-box">
+          <div className="hud-box" style={{ position: 'relative' }}>
+            <span className="hud-tag">[SYS://FOUND]</span>
             <span className="hud-label fit-flow fit-title">УЧАСТНИК НАЙДЕН</span>
             
             <div className="center-col" style={{ padding: '10px 0', marginBottom: '10px' }}>
@@ -298,14 +332,13 @@ export default function CuratorScreen({ user, onLogout }: Props) {
       {/* Модальное окно ошибки */}
       {showError && (
         <div className="modal-overlay">
-          <div className="modal-card center-col">
+          <div className="modal-card modal-card-v9 center-col">
             <p className="text-white font-medium text-center fit-flow" style={{ marginBottom: '24px', fontSize: 'clamp(13px, 3.6vw, 15px)' }}>{showError}</p>
             <button
               onClick={() => setShowError('')}
-              className="btn-neon btn-pink"
-              style={{ width: 'auto', paddingInline: '32px' }}
+              className="btn-neon btn-pink modal-btn"
             >
-              <span className="fit-nowrap fit-btn3">Понятно</span>
+              <span className="fit-nowrap fit-btn3">ПОНЯТНО</span>
             </button>
           </div>
         </div>
@@ -314,14 +347,13 @@ export default function CuratorScreen({ user, onLogout }: Props) {
       {/* Модальное окно успеха */}
       {showSuccess && (
         <div className="modal-overlay">
-          <div className="modal-card center-col">
+          <div className="modal-card modal-card-v9 center-col">
             <p className="text-white font-medium text-center fit-flow" style={{ marginBottom: '24px', fontSize: 'clamp(13px, 3.6vw, 15px)' }}>{showSuccess}</p>
             <button
               onClick={() => setShowSuccess('')}
-              className="btn-neon btn-cyan"
-              style={{ width: 'auto', paddingInline: '32px' }}
+              className="btn-neon btn-cyan modal-btn"
             >
-              <span className="fit-nowrap fit-btn3">Отлично</span>
+              <span className="fit-nowrap fit-btn3">ОТЛИЧНО</span>
             </button>
           </div>
         </div>

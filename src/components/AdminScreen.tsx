@@ -31,7 +31,7 @@ export default function AdminScreen({ user, onLogout }: Props) {
   return (
     <div style={{ paddingTop: '24px' }}>
       {/* Заголовок */}
-      <div className="center-col screen-head" style={{ marginBottom: 'var(--gap-title)' }}>
+      <div className="center-col screen-head" style={{ marginBottom: '8px' }}>
         <h1 className="screen-title text-chrome">
           <SignalType>АДМИН</SignalType>
         </h1>
@@ -40,19 +40,29 @@ export default function AdminScreen({ user, onLogout }: Props) {
         </p>
       </div>
 
-      {/* Шапка */}
+      {/* ASCII-маркиза */}
+      <div className="ascii-marquee">
+        <div className="ascii-marquee-inner">
+          ░▒▓█▓▒░・アィウエオ・01 ░▒▓█▓▒░・アィウエオ・01 ░▒▓█▓▒░・アィウエオ・01 ░▒▓█▓▒░・アィウエオ・01
+        </div>
+      </div>
+
+      {/* Шапка с моно-чипами */}
       <div className="center-col" style={{ marginBottom: 'var(--gap-block)' }}>
-        <h2 className="text-chrome-soft text-center user-name fit-flow">
+        <h2 className="text-chrome-soft text-center user-name fit-flow" style={{ paddingInline: '16px' }}>
           {user.fullName}
         </h2>
-        <span className="badge-neon" style={{ marginTop: '10px' }}>
-          <span className="fit-nowrap" style={{ fontSize: 'clamp(10px, 3vw, 13px)' }}>ID: {user.id}</span>
-        </span>
+        <div className="mono-chips" style={{ marginTop: '12px' }}>
+          <span className="mono-chip">[ID: {user.id}]</span>
+          <span className="mono-chip">[ROLE: ADMIN]</span>
+          <span className="mono-chip">[DB: LOCAL]</span>
+        </div>
       </div>
 
       {/* Статистика */}
       <NeonReveal>
-        <div className="hud-box">
+        <div className="hud-box" style={{ position: 'relative' }}>
+          <span className="hud-tag">[SYS://STATS]</span>
           <div key={refreshKey} className="stat-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0, 1fr))', columnGap: '10px' }}>
             <div className="stat-cell">
               <p className="fit-nowrap fit-stat-v text-white">
@@ -110,7 +120,8 @@ export default function AdminScreen({ user, onLogout }: Props) {
           </p>
           
           {groupSummary.length === 0 ? (
-            <div className="hud-box center-col">
+            <div className="hud-box center-col" style={{ position: 'relative' }}>
+              <span className="hud-tag">[SYS://EMPTY]</span>
               <p className="text-neon-lilac" style={{ fontSize: 'clamp(13px, 3.6vw, 15px)' }}>Нет данных</p>
             </div>
           ) : (
@@ -123,7 +134,8 @@ export default function AdminScreen({ user, onLogout }: Props) {
                 
                 return (
                   <AnimatedListItem key={item.group}>
-                    <div className="hud-box" style={{ marginBottom: 0 }}>
+                    <div className="hud-box" style={{ marginBottom: 0, position: 'relative' }}>
+                      <span className="hud-tag">[SYS://GRP]</span>
                       <div className="grp-row" style={{ marginBottom: '10px' }}>
                         <div className="fit-box">
                           <span className="fit-nowrap fit-val" style={{ color, display: 'block' }}>{item.group}</span>
@@ -161,7 +173,8 @@ export default function AdminScreen({ user, onLogout }: Props) {
           <AnimatedList style={{ display: 'flex', flexDirection: 'column', gap: 'var(--gap-btn)' }}>
             {participants.map((p) => (
               <AnimatedListItem key={p.id}>
-                <div className="hud-box list-row" style={{ marginBottom: 0 }}>
+                <div className="hud-box list-row" style={{ marginBottom: 0, position: 'relative' }}>
+                  <span className="hud-tag">[SYS://USR]</span>
                   <div className="name">
                     <p className="text-white" style={{ fontWeight: 600 }}>{p.fullName}</p>
                     <p className="fit-nowrap fit-stat-l text-neon-lilac" style={{ marginTop: '2px' }}>
@@ -186,14 +199,13 @@ export default function AdminScreen({ user, onLogout }: Props) {
       {/* Модальное окно успеха */}
       {showResetSuccess && (
         <div className="modal-overlay">
-          <div className="modal-card center-col">
+          <div className="modal-card modal-card-v9 center-col">
             <p className="text-white font-medium text-center fit-flow" style={{ marginBottom: '24px', fontSize: 'clamp(13px, 3.6vw, 15px)' }}>Баллы всех участников сброшены до 300!</p>
             <button
               onClick={() => setShowResetSuccess(false)}
-              className="btn-neon btn-cyan"
-              style={{ width: 'auto', paddingInline: '32px' }}
+              className="btn-neon btn-cyan modal-btn"
             >
-              <span className="fit-nowrap fit-btn3">Отлично</span>
+              <span className="fit-nowrap fit-btn3">ОТЛИЧНО</span>
             </button>
           </div>
         </div>
@@ -202,7 +214,7 @@ export default function AdminScreen({ user, onLogout }: Props) {
       {/* Модальное окно подтверждения */}
       {showResetConfirm && (
         <div className="modal-overlay">
-          <div className="modal-card center-col">
+          <div className="modal-card modal-card-v9 center-col">
             <h3 className="text-white font-bold text-center fit-flow fit-sub" style={{ marginBottom: '12px' }}>
               Подтверждение
             </h3>
