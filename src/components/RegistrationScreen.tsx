@@ -29,63 +29,58 @@ export default function RegistrationScreen({ onLogin }: Props) {
   };
 
   return (
-    <div className="p-4 pt-10">
-      {/* Title */}
-      <div className="text-center mb-8">
-        <div className="inline-block relative">
-          <div className="w-20 h-20 mx-auto mb-4 rounded-3xl flex items-center justify-center soft-glow-pink" style={{ background: 'linear-gradient(135deg, #ffb6c1, #ff9ecd)' }}>
-            <span className="text-4xl">✿</span>
-          </div>
-          <h1 className="text-4xl text-gradient-pink tracking-wider mb-1">
-            VK
-          </h1>
-          <h2 className="text-xl text-gradient-lavender tracking-widest">
-            Сервис
-          </h2>
+    <div className="p-4 pt-12">
+      {/* Title - без VK Сервис */}
+      <div className="center-content mb-8">
+        <div className="icon-circle glow-violet mb-4" style={{ background: 'linear-gradient(135deg, #8b5cf6, #6b21a8)' }}>
+          <span className="text-white">✦</span>
         </div>
-        <p className="text-sm mt-4 tracking-wide" style={{ color: '#c8a2c8' }}>
-          ♡ Система баллов ♡
+        <h1 className="text-3xl text-gradient-violet tracking-wider mb-2 font-bold">
+          Система баллов
+        </h1>
+        <p className="text-base text-violet-medium tracking-wide">
+          Вход в аккаунт
         </p>
       </div>
 
       {/* QR Code Info Toggle */}
-      <div className="card-soft-lavender p-4 mb-4">
+      <div className="card-violet-accent p-5 mb-4">
         <button
           onClick={() => setShowQRInfo(!showQRInfo)}
           className="w-full flex items-center justify-between text-left"
         >
-          <span className="text-sm tracking-wide" style={{ color: '#b19cd9' }}>
-            ✧ Доступные ID
+          <span className="text-base text-violet-primary font-semibold tracking-wide">
+            ✧ Доступные ID пользователей
           </span>
-          <span className="text-xl" style={{ color: '#c8a2c8' }}>{showQRInfo ? '▾' : '▸'}</span>
+          <span className="text-2xl text-violet-light">{showQRInfo ? '▾' : '▸'}</span>
         </button>
         
         {showQRInfo && (
-          <div className="mt-4 space-y-4 pt-4" style={{ borderTop: '1px solid rgba(200, 162, 200, 0.3)' }}>
+          <div className="mt-4 space-y-4 pt-4" style={{ borderTop: '1.5px solid #c4b5fd' }}>
             <div>
-              <p className="text-xs tracking-wider mb-2" style={{ color: '#87ceeb' }}>✿ Участники:</p>
+              <p className="text-sm text-violet-primary font-semibold tracking-wider mb-3">✦ Участники:</p>
               {participants.map(p => (
-                <div key={p.id} className="flex justify-between items-center bg-white/60 rounded-2xl px-3 py-2 mb-1.5">
-                  <span className="text-xs" style={{ color: '#4a3154' }}>{p.fullName}</span>
-                  <span className="text-xs font-mono px-2 py-0.5 rounded-full" style={{ background: 'rgba(135, 206, 235, 0.2)', color: '#5ba3c4' }}>{p.id}</span>
+                <div key={p.id} className="flex justify-between items-center bg-white rounded-2xl px-4 py-3 mb-2">
+                  <span className="text-sm text-violet-dark font-medium">{p.fullName}</span>
+                  <span className="text-sm font-mono px-3 py-1 rounded-full badge-violet">{p.id}</span>
                 </div>
               ))}
             </div>
             <div>
-              <p className="text-xs tracking-wider mb-2" style={{ color: '#98fb98' }}>✿ Кураторы:</p>
+              <p className="text-sm text-violet-primary font-semibold tracking-wider mb-3">✦ Кураторы:</p>
               {curators.map(c => (
-                <div key={c.id} className="flex justify-between items-center bg-white/60 rounded-2xl px-3 py-2 mb-1.5">
-                  <span className="text-xs" style={{ color: '#4a3154' }}>{c.fullName}</span>
-                  <span className="text-xs font-mono px-2 py-0.5 rounded-full" style={{ background: 'rgba(152, 251, 152, 0.2)', color: '#5ba37a' }}>{c.id}</span>
+                <div key={c.id} className="flex justify-between items-center bg-white rounded-2xl px-4 py-3 mb-2">
+                  <span className="text-sm text-violet-dark font-medium">{c.fullName}</span>
+                  <span className="text-sm font-mono px-3 py-1 rounded-full badge-violet">{c.id}</span>
                 </div>
               ))}
             </div>
             <div>
-              <p className="text-xs tracking-wider mb-2" style={{ color: '#ff9999' }}>✿ Админ:</p>
+              <p className="text-sm text-violet-primary font-semibold tracking-wider mb-3">✦ Админ:</p>
               {admins.map(a => (
-                <div key={a.id} className="flex justify-between items-center bg-white/60 rounded-2xl px-3 py-2 mb-1.5">
-                  <span className="text-xs" style={{ color: '#4a3154' }}>{a.fullName}</span>
-                  <span className="text-xs font-mono px-2 py-0.5 rounded-full" style={{ background: 'rgba(255, 153, 153, 0.2)', color: '#c45b5b' }}>{a.id}</span>
+                <div key={a.id} className="flex justify-between items-center bg-white rounded-2xl px-4 py-3 mb-2">
+                  <span className="text-sm text-violet-dark font-medium">{a.fullName}</span>
+                  <span className="text-sm font-mono px-3 py-1 rounded-full badge-violet">{a.id}</span>
                 </div>
               ))}
             </div>
@@ -94,22 +89,22 @@ export default function RegistrationScreen({ onLogin }: Props) {
       </div>
 
       {/* Manual ID Input */}
-      <div className="card-soft-sky p-4 mb-4">
-        <label className="block text-sm tracking-wide mb-3" style={{ color: '#5ba3c4' }}>
-          ✧ Введите ID
+      <div className="card-violet p-5 mb-4">
+        <label className="block text-base text-violet-primary font-semibold tracking-wide mb-3">
+          ✧ Введите ID пользователя
         </label>
-        <div className="flex gap-2">
+        <div className="flex gap-3">
           <input
             type="text"
             value={manualId}
             onChange={(e) => { setManualId(e.target.value); setShowError(''); }}
-            placeholder="P001 / C001 / A001"
-            className="input-soft flex-1 px-4 py-3 text-sm"
+            placeholder="Например: P001"
+            className="input-violet flex-1 px-4 py-3.5 text-base"
             onKeyDown={(e) => e.key === 'Enter' && handleManualLogin()}
           />
           <button
             onClick={handleManualLogin}
-            className="btn-soft btn-soft-pink px-5 py-3 text-sm tracking-wider"
+            className="btn-violet btn-violet-primary px-6 py-3.5 text-base tracking-wider"
           >
             Войти
           </button>
@@ -119,14 +114,14 @@ export default function RegistrationScreen({ onLogin }: Props) {
       {/* Error Modal */}
       {showError && (
         <div className="modal-overlay">
-          <div className="card-soft-yellow p-6 w-full max-w-sm text-center">
-            <div className="w-16 h-16 mx-auto mb-3 rounded-full flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #ffeb99, #ffd966)' }}>
-              <span className="text-3xl">⚠</span>
+          <div className="card-violet p-6 w-full max-w-sm center-content">
+            <div className="icon-circle mb-4" style={{ background: 'linear-gradient(135deg, #fbbf24, #f59e0b)' }}>
+              <span>⚠</span>
             </div>
-            <p className="text-sm tracking-wide mb-5" style={{ color: '#4a3154' }}>{showError}</p>
+            <p className="text-base text-violet-dark tracking-wide mb-6 font-medium">{showError}</p>
             <button
               onClick={() => setShowError('')}
-              className="btn-soft btn-soft-yellow px-8 py-2.5 text-sm tracking-wider"
+              className="btn-violet btn-violet-warning px-8 py-3 text-base tracking-wider"
             >
               Понятно
             </button>
@@ -136,50 +131,50 @@ export default function RegistrationScreen({ onLogin }: Props) {
 
       {/* Quick Access */}
       <div className="mb-6">
-        <p className="text-center text-xs tracking-wider mb-3" style={{ color: '#c8a2c8' }}>
+        <p className="center-content text-sm text-violet-muted tracking-wider mb-4 font-medium">
           ✧ Быстрый доступ ✧
         </p>
-        <div className="grid grid-cols-3 gap-2">
+        <div className="grid grid-cols-3 gap-3">
           <button
             onClick={() => onLogin('P001')}
-            className="btn-soft btn-soft-sky py-4 text-xs tracking-wider"
+            className="btn-violet btn-violet-primary py-4 text-sm tracking-wider"
           >
-            ✿ Участник
+            ✦ Участник
           </button>
           <button
             onClick={() => onLogin('C001')}
-            className="btn-soft btn-soft-mint py-4 text-xs tracking-wider"
+            className="btn-violet btn-violet-success py-4 text-sm tracking-wider"
           >
-            ✿ Куратор
+            ✦ Куратор
           </button>
           <button
             onClick={() => onLogin('A001')}
-            className="btn-soft btn-soft-red py-4 text-xs tracking-wider"
+            className="btn-violet btn-violet-danger py-4 text-sm tracking-wider"
           >
-            ✿ Админ
+            ✦ Админ
           </button>
         </div>
       </div>
 
       {/* Info */}
-      <div className="card-soft p-4">
-        <h3 className="text-sm tracking-wider mb-3" style={{ color: '#ff9ecd' }}>✧ Как это работает ✧</h3>
-        <ul className="text-xs space-y-2 tracking-wide" style={{ color: '#6b4d7a' }}>
-          <li className="flex items-start gap-2">
-            <span style={{ color: '#ffb6c1' }}>✿</span>
-            <span>Участники показывают QR-код кураторам</span>
+      <div className="card-violet p-5">
+        <h3 className="text-base text-violet-primary font-semibold tracking-wider mb-4 center-content">✧ Как это работает ✧</h3>
+        <ul className="text-sm text-violet-dark space-y-3 tracking-wide">
+          <li className="flex items-start gap-3">
+            <span className="text-violet-light text-lg">✦</span>
+            <span className="font-medium">Участники показывают QR-код кураторам</span>
           </li>
-          <li className="flex items-start gap-2">
-            <span style={{ color: '#98fb98' }}>✿</span>
-            <span>Кураторы сканируют QR и начисляют/списывают баллы</span>
+          <li className="flex items-start gap-3">
+            <span className="text-violet-light text-lg">✦</span>
+            <span className="font-medium">Кураторы сканируют QR и начисляют/списывают баллы</span>
           </li>
-          <li className="flex items-start gap-2">
-            <span style={{ color: '#ffeb99' }}>✿</span>
-            <span>Администратор отслеживает рейтинг групп</span>
+          <li className="flex items-start gap-3">
+            <span className="text-violet-light text-lg">✦</span>
+            <span className="font-medium">Администратор отслеживает рейтинг групп</span>
           </li>
-          <li className="flex items-start gap-2">
-            <span style={{ color: '#87ceeb' }}>✿</span>
-            <span>Каждый пользователь имеет уникальный ID</span>
+          <li className="flex items-start gap-3">
+            <span className="text-violet-light text-lg">✦</span>
+            <span className="font-medium">Каждый пользователь имеет уникальный ID</span>
           </li>
         </ul>
       </div>

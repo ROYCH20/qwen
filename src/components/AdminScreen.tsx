@@ -3,9 +3,10 @@ import { getGroupSummary, getUsersByRole, resetAllPoints, User } from '../databa
 
 interface Props {
   user: User;
+  onLogout: () => void;
 }
 
-export default function AdminScreen({ user }: Props) {
+export default function AdminScreen({ user, onLogout }: Props) {
   const [activeTab, setActiveTab] = useState<'groups' | 'participants'>('groups');
   const [showResetConfirm, setShowResetConfirm] = useState(false);
   const [showResetSuccess, setShowResetSuccess] = useState(false);
@@ -28,37 +29,37 @@ export default function AdminScreen({ user }: Props) {
   return (
     <div className="p-4 pt-10">
       {/* Title */}
-      <div className="text-center mb-6">
-        <div className="w-16 h-16 mx-auto mb-3 rounded-full flex items-center justify-center soft-glow-pink" style={{ background: 'linear-gradient(135deg, #ffeb99, #ffd966)' }}>
-          <span className="text-3xl">✿</span>
+      <div className="center-content mb-6">
+        <div className="icon-circle glow-violet mb-3" style={{ background: 'linear-gradient(135deg, #8b5cf6, #6b21a8)' }}>
+          <span className="text-white text-3xl">✦</span>
         </div>
-        <h1 className="text-2xl tracking-wider" style={{ background: 'linear-gradient(135deg, #ffd966, #ffb6c1)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Админ</h1>
+        <h1 className="text-2xl text-gradient-violet tracking-wider font-bold">Панель администратора</h1>
       </div>
 
       {/* Admin Header */}
-      <div className="card-soft-yellow p-4 mb-4">
-        <div className="flex items-center gap-3 mb-4">
-          <div className="w-14 h-14 rounded-2xl flex items-center justify-center text-2xl" style={{ background: 'linear-gradient(135deg, #ffeb99, #ffd966)' }}>
-            👑
+      <div className="card-violet p-5 mb-4">
+        <div className="flex items-center gap-4 mb-5">
+          <div className="icon-circle-sm" style={{ background: 'linear-gradient(135deg, #8b5cf6, #6b21a8)' }}>
+            <span className="text-white">👑</span>
           </div>
-          <div>
-            <h2 className="text-base tracking-wide" style={{ color: '#4a3154' }}>{user.fullName}</h2>
-            <p className="text-sm tracking-wider" style={{ color: '#b8a44a' }}>ID: {user.id}</p>
+          <div className="text-left">
+            <h2 className="text-base text-violet-dark font-semibold tracking-wide">{user.fullName}</h2>
+            <p className="text-sm text-violet-muted tracking-wider font-medium">ID: {user.id}</p>
           </div>
         </div>
 
-        <div className="grid grid-cols-3 gap-2">
-          <div className="rounded-2xl p-2 text-center" style={{ background: 'rgba(255, 182, 193, 0.15)', border: '1.5px solid rgba(255, 182, 193, 0.3)' }}>
-            <p className="text-xl tracking-wider" style={{ color: '#ff9ecd' }}>{totalParticipants}</p>
-            <p className="text-xs tracking-wider" style={{ color: '#c47a8a' }}>Участников</p>
+        <div className="grid grid-cols-3 gap-3">
+          <div className="rounded-2xl p-3 text-center" style={{ background: '#ede9fe', border: '1.5px solid #c4b5fd' }}>
+            <p className="text-2xl text-violet-primary font-bold tracking-wider">{totalParticipants}</p>
+            <p className="text-xs text-violet-muted tracking-wider font-medium">Участников</p>
           </div>
-          <div className="rounded-2xl p-2 text-center" style={{ background: 'rgba(135, 206, 235, 0.15)', border: '1.5px solid rgba(135, 206, 235, 0.3)' }}>
-            <p className="text-xl tracking-wider" style={{ color: '#5ba3c4' }}>{groupSummary.length}</p>
-            <p className="text-xs tracking-wider" style={{ color: '#5ba3c4' }}>Групп</p>
+          <div className="rounded-2xl p-3 text-center" style={{ background: '#ede9fe', border: '1.5px solid #c4b5fd' }}>
+            <p className="text-2xl text-violet-primary font-bold tracking-wider">{groupSummary.length}</p>
+            <p className="text-xs text-violet-muted tracking-wider font-medium">Групп</p>
           </div>
-          <div className="rounded-2xl p-2 text-center" style={{ background: 'rgba(255, 235, 153, 0.15)', border: '1.5px solid rgba(255, 235, 153, 0.4)' }}>
-            <p className="text-xl tracking-wider" style={{ color: '#d4a82f' }}>{totalPoints}</p>
-            <p className="text-xs tracking-wider" style={{ color: '#b8a44a' }}>Баллов</p>
+          <div className="rounded-2xl p-3 text-center" style={{ background: '#fef3c7', border: '1.5px solid #fcd34d' }}>
+            <p className="text-2xl font-bold tracking-wider" style={{ color: '#d97706' }}>{totalPoints}</p>
+            <p className="text-xs tracking-wider font-medium" style={{ color: '#92400e' }}>Баллов</p>
           </div>
         </div>
       </div>
@@ -66,22 +67,22 @@ export default function AdminScreen({ user }: Props) {
       {/* Reset Button */}
       <button
         onClick={() => setShowResetConfirm(true)}
-        className="btn-soft btn-soft-red w-full py-4 text-sm tracking-wider mb-4"
+        className="btn-violet btn-violet-danger w-full py-4 text-base tracking-wider mb-5 font-semibold"
       >
-        ✿ Сбросить баллы ✿
+        ✦ Сбросить баллы всех участников ✦
       </button>
 
       {/* Reset Success Modal */}
       {showResetSuccess && (
         <div className="modal-overlay">
-          <div className="card-soft-mint p-6 w-full max-w-sm text-center">
-            <div className="w-16 h-16 mx-auto mb-3 rounded-full flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #98fb98, #7fdbca)' }}>
-              <span className="text-3xl">✓</span>
+          <div className="card-violet p-6 w-full max-w-sm center-content">
+            <div className="icon-circle mb-4" style={{ background: 'linear-gradient(135deg, #a78bfa, #8b5cf6)' }}>
+              <span className="text-white">✓</span>
             </div>
-            <p className="text-sm tracking-wide mb-5" style={{ color: '#4a3154' }}>Баллы всех участников сброшены до 300!</p>
+            <p className="text-base text-violet-dark tracking-wide mb-6 font-medium text-center">Баллы всех участников сброшены до 300!</p>
             <button
               onClick={() => setShowResetSuccess(false)}
-              className="btn-soft btn-soft-mint px-8 py-2.5 text-sm tracking-wider"
+              className="btn-violet btn-violet-success px-8 py-3 text-base tracking-wider"
             >
               Отлично
             </button>
@@ -92,25 +93,24 @@ export default function AdminScreen({ user }: Props) {
       {/* Reset Confirmation Modal */}
       {showResetConfirm && (
         <div className="modal-overlay">
-          <div className="card-soft-yellow p-6 w-full max-w-sm text-center">
-            <div className="w-16 h-16 mx-auto mb-3 rounded-full flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #ffeb99, #ffd966)' }}>
-              <span className="text-3xl">⚠</span>
+          <div className="card-violet p-6 w-full max-w-sm center-content">
+            <div className="icon-circle mb-4" style={{ background: 'linear-gradient(135deg, #fbbf24, #f59e0b)' }}>
+              <span>⚠</span>
             </div>
-            <h3 className="text-lg tracking-wider mb-3" style={{ color: '#4a3154' }}>Подтверждение</h3>
-            <p className="text-sm tracking-wide mb-5" style={{ color: '#6b4d7a' }}>
+            <h3 className="text-lg text-violet-dark tracking-wider mb-3 font-bold">Подтверждение</h3>
+            <p className="text-base text-violet-muted tracking-wide mb-6 font-medium text-center">
               Сбросить баллы всех участников до 300? Это действие нельзя отменить.
             </p>
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-2 gap-3 w-full">
               <button
                 onClick={() => setShowResetConfirm(false)}
-                className="btn-soft py-3 text-sm tracking-wider bg-white/50 border-2 border-gray-200"
-                style={{ color: '#c8a2c8' }}
+                className="btn-violet btn-violet-secondary py-4 text-base tracking-wider font-semibold"
               >
                 Отмена
               </button>
               <button
                 onClick={handleResetPoints}
-                className="btn-soft btn-soft-red py-3 text-sm tracking-wider"
+                className="btn-violet btn-violet-danger py-4 text-base tracking-wider font-semibold"
               >
                 Сбросить
               </button>
@@ -120,64 +120,64 @@ export default function AdminScreen({ user }: Props) {
       )}
 
       {/* Tabs */}
-      <div key={refreshKey} className="flex rounded-2xl p-1 mb-4" style={{ background: 'rgba(255, 255, 255, 0.5)', border: '1.5px solid rgba(255, 182, 193, 0.3)' }}>
+      <div key={refreshKey} className="flex rounded-2xl p-1.5 mb-5" style={{ background: '#ede9fe', border: '1.5px solid #c4b5fd' }}>
         <button
           onClick={() => setActiveTab('groups')}
-          className={`flex-1 py-3 text-sm tracking-wider rounded-xl transition ${
+          className={`flex-1 py-3.5 text-base tracking-wider rounded-xl transition font-semibold ${
             activeTab === 'groups'
-              ? 'btn-soft btn-soft-pink'
-              : 'text-gray-400'
+              ? 'btn-violet btn-violet-primary'
+              : 'text-violet-muted bg-transparent'
           }`}
         >
-          ✿ По группам
+          ✦ По группам
         </button>
         <button
           onClick={() => setActiveTab('participants')}
-          className={`flex-1 py-3 text-sm tracking-wider rounded-xl transition ${
+          className={`flex-1 py-3.5 text-base tracking-wider rounded-xl transition font-semibold ${
             activeTab === 'participants'
-              ? 'btn-soft btn-soft-pink'
-              : 'text-gray-400'
+              ? 'btn-violet btn-violet-primary'
+              : 'text-violet-muted bg-transparent'
           }`}
         >
-          ✿ Участники
+          ✦ Участники
         </button>
       </div>
 
       {/* Group Summary */}
       {activeTab === 'groups' && (
-        <div className="space-y-3">
-          <h3 className="text-sm tracking-wider" style={{ color: '#5ba3c4' }}>✧ Рейтинг групп ✧</h3>
+        <div className="space-y-3 mb-6">
+          <h3 className="text-base text-violet-primary font-semibold tracking-wider center-content">✧ Рейтинг академических групп ✧</h3>
           
           {groupSummary.length === 0 ? (
-            <div className="card-soft p-8 text-center">
-              <p className="text-4xl mb-2">✿</p>
-              <p className="text-sm tracking-wider" style={{ color: '#c8a2c8' }}>Нет данных</p>
+            <div className="card-violet p-8 center-content">
+              <p className="text-4xl mb-3">✦</p>
+              <p className="text-base text-violet-muted tracking-wider font-medium">Нет данных</p>
             </div>
           ) : (
             groupSummary.map((item, index) => {
               const maxPoints = groupSummary[0]?.totalPoints || 1;
               const percentage = (item.totalPoints / maxPoints) * 100;
-              const colors = ['#ffd966', '#c0c0c0', '#ffb366', '#87ceeb'];
-              const color = colors[index] || '#ffb6c1';
+              const colors = ['#fbbf24', '#9ca3af', '#fb923c', '#8b5cf6'];
+              const color = colors[index] || '#a78bfa';
               
               return (
-                <div key={item.group} className="card-soft p-4" style={{ borderColor: `${color}66` }}>
+                <div key={item.group} className="card-violet p-4" style={{ borderColor: `${color}66` }}>
                   <div className="flex items-center justify-between mb-3">
                     <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-full flex items-center justify-center text-sm tracking-wider" style={{ background: `${color}33`, color, border: `1.5px solid ${color}66` }}>
+                      <div className="w-10 h-10 rounded-full flex items-center justify-center text-base font-bold" style={{ background: `${color}33`, color, border: `2px solid ${color}66` }}>
                         {index + 1}
                       </div>
-                      <div>
-                        <p className="text-sm tracking-wider" style={{ color }}>{item.group}</p>
-                        <p className="text-xs tracking-wider" style={{ color: '#999' }}>{item.participants} участников</p>
+                      <div className="text-left">
+                        <p className="text-base font-bold tracking-wider" style={{ color }}>{item.group}</p>
+                        <p className="text-sm text-violet-muted tracking-wider font-medium">{item.participants} участников</p>
                       </div>
                     </div>
                     <div className="text-right">
-                      <p className="text-xl tracking-wider" style={{ color }}>{item.totalPoints}</p>
-                      <p className="text-xs tracking-wider" style={{ color: '#999' }}>баллов</p>
+                      <p className="text-2xl font-bold tracking-wider" style={{ color }}>{item.totalPoints}</p>
+                      <p className="text-sm text-violet-muted tracking-wider font-medium">баллов</p>
                     </div>
                   </div>
-                  <div className="w-full h-2 rounded-full" style={{ background: 'rgba(0,0,0,0.05)' }}>
+                  <div className="w-full h-3 rounded-full" style={{ background: '#ede9fe' }}>
                     <div
                       className="h-full rounded-full transition-all duration-500"
                       style={{ width: `${percentage}%`, background: `linear-gradient(90deg, ${color}, ${color}cc)`, boxShadow: `0 0 8px ${color}66` }}
@@ -192,28 +192,36 @@ export default function AdminScreen({ user }: Props) {
 
       {/* Participants List */}
       {activeTab === 'participants' && (
-        <div className="space-y-2">
-          <h3 className="text-sm tracking-wider" style={{ color: '#5ba3c4' }}>✧ Все участники ✧</h3>
+        <div className="space-y-2 mb-6">
+          <h3 className="text-base text-violet-primary font-semibold tracking-wider center-content mb-4">✧ Все участники ✧</h3>
           
           {participants.map((p, index) => (
-            <div key={p.id} className="card-soft-sky p-3 flex items-center justify-between">
+            <div key={p.id} className="card-violet p-4 flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-full flex items-center justify-center text-xs tracking-wider" style={{ background: 'rgba(135, 206, 235, 0.2)', color: '#5ba3c4', border: '1.5px solid rgba(135, 206, 235, 0.4)' }}>
+                <div className="w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold" style={{ background: '#ede9fe', color: '#6b21a8', border: '2px solid #c4b5fd' }}>
                   {index + 1}
                 </div>
-                <div>
-                  <p className="text-sm tracking-wide" style={{ color: '#4a3154' }}>{p.fullName}</p>
-                  <p className="text-xs tracking-wider" style={{ color: '#5ba3c4' }}>{p.group} • {p.id}</p>
+                <div className="text-left">
+                  <p className="text-base text-violet-dark font-semibold tracking-wide">{p.fullName}</p>
+                  <p className="text-sm text-violet-muted tracking-wider font-medium">{p.group} • {p.id}</p>
                 </div>
               </div>
               <div className="text-right">
-                <p className="text-sm tracking-wider" style={{ color: '#d4a82f' }}>{p.points}</p>
-                <p className="text-xs tracking-wider" style={{ color: '#b8a44a' }}>баллов</p>
+                <p className="text-xl font-bold tracking-wider" style={{ color: '#d97706' }}>{p.points}</p>
+                <p className="text-sm tracking-wider font-medium" style={{ color: '#92400e' }}>баллов</p>
               </div>
             </div>
           ))}
         </div>
       )}
+
+      {/* Logout button - after tabs content */}
+      <button
+        onClick={onLogout}
+        className="btn-violet btn-violet-dark w-full py-4 text-base tracking-wider shadow-lg mt-6 mb-4 font-semibold"
+      >
+        ← Выйти из аккаунта
+      </button>
     </div>
   );
 }
