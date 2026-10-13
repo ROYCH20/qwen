@@ -1,6 +1,8 @@
 import { useState, useEffect, useRef } from 'react';
 import { Html5Qrcode } from 'html5-qrcode';
 import { getUserById, updatePoints, User } from '../database';
+import { LogOut, ScanLine } from 'lucide-react';
+import { SignalType, AnimatedList, AnimatedListItem, NeonReveal, SpeedingText } from './animations';
 
 interface Props {
   user: User;
@@ -147,9 +149,11 @@ export default function CuratorScreen({ user, onLogout }: Props) {
     <div style={{ paddingTop: '24px' }}>
       {/* Заголовок */}
       <div className="center-col screen-head" style={{ marginBottom: 'var(--gap-title)' }}>
-        <h1 className="screen-title text-chrome">КУРАТОР</h1>
+        <h1 className="screen-title text-chrome">
+          <SignalType>КУРАТОР</SignalType>
+        </h1>
         <p className="text-neon-cyan fit-flow fit-sub" style={{ marginTop: '4px' }}>
-          Панель управления
+          <SignalType>Панель управления</SignalType>
         </p>
       </div>
 
@@ -164,125 +168,131 @@ export default function CuratorScreen({ user, onLogout }: Props) {
       </div>
 
       {/* Сканирование */}
-      <div className="hud-box">
-        <span className="hud-label fit-flow fit-title">СКАНИРОВАНИЕ QR-КОДА</span>
-        
-        {!isScanning ? (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
-            <button onClick={startScanner} className="btn-neon btn-cyan">
-              <span className="fit-btn-m">Открыть камеру</span>
-            </button>
-            
-            <p className="text-neon-lilac fit-flow fit-sub text-center" style={{ margin: '0' }}>
-              или введите ID
-            </p>
-
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-              <input
-                type="text"
-                value={manualScan}
-                onChange={(e) => { setManualScan(e.target.value); setShowError(''); }}
-                placeholder="Например: P001"
-                className="input-neon"
-              />
-              <button onClick={handleManualScan} className="btn-neon btn-lilac">
-                <span className="fit-btn-m">Найти участника</span>
+      <NeonReveal>
+        <div className="hud-box">
+          <span className="hud-label fit-flow fit-title">СКАНИРОВАНИЕ QR-КОДА</span>
+          
+          {!isScanning ? (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+              <button onClick={startScanner} className="btn-neon btn-cyan focus-glow">
+                <ScanLine size={18} strokeWidth={1.5} style={{ marginRight: '8px' }} />
+                <span className="fit-btn-m">Открыть камеру</span>
               </button>
-              <p style={{ fontSize: '10px', color: '#B9B0E6', textAlign: 'center', lineHeight: 1.3 }}>
-                ID участника, которому начисляются или списываются баллы
+              
+              <p className="text-neon-lilac fit-flow fit-sub text-center" style={{ margin: '0' }}>
+                или введите ID
               </p>
+
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                <input
+                  type="text"
+                  value={manualScan}
+                  onChange={(e) => { setManualScan(e.target.value); setShowError(''); }}
+                  placeholder="Например: P001"
+                  className="input-neon"
+                />
+                <button onClick={handleManualScan} className="btn-neon btn-lilac">
+                  <span className="fit-btn-m">Найти участника</span>
+                </button>
+                <p style={{ fontSize: '10px', color: '#B9B0E6', textAlign: 'center', lineHeight: 1.3 }}>
+                  ID участника, которому начисляются или списываются баллы
+                </p>
+              </div>
             </div>
-          </div>
-        ) : (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
-            <div className="qr-frame">
-              <div id={scannerContainerId} className="overflow-hidden"></div>
+          ) : (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+              <div className="qr-frame">
+                <div id={scannerContainerId} className="overflow-hidden"></div>
+              </div>
+              <button onClick={stopScanner} className="btn-neon btn-danger">
+                <span className="fit-btn-m">Остановить сканирование</span>
+              </button>
             </div>
-            <button onClick={stopScanner} className="btn-neon btn-danger">
-              <span className="fit-btn-m">Остановить сканирование</span>
-            </button>
-          </div>
-        )}
-      </div>
+          )}
+        </div>
+      </NeonReveal>
 
       {/* Информация о найденном участнике */}
       {scannedUser && (
-        <div className="hud-box">
-          <span className="hud-label fit-flow fit-title">УЧАСТНИК НАЙДЕН</span>
-          
-          <div className="center-col" style={{ padding: '10px 0', marginBottom: '10px' }}>
-            <p className="user-name text-white text-center fit-flow">{scannedUser.fullName}</p>
-            <p className="fit-flow fit-sub text-neon-lilac" style={{ marginTop: '4px' }}>
-              Группа: {scannedUser.group} • ID: {scannedUser.id}
-            </p>
-            <p className="fit-nowrap fit-stat-v text-neon-cyan" style={{ marginTop: '8px' }}>
-              Баланс: {scannedUser.points}
-            </p>
-          </div>
-
-          <div className="hud-divider"></div>
-
-          {/* Действие */}
-          <div style={{ marginTop: '10px', marginBottom: '14px' }}>
-            <p className="fit-nowrap fit-stat-l text-neon-lilac text-center" style={{ marginBottom: '10px' }}>
-              Действие
-            </p>
-            <div className="btn-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: 'var(--gap-btn)' }}>
-              <button
-                onClick={() => { setAction('credit'); setShowError(''); }}
-                className={`btn-neon ${action === 'credit' ? 'btn-cyan' : 'btn-ghost'}`}
-              >
-                <span className="fit-nowrap fit-btn2">Зачисление</span>
-              </button>
-              <button
-                onClick={() => { setAction('debit'); setShowError(''); }}
-                className={`btn-neon ${action === 'debit' ? 'btn-danger' : 'btn-ghost'}`}
-              >
-                <span className="fit-nowrap fit-btn2">Списание</span>
-              </button>
+        <NeonReveal>
+          <div className="hud-box">
+            <span className="hud-label fit-flow fit-title">УЧАСТНИК НАЙДЕН</span>
+            
+            <div className="center-col" style={{ padding: '10px 0', marginBottom: '10px' }}>
+              <p className="user-name text-white text-center fit-flow">{scannedUser.fullName}</p>
+              <p className="fit-flow fit-sub text-neon-lilac" style={{ marginTop: '4px' }}>
+                Группа: {scannedUser.group} • ID: {scannedUser.id}
+              </p>
+              <p className="fit-nowrap fit-stat-v text-neon-cyan" style={{ marginTop: '8px' }}>
+                Баланс: <SpeedingText value={scannedUser.points} />
+              </p>
             </div>
-          </div>
 
-          {/* Количество баллов */}
-          <div style={{ marginBottom: '14px' }}>
-            <p className="fit-flow fit-stat-l text-neon-lilac text-center" style={{ marginBottom: '10px' }}>
-              Количество баллов
-            </p>
-            <div className="btn-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0, 1fr))', gap: 'var(--gap-btn)' }}>
-              {[50, 100, 150].map(p => (
+            <div className="hud-divider"></div>
+
+            {/* Действие */}
+            <div style={{ marginTop: '10px', marginBottom: '14px' }}>
+              <p className="fit-nowrap fit-stat-l text-neon-lilac text-center" style={{ marginBottom: '10px' }}>
+                Действие
+              </p>
+              <div className="btn-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: 'var(--gap-btn)' }}>
                 <button
-                  key={p}
-                  onClick={() => { setPoints(p); setShowError(''); }}
-                  className={`btn-neon ${points === p ? 'btn-chrome' : 'btn-ghost'}`}
-                  style={{ fontWeight: 700 }}
+                  onClick={() => { setAction('credit'); setShowError(''); }}
+                  className={`btn-neon ${action === 'credit' ? 'btn-cyan' : 'btn-ghost'}`}
                 >
-                  <span className="fit-nowrap fit-stat-v">{p}</span>
+                  <span className="fit-nowrap fit-btn2">Зачисление</span>
                 </button>
-              ))}
+                <button
+                  onClick={() => { setAction('debit'); setShowError(''); }}
+                  className={`btn-neon ${action === 'debit' ? 'btn-danger' : 'btn-ghost'}`}
+                >
+                  <span className="fit-nowrap fit-btn2">Списание</span>
+                </button>
+              </div>
+            </div>
+
+            {/* Количество баллов */}
+            <div style={{ marginBottom: '14px' }}>
+              <p className="fit-flow fit-stat-l text-neon-lilac text-center" style={{ marginBottom: '10px' }}>
+                Количество баллов
+              </p>
+              <AnimatedList className="btn-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0, 1fr))', gap: 'var(--gap-btn)' }}>
+                {[50, 100, 150].map(p => (
+                  <AnimatedListItem key={p}>
+                    <button
+                      onClick={() => { setPoints(p); setShowError(''); }}
+                      className={`btn-neon ${points === p ? 'btn-chrome' : 'btn-ghost'}`}
+                      style={{ fontWeight: 700 }}
+                    >
+                      <span className="fit-nowrap fit-stat-v">{p}</span>
+                    </button>
+                  </AnimatedListItem>
+                ))}
+              </AnimatedList>
+            </div>
+
+            <div className="hud-divider"></div>
+
+            {/* Подтверждение */}
+            <div className="btn-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: 'var(--gap-btn)', marginTop: '10px' }}>
+              <button
+                onClick={handleSubmit}
+                disabled={points === null}
+                className={`btn-neon ${
+                  points !== null
+                    ? action === 'credit' ? 'btn-cyan' : 'btn-danger'
+                    : 'btn-ghost'
+                }`}
+                style={points === null ? { opacity: 0.4, cursor: 'not-allowed' } : {}}
+              >
+                <span className="fit-nowrap fit-btn2">{action === 'credit' ? `+${points || 0}` : `-${points || 0}`}</span>
+              </button>
+              <button onClick={handleReset} className="btn-neon btn-ghost">
+                <span className="fit-nowrap fit-btn2">Сброс</span>
+              </button>
             </div>
           </div>
-
-          <div className="hud-divider"></div>
-
-          {/* Подтверждение */}
-          <div className="btn-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: 'var(--gap-btn)', marginTop: '10px' }}>
-            <button
-              onClick={handleSubmit}
-              disabled={points === null}
-              className={`btn-neon ${
-                points !== null
-                  ? action === 'credit' ? 'btn-cyan' : 'btn-danger'
-                  : 'btn-ghost'
-              }`}
-              style={points === null ? { opacity: 0.4, cursor: 'not-allowed' } : {}}
-            >
-              <span className="fit-nowrap fit-btn2">{action === 'credit' ? `+${points || 0}` : `-${points || 0}`}</span>
-            </button>
-            <button onClick={handleReset} className="btn-neon btn-ghost">
-              <span className="fit-nowrap fit-btn2">Сброс</span>
-            </button>
-          </div>
-        </div>
+        </NeonReveal>
       )}
 
       {/* Модальное окно ошибки */}
@@ -323,6 +333,7 @@ export default function CuratorScreen({ user, onLogout }: Props) {
         className="btn-neon btn-danger"
         style={{ marginTop: 'var(--gap-block)' }}
       >
+        <LogOut size={18} strokeWidth={1.5} style={{ marginRight: '8px' }} />
         <span className="fit-btn-m2">Выйти из аккаунта</span>
       </button>
     </div>

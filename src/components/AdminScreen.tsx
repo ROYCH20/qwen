@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import { getGroupSummary, getUsersByRole, resetAllPoints, User } from '../database';
+import { LogOut, RotateCcw } from 'lucide-react';
+import { SignalType, SpeedingText, AnimatedList, AnimatedListItem, NeonReveal } from './animations';
 
 interface Props {
   user: User;
@@ -30,9 +32,11 @@ export default function AdminScreen({ user, onLogout }: Props) {
     <div style={{ paddingTop: '24px' }}>
       {/* Заголовок */}
       <div className="center-col screen-head" style={{ marginBottom: 'var(--gap-title)' }}>
-        <h1 className="screen-title text-chrome">АДМИН</h1>
+        <h1 className="screen-title text-chrome">
+          <SignalType>АДМИН</SignalType>
+        </h1>
         <p className="text-neon-cyan fit-flow fit-sub" style={{ marginTop: '4px' }}>
-          Панель управления
+          <SignalType>Панель управления</SignalType>
         </p>
       </div>
 
@@ -47,29 +51,38 @@ export default function AdminScreen({ user, onLogout }: Props) {
       </div>
 
       {/* Статистика */}
-      <div className="hud-box">
-        <div key={refreshKey} className="stat-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0, 1fr))', columnGap: '10px' }}>
-          <div className="stat-cell">
-            <p className="fit-nowrap fit-stat-v text-white">{totalParticipants}</p>
-            <p className="fit-nowrap fit-stat-l text-neon-lilac" style={{ marginTop: '4px' }}>Участников</p>
-          </div>
-          <div className="stat-cell" style={{ borderLeft: '1px solid rgba(223,183,239,.25)' }}>
-            <p className="fit-nowrap fit-stat-v text-white">{groupSummary.length}</p>
-            <p className="fit-nowrap fit-stat-l text-neon-lilac" style={{ marginTop: '4px' }}>Групп</p>
-          </div>
-          <div className="stat-cell" style={{ borderLeft: '1px solid rgba(223,183,239,.25)' }}>
-            <p className="fit-nowrap fit-stat-v text-neon-pink">{totalPoints}</p>
-            <p className="fit-nowrap fit-stat-l text-neon-pink" style={{ marginTop: '4px' }}>Баллов</p>
+      <NeonReveal>
+        <div className="hud-box">
+          <div key={refreshKey} className="stat-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0, 1fr))', columnGap: '10px' }}>
+            <div className="stat-cell">
+              <p className="fit-nowrap fit-stat-v text-white">
+                <SpeedingText value={totalParticipants} />
+              </p>
+              <p className="fit-nowrap fit-stat-l text-neon-lilac" style={{ marginTop: '4px' }}>Участников</p>
+            </div>
+            <div className="stat-cell" style={{ borderLeft: '1px solid rgba(223,183,239,.25)' }}>
+              <p className="fit-nowrap fit-stat-v text-white">
+                <SpeedingText value={groupSummary.length} />
+              </p>
+              <p className="fit-nowrap fit-stat-l text-neon-lilac" style={{ marginTop: '4px' }}>Групп</p>
+            </div>
+            <div className="stat-cell" style={{ borderLeft: '1px solid rgba(223,183,239,.25)' }}>
+              <p className="fit-nowrap fit-stat-v text-neon-pink">
+                <SpeedingText value={totalPoints} />
+              </p>
+              <p className="fit-nowrap fit-stat-l text-neon-pink" style={{ marginTop: '4px' }}>Баллов</p>
+            </div>
           </div>
         </div>
-      </div>
+      </NeonReveal>
 
       {/* Кнопка сброса */}
       <button
         onClick={() => setShowResetConfirm(true)}
-        className="btn-neon btn-danger fit-flow"
+        className="btn-neon btn-danger focus-glow fit-flow"
         style={{ marginTop: 'var(--gap-block)' }}
       >
+        <RotateCcw size={18} strokeWidth={1.5} style={{ marginRight: '8px' }} />
         Сбросить баллы всех участников
       </button>
 
@@ -101,7 +114,7 @@ export default function AdminScreen({ user, onLogout }: Props) {
               <p className="text-neon-lilac" style={{ fontSize: 'clamp(13px, 3.6vw, 15px)' }}>Нет данных</p>
             </div>
           ) : (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--gap-block)' }}>
+            <AnimatedList style={{ display: 'flex', flexDirection: 'column', gap: 'var(--gap-block)' }}>
               {groupSummary.map((item, index) => {
                 const maxPoints = groupSummary[0]?.totalPoints || 1;
                 const percentage = (item.totalPoints / maxPoints) * 100;
@@ -109,27 +122,31 @@ export default function AdminScreen({ user, onLogout }: Props) {
                 const color = colors[index] || '#B78FF2';
                 
                 return (
-                  <div key={item.group} className="hud-box" style={{ marginBottom: 0 }}>
-                    <div className="grp-row" style={{ marginBottom: '10px' }}>
-                      <div className="fit-box">
-                        <span className="fit-nowrap fit-val" style={{ color, display: 'block' }}>{item.group}</span>
+                  <AnimatedListItem key={item.group}>
+                    <div className="hud-box" style={{ marginBottom: 0 }}>
+                      <div className="grp-row" style={{ marginBottom: '10px' }}>
+                        <div className="fit-box">
+                          <span className="fit-nowrap fit-val" style={{ color, display: 'block' }}>{item.group}</span>
+                        </div>
+                        <div className="fit-box" style={{ textAlign: 'right' }}>
+                          <span className="fit-nowrap fit-val" style={{ color, display: 'block' }}>
+                            <SpeedingText value={item.totalPoints} />
+                          </span>
+                        </div>
+                        <span className="fit-flow fit-small text-neon-lilac">{item.participants} участников</span>
+                        <span className="fit-nowrap fit-small text-neon-lilac">баллов</span>
                       </div>
-                      <div className="fit-box" style={{ textAlign: 'right' }}>
-                        <span className="fit-nowrap fit-val" style={{ color, display: 'block' }}>{item.totalPoints}</span>
+                      <div className="progress-bar">
+                        <div
+                          className="progress-fill"
+                          style={{ width: `${percentage}%`, background: `linear-gradient(90deg, ${color}, ${color}cc)`, boxShadow: `0 0 8px ${color}66` }}
+                        ></div>
                       </div>
-                      <span className="fit-flow fit-small text-neon-lilac">{item.participants} участников</span>
-                      <span className="fit-nowrap fit-small text-neon-lilac">баллов</span>
                     </div>
-                    <div className="progress-bar">
-                      <div
-                        className="progress-fill"
-                        style={{ width: `${percentage}%`, background: `linear-gradient(90deg, ${color}, ${color}cc)`, boxShadow: `0 0 8px ${color}66` }}
-                      ></div>
-                    </div>
-                  </div>
+                  </AnimatedListItem>
                 );
               })}
-            </div>
+            </AnimatedList>
           )}
         </div>
       )}
@@ -141,24 +158,28 @@ export default function AdminScreen({ user, onLogout }: Props) {
             Все участники
           </p>
           
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--gap-btn)' }}>
+          <AnimatedList style={{ display: 'flex', flexDirection: 'column', gap: 'var(--gap-btn)' }}>
             {participants.map((p) => (
-              <div key={p.id} className="hud-box list-row" style={{ marginBottom: 0 }}>
-                <div className="name">
-                  <p className="text-white" style={{ fontWeight: 600 }}>{p.fullName}</p>
-                  <p className="fit-nowrap fit-stat-l text-neon-lilac" style={{ marginTop: '2px' }}>
-                    {p.group} • {p.id}
-                  </p>
+              <AnimatedListItem key={p.id}>
+                <div className="hud-box list-row" style={{ marginBottom: 0 }}>
+                  <div className="name">
+                    <p className="text-white" style={{ fontWeight: 600 }}>{p.fullName}</p>
+                    <p className="fit-nowrap fit-stat-l text-neon-lilac" style={{ marginTop: '2px' }}>
+                      {p.group} • {p.id}
+                    </p>
+                  </div>
+                  <div className="text-right">
+                    <p className="fit-nowrap fit-stat-v text-neon-pink">
+                      <SpeedingText value={p.points} />
+                    </p>
+                    <p className="fit-nowrap fit-stat-l text-neon-lilac" style={{ marginTop: '2px' }}>
+                      баллов
+                    </p>
+                  </div>
                 </div>
-                <div className="text-right">
-                  <p className="fit-nowrap fit-stat-v text-neon-pink">{p.points}</p>
-                  <p className="fit-nowrap fit-stat-l text-neon-lilac" style={{ marginTop: '2px' }}>
-                    баллов
-                  </p>
-                </div>
-              </div>
+              </AnimatedListItem>
             ))}
-          </div>
+          </AnimatedList>
         </div>
       )}
 
@@ -206,6 +227,7 @@ export default function AdminScreen({ user, onLogout }: Props) {
         className="btn-neon btn-danger"
         style={{ marginTop: 'var(--gap-block)' }}
       >
+        <LogOut size={18} strokeWidth={1.5} style={{ marginRight: '8px' }} />
         <span className="fit-btn-m2">Выйти из аккаунта</span>
       </button>
     </div>
