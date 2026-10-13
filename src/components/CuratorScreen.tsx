@@ -1,6 +1,8 @@
 import { useState, useEffect, useRef } from 'react';
 import { Html5Qrcode } from 'html5-qrcode';
 import { getUserById, updatePoints, User } from '../database';
+import { LogOut, ScanLine } from 'lucide-react';
+import { SignalType, AnimatedList, AnimatedListItem, NeonReveal, SpeedingText, GlimmerWrap, CipherText } from './animations';
 
 interface Props {
   user: User;
@@ -144,186 +146,226 @@ export default function CuratorScreen({ user, onLogout }: Props) {
   };
 
   return (
-    <div className="p-4 pt-10">
-      {/* Title */}
-      <div className="center-content mb-6">
-        <h1 className="text-2xl text-gradient-violet tracking-wider font-bold">Панель куратора</h1>
+    <div style={{ paddingTop: '24px' }}>
+      {/* Заголовок */}
+      <div className="center-col screen-head" style={{ marginBottom: 'var(--gap-title)' }}>
+        <h1 className="screen-title text-chrome">
+          <SignalType>КУРАТОР</SignalType>
+        </h1>
+        <p className="text-neon-cyan fit-flow fit-sub" style={{ marginTop: '4px' }}>
+          <SignalType>Панель управления</SignalType>
+        </p>
       </div>
 
-      {/* Curator Header */}
-      <div className="card-violet p-4 mb-4 text-center">
-        <div>
-          <h2 className="text-sm text-violet-dark font-semibold tracking-wide">{user.fullName}</h2>
-          <p className="text-xs text-violet-muted tracking-wider font-medium">ID: {user.id}</p>
+      {/* Holo-card */}
+      <div className="holo-card">
+        <div className="holo-card-inner center-col" style={{ paddingInline: '16px' }}>
+          {/* 3D-хром-эмблема */}
+          <div className="holo-emblem-wrap">
+            <svg className="holo-circle-text" viewBox="0 0 120 120">
+              <defs>
+                <path id="circle-path" d="M 60, 60 m -45, 0 a 45,45 0 1,1 90,0 a 45,45 0 1,1 -90,0" />
+              </defs>
+              <text>
+                <textPath href="#circle-path">СИСТЕМА БАЛЛОВ • POSVYAT • 2026 •</textPath>
+              </text>
+            </svg>
+            <div className="holo-emblem">✦</div>
+          </div>
+
+          {/* Имя — тёмный текст на голограмме */}
+          <h2 className="text-center fit-flow" style={{ 
+            fontSize: 'clamp(14px, 4.5vw, 18px)', 
+            fontWeight: 700, 
+            color: '#221D5E',
+            lineHeight: 1.25,
+            maxWidth: '100%'
+          }}>
+            {user.fullName}
+          </h2>
+
+          {/* Строка-подпись */}
+          <p style={{
+            fontSize: 'clamp(10px, 3vw, 12px)',
+            color: '#221D5E',
+            letterSpacing: '0.06em',
+            textAlign: 'center',
+            marginTop: '8px',
+            lineHeight: 1.3
+          }}>
+            ID: {user.id} · КУРАТОР
+          </p>
         </div>
       </div>
 
-      {/* Scanner Section */}
-      <div className="card-violet-accent p-4 mb-4">
-        <h3 className="text-sm text-violet-primary font-semibold tracking-wider mb-3 text-center">Сканирование QR-кода</h3>
-        
-        {!isScanning ? (
-          <div className="space-y-3">
-            <button
-              onClick={startScanner}
-              className="btn-violet btn-violet-primary w-full py-3 text-sm tracking-wider"
-            >
-              Открыть камеру
-            </button>
+      {/* Сканирование */}
+      <NeonReveal>
+        <div className="hud-box">
+          <span className="hud-label fit-flow fit-title">СКАНИРОВАНИЕ QR-КОДА</span>
+          
+          {!isScanning ? (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+              <button onClick={startScanner} className="btn-neon btn-cyan focus-glow">
+                <ScanLine size={18} strokeWidth={1.5} style={{ marginRight: '8px' }} />
+                <span className="fit-btn-m">Открыть камеру</span>
+              </button>
+              
+              <p className="text-neon-lilac fit-flow fit-sub text-center" style={{ margin: '0' }}>
+                или введите ID
+              </p>
+
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                <input
+                  type="text"
+                  value={manualScan}
+                  onChange={(e) => { setManualScan(e.target.value); setShowError(''); }}
+                  placeholder="Например: P001"
+                  className="input-neon"
+                />
+                <button onClick={handleManualScan} className="btn-neon btn-lilac">
+                  <span className="fit-btn-m">Найти участника</span>
+                </button>
+                <p style={{ fontSize: '10px', color: '#B9B0E6', textAlign: 'center', lineHeight: 1.3 }}>
+                  ID участника, которому начисляются или списываются баллы
+                </p>
+              </div>
+            </div>
+          ) : (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+              <div className="qr-frame">
+                <div id={scannerContainerId} className="overflow-hidden"></div>
+              </div>
+              <button onClick={stopScanner} className="btn-neon btn-danger">
+                <span className="fit-btn-m">Остановить сканирование</span>
+              </button>
+            </div>
+          )}
+        </div>
+      </NeonReveal>
+
+      {/* Информация о найденном участнике */}
+      {scannedUser && (
+        <NeonReveal>
+          <div className="hud-box">
+            <span className="hud-label fit-flow fit-title">УЧАСТНИК НАЙДЕН</span>
             
-            <div className="flex items-center gap-2 py-1">
-              <div className="flex-1 soft-divider"></div>
-              <span className="text-xs text-violet-muted tracking-wider font-medium">или введите ID</span>
-              <div className="flex-1 soft-divider"></div>
+            <div className="center-col" style={{ padding: '10px 0', marginBottom: '10px' }}>
+              <p className="user-name text-white text-center fit-flow">{scannedUser.fullName}</p>
+              <p className="fit-flow fit-sub text-neon-lilac" style={{ marginTop: '4px' }}>
+                Группа: {scannedUser.group} • ID: {scannedUser.id}
+              </p>
+              <p className="fit-nowrap fit-stat-v text-neon-cyan" style={{ marginTop: '8px' }}>
+                Баланс: <SpeedingText value={scannedUser.points} />
+              </p>
             </div>
 
-            <div className="flex gap-2">
-              <input
-                type="text"
-                value={manualScan}
-                onChange={(e) => { setManualScan(e.target.value); setShowError(''); }}
-                placeholder="ID участника (P001)"
-                className="input-violet flex-1 px-3 py-3 text-sm"
-              />
+            <div className="hud-divider"></div>
+
+            {/* Действие */}
+            <div style={{ marginTop: '10px', marginBottom: '14px' }}>
+              <p className="fit-nowrap fit-stat-l text-neon-lilac text-center" style={{ marginBottom: '10px' }}>
+                Действие
+              </p>
+              <div className="btn-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: 'var(--gap-btn)' }}>
+                <button
+                  onClick={() => { setAction('credit'); setShowError(''); }}
+                  className={`btn-neon ${action === 'credit' ? 'btn-cyan' : 'btn-ghost'}`}
+                >
+                  <span className="fit-nowrap fit-btn2">Зачисление</span>
+                </button>
+                <button
+                  onClick={() => { setAction('debit'); setShowError(''); }}
+                  className={`btn-neon ${action === 'debit' ? 'btn-danger' : 'btn-ghost'}`}
+                >
+                  <span className="fit-nowrap fit-btn2">Списание</span>
+                </button>
+              </div>
+            </div>
+
+            {/* Количество баллов */}
+            <div style={{ marginBottom: '14px' }}>
+              <p className="fit-flow fit-stat-l text-neon-lilac text-center" style={{ marginBottom: '10px' }}>
+                Количество баллов
+              </p>
+              <AnimatedList className="btn-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0, 1fr))', gap: 'var(--gap-btn)' }}>
+                {[50, 100, 150].map(p => (
+                  <AnimatedListItem key={p}>
+                    <button
+                      onClick={() => { setPoints(p); setShowError(''); }}
+                      className={`btn-neon ${points === p ? 'btn-chrome' : 'btn-ghost'}`}
+                      style={{ fontWeight: 700 }}
+                    >
+                      <span className="fit-nowrap fit-stat-v">{p}</span>
+                    </button>
+                  </AnimatedListItem>
+                ))}
+              </AnimatedList>
+            </div>
+
+            <div className="hud-divider"></div>
+
+            {/* Подтверждение */}
+            <div className="btn-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: 'var(--gap-btn)', marginTop: '10px' }}>
               <button
-                onClick={handleManualScan}
-                className="btn-violet btn-violet-success px-4 py-3 text-sm tracking-wider"
+                onClick={handleSubmit}
+                disabled={points === null}
+                className={`btn-neon ${
+                  points !== null
+                    ? action === 'credit' ? 'btn-cyan' : 'btn-danger'
+                    : 'btn-ghost'
+                }`}
+                style={points === null ? { opacity: 0.4, cursor: 'not-allowed' } : {}}
               >
-                Найти
+                <span className="fit-nowrap fit-btn2">{action === 'credit' ? `+${points || 0}` : `-${points || 0}`}</span>
+              </button>
+              <button onClick={handleReset} className="btn-neon btn-ghost">
+                <span className="fit-nowrap fit-btn2">Сброс</span>
               </button>
             </div>
           </div>
-        ) : (
-          <div className="space-y-3">
-            <div id={scannerContainerId} className="overflow-hidden"></div>
-            <button
-              onClick={stopScanner}
-              className="btn-violet btn-violet-danger w-full py-3 text-sm tracking-wider"
-            >
-              Остановить сканирование
-            </button>
-          </div>
-        )}
-      </div>
+        </NeonReveal>
+      )}
 
-      {/* Error Modal */}
+      {/* Модальное окно ошибки */}
       {showError && (
         <div className="modal-overlay">
-          <div className="card-violet p-6 w-full max-w-sm center-content">
-            <p className="text-base text-violet-dark tracking-wide mb-6 font-medium text-center">{showError}</p>
+          <div className="modal-card center-col">
+            <p className="text-white font-medium text-center fit-flow" style={{ marginBottom: '24px', fontSize: 'clamp(13px, 3.6vw, 15px)' }}>{showError}</p>
             <button
               onClick={() => setShowError('')}
-              className="btn-violet btn-violet-warning px-8 py-3 text-base tracking-wider"
+              className="btn-neon btn-pink"
+              style={{ width: 'auto', paddingInline: '32px' }}
             >
-              Понятно
+              <span className="fit-nowrap fit-btn3">ПОНЯТНО</span>
             </button>
           </div>
         </div>
       )}
 
-      {/* Success Modal */}
+      {/* Модальное окно успеха */}
       {showSuccess && (
         <div className="modal-overlay">
-          <div className="card-violet p-6 w-full max-w-sm center-content">
-            <p className="text-base text-violet-dark tracking-wide mb-6 font-medium text-center">{showSuccess}</p>
+          <div className="modal-card center-col">
+            <p className="text-white font-medium text-center fit-flow" style={{ marginBottom: '24px', fontSize: 'clamp(13px, 3.6vw, 15px)' }}>{showSuccess}</p>
             <button
               onClick={() => setShowSuccess('')}
-              className="btn-violet btn-violet-success px-8 py-3 text-base tracking-wider"
+              className="btn-neon btn-cyan"
+              style={{ width: 'auto', paddingInline: '32px' }}
             >
-              Отлично
+              <span className="fit-nowrap fit-btn3">ОТЛИЧНО</span>
             </button>
           </div>
         </div>
       )}
 
-      {/* Scanned User Info */}
-      {scannedUser && (
-        <div className="card-violet p-4 mb-4">
-          <h3 className="text-sm text-violet-primary font-semibold tracking-wider mb-3 text-center">Участник найден</h3>
-          <div className="rounded-2xl p-3 mb-4 text-center" style={{ background: '#ede9fe', border: '1.5px solid #c4b5fd' }}>
-            <p className="text-sm text-violet-dark font-semibold tracking-wide mb-1 truncate">{scannedUser.fullName}</p>
-            <p className="text-xs text-violet-muted tracking-wider font-medium">Группа: {scannedUser.group} • ID: {scannedUser.id}</p>
-            <p className="text-sm text-violet-primary tracking-wider mt-2 font-bold">Баланс: {scannedUser.points}</p>
-          </div>
-
-          {/* Action Selection */}
-          <div className="mb-4">
-            <p className="text-xs text-violet-primary font-semibold tracking-wider mb-2 text-center">Действие:</p>
-            <div className="grid grid-cols-2 gap-2">
-              <button
-                onClick={() => { setAction('credit'); setShowError(''); }}
-                className={`py-3 text-sm tracking-wider rounded-2xl transition font-semibold ${
-                  action === 'credit'
-                    ? 'btn-violet btn-violet-success'
-                    : 'btn-violet btn-violet-light'
-                }`}
-              >
-                Зачисление
-              </button>
-              <button
-                onClick={() => { setAction('debit'); setShowError(''); }}
-                className={`py-3 text-sm tracking-wider rounded-2xl transition font-semibold ${
-                  action === 'debit'
-                    ? 'btn-violet btn-violet-danger'
-                    : 'btn-violet btn-violet-light'
-                }`}
-              >
-                Списание
-              </button>
-            </div>
-          </div>
-
-          {/* Points Selection */}
-          <div className="mb-4">
-            <p className="text-xs text-violet-primary font-semibold tracking-wider mb-2 text-center">Количество баллов:</p>
-            <div className="grid grid-cols-3 gap-2">
-              {[50, 100, 150].map(p => (
-                <button
-                  key={p}
-                  onClick={() => { setPoints(p); setShowError(''); }}
-                  className={`py-4 text-lg tracking-wider rounded-2xl transition font-bold ${
-                    points === p
-                      ? 'btn-violet btn-violet-warning'
-                      : 'btn-violet btn-violet-light'
-                  }`}
-                >
-                  {p}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Submit */}
-          <div className="grid grid-cols-2 gap-2">
-            <button
-              onClick={handleSubmit}
-              disabled={points === null}
-              className={`py-3 text-sm tracking-wider rounded-2xl transition font-bold ${
-                points !== null
-                  ? action === 'credit'
-                    ? 'btn-violet btn-violet-success'
-                    : 'btn-violet btn-violet-danger'
-                  : 'btn-violet btn-violet-light opacity-50 cursor-not-allowed'
-              }`}
-            >
-              {action === 'credit' ? `+${points || 0}` : `-${points || 0}`}
-            </button>
-            <button
-              onClick={handleReset}
-              className="btn-violet btn-violet-secondary py-3 text-sm tracking-wider font-semibold"
-            >
-              Сброс
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* Logout button */}
+      {/* Кнопка выхода */}
       <button
         onClick={onLogout}
-        className="btn-violet btn-violet-dark w-full py-4 text-base tracking-wider shadow-lg mt-6 mb-4 font-semibold"
+        className="btn-neon btn-danger"
+        style={{ marginTop: 'var(--gap-block)' }}
       >
-        Выйти из аккаунта
+        <LogOut size={18} strokeWidth={1.5} style={{ marginRight: '8px' }} />
+        <span className="fit-btn-m2">Выйти из аккаунта</span>
       </button>
     </div>
   );

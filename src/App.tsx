@@ -1,15 +1,30 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
 import RegistrationScreen from './components/RegistrationScreen';
 import ParticipantScreen from './components/ParticipantScreen';
 import CuratorScreen from './components/CuratorScreen';
 import AdminScreen from './components/AdminScreen';
 import { getUserById, User } from './database';
+import { Preloader, PerspectiveGrid, BlinkingSquares, FilmGrain, Vignette } from './components/animations';
 
 type Screen = 'registration' | 'participant' | 'curator' | 'admin';
 
 function App() {
   const [currentScreen, setCurrentScreen] = useState<Screen>('registration');
   const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const [showPreloader, setShowPreloader] = useState(false);
+
+  useEffect(() => {
+    const hasSeenPreloader = sessionStorage.getItem('preloader_shown');
+    if (!hasSeenPreloader) {
+      setShowPreloader(true);
+    }
+  }, []);
+
+  const handlePreloaderComplete = () => {
+    setShowPreloader(false);
+    sessionStorage.setItem('preloader_shown', 'true');
+  };
 
   const handleLogin = (userId: string) => {
     const user = getUserById(userId);
@@ -27,29 +42,51 @@ function App() {
   };
 
   return (
-    <div className="min-h-screen bg-violet-soft flex justify-center">
-      <div className="w-full max-w-[430px] min-h-screen relative overflow-hidden">
-        {/* Background decorations - только градиентные блобы */}
-        <div className="fixed top-0 left-1/2 -translate-x-1/2 w-full max-w-[430px] h-full pointer-events-none overflow-hidden z-0">
-          <div className="absolute top-20 -right-20 w-60 h-60 rounded-full opacity-10" style={{ background: 'radial-gradient(circle, #8b5cf6, transparent)' }}></div>
-          <div className="absolute top-96 -left-20 w-48 h-48 rounded-full opacity-10" style={{ background: 'radial-gradient(circle, #a78bfa, transparent)' }}></div>
-          <div className="absolute bottom-40 -right-10 w-52 h-52 rounded-full opacity-10" style={{ background: 'radial-gradient(circle, #c4b5fd, transparent)' }}></div>
-        </div>
+    <div className="min-h-screen bg-night-sky crt-scanlines flex justify-center relative">
+      {/* Боке-слой */}
+      <div className="boke-spot boke-spot-1" />
+      <div className="boke-spot boke-spot-2" />
+      <div className="boke-spot boke-spot-3" />
+      <div className="boke-spot boke-spot-4" />
+      <div className="boke-spot boke-spot-5" />
 
-        {/* Content */}
-        <div className="relative z-10 pb-6">
-          {currentScreen === 'registration' && (
-            <RegistrationScreen onLogin={handleLogin} />
-          )}
-          {currentScreen === 'participant' && currentUser && (
-            <ParticipantScreen user={currentUser} onLogout={handleLogout} />
-          )}
-          {currentScreen === 'curator' && currentUser && (
-            <CuratorScreen user={currentUser} onLogout={handleLogout} />
-          )}
-          {currentScreen === 'admin' && currentUser && (
-            <AdminScreen user={currentUser} onLogout={handleLogout} />
-          )}
+      {/* Глобальные слои */}
+      <PerspectiveGrid />
+      <BlinkingSquares />
+      <div className="bg-lens" />
+      <div className="vignette-strong" />
+      <FilmGrain />
+
+      {/* Preloader */}
+      {showPreloader && <Preloader onComplete={handlePreloaderComplete} />}
+
+      <div className="w-full max-w-[430px] min-h-screen relative z-10">
+        {/* CRT-рамка */}
+        <div className="crt-frame min-h-screen">
+          {/* Контент с анимацией перехода */}
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={currentScreen + (currentUser?.id || '')}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.3, ease: [0.22, 0.61, 0.36, 1] }}
+              className="p-4 pb-24"
+            >
+              {currentScreen === 'registration' && (
+                <RegistrationScreen onLogin={handleLogin} />
+              )}
+              {currentScreen === 'participant' && currentUser && (
+                <ParticipantScreen user={currentUser} onLogout={handleLogout} />
+              )}
+              {currentScreen === 'curator' && currentUser && (
+                <CuratorScreen user={currentUser} onLogout={handleLogout} />
+              )}
+              {currentScreen === 'admin' && currentUser && (
+                <AdminScreen user={currentUser} onLogout={handleLogout} />
+              )}
+            </motion.div>
+          </AnimatePresence>
         </div>
       </div>
     </div>

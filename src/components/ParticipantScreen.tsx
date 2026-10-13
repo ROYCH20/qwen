@@ -1,5 +1,7 @@
 import { QRCodeSVG } from 'qrcode.react';
 import { User } from '../database';
+import { LogOut } from 'lucide-react';
+import { CipherText, SpeedingText, NeonReveal, SignalType, GlimmerWrap } from './animations';
 
 interface Props {
   user: User;
@@ -14,80 +16,106 @@ export default function ParticipantScreen({ user, onLogout }: Props) {
   });
 
   return (
-    <div className="p-4 pt-10">
-      {/* Title */}
-      <div className="center-content mb-6">
-        <h1 className="text-2xl text-gradient-violet tracking-wider font-bold">Профиль участника</h1>
-      </div>
-
-      {/* Profile Card */}
-      <div className="card-violet p-4 mb-4">
-        <div className="mb-4 text-center">
-          <h2 className="text-base text-violet-dark font-semibold tracking-wide">{user.fullName}</h2>
-          <p className="text-sm text-violet-muted tracking-wider font-medium">ID: {user.id}</p>
-        </div>
-        
-        <div className="grid grid-cols-2 gap-2">
-          <div className="rounded-2xl p-3 text-center" style={{ background: '#ede9fe', border: '1.5px solid #c4b5fd' }}>
-            <p className="text-xs text-violet-muted tracking-wider mb-1 font-medium">Группа</p>
-            <p className="text-lg text-violet-primary font-bold tracking-wider">{user.group}</p>
-          </div>
-          <div className="rounded-2xl p-3 text-center" style={{ background: '#fef3c7', border: '1.5px solid #fcd34d' }}>
-            <p className="text-xs tracking-wider mb-1 font-medium" style={{ color: '#92400e' }}>Баллы</p>
-            <p className="text-lg font-bold tracking-wider" style={{ color: '#d97706' }}>{user.points}</p>
-          </div>
-        </div>
-      </div>
-
-      {/* QR Code Section */}
-      <div className="card-violet-accent p-5 mb-4 center-content">
-        <h3 className="text-base text-violet-primary font-semibold tracking-wider mb-4">
-          QR-код для куратора
-        </h3>
-        <div className="inline-block rounded-3xl p-4 relative" style={{ background: '#fff', border: '2.5px solid #8b5cf6', boxShadow: '0 4px 20px rgba(139, 92, 246, 0.2)' }}>
-          <QRCodeSVG
-            value={qrValue}
-            size={180}
-            level="H"
-            includeMargin={false}
-            fgColor="#2d1b4e"
-            bgColor="#ffffff"
-          />
-        </div>
-        <p className="text-sm text-violet-muted mt-4 tracking-wide font-medium">
-          Покажите этот код куратору
+    <div style={{ paddingTop: '24px' }}>
+      {/* Заголовок */}
+      <div className="center-col screen-head" style={{ marginBottom: 'var(--gap-title)' }}>
+        <h1 className="screen-title text-chrome">
+          <SignalType>ПРОФИЛЬ</SignalType>
+        </h1>
+        <p className="text-neon-lilac fit-flow fit-sub" style={{ marginTop: '4px' }}>
+          <SignalType>Участник</SignalType>
         </p>
       </div>
 
-      {/* Info */}
-      <div className="card-violet p-4 mb-4">
-        <h4 className="text-sm text-violet-primary font-semibold tracking-wider mb-3 text-center">Информация</h4>
-        <div className="space-y-3">
-          <div className="flex justify-between items-center pb-2" style={{ borderBottom: '1.5px solid #ede9fe' }}>
-            <span className="text-xs text-violet-muted tracking-wider font-medium">ФИО:</span>
-            <span className="text-xs text-violet-dark tracking-wide font-semibold truncate ml-2">{user.fullName}</span>
+      {/* Holo-card */}
+      <div className="holo-card">
+        <div className="holo-card-inner center-col" style={{ paddingInline: '16px' }}>
+          {/* 3D-хром-эмблема */}
+          <div className="holo-emblem-wrap">
+            <svg className="holo-circle-text" viewBox="0 0 120 120">
+              <defs>
+                <path id="circle-path" d="M 60, 60 m -45, 0 a 45,45 0 1,1 90,0 a 45,45 0 1,1 -90,0" />
+              </defs>
+              <text>
+                <textPath href="#circle-path">СИСТЕМА БАЛЛОВ • POSVYAT • 2026 •</textPath>
+              </text>
+            </svg>
+            <div className="holo-emblem">✦</div>
           </div>
-          <div className="flex justify-between items-center pb-2" style={{ borderBottom: '1.5px solid #ede9fe' }}>
-            <span className="text-xs text-violet-muted tracking-wider font-medium">Группа:</span>
-            <span className="text-xs text-violet-dark tracking-wide font-semibold">{user.group}</span>
-          </div>
-          <div className="flex justify-between items-center pb-2" style={{ borderBottom: '1.5px solid #ede9fe' }}>
-            <span className="text-xs text-violet-muted tracking-wider font-medium">Баллы:</span>
-            <span className="text-sm text-violet-primary tracking-wider font-bold">{user.points}</span>
-          </div>
-          <div className="flex justify-between items-center">
-            <span className="text-xs text-violet-muted tracking-wider font-medium">Роль:</span>
-            <span className="badge-violet text-xs">Участник</span>
-          </div>
+
+          {/* Имя — тёмный текст на голограмме */}
+          <h2 className="text-center fit-flow" style={{ 
+            fontSize: 'clamp(14px, 4.5vw, 18px)', 
+            fontWeight: 700, 
+            color: '#221D5E',
+            lineHeight: 1.25,
+            maxWidth: '100%'
+          }}>
+            {user.fullName}
+          </h2>
+
+          {/* Строка-подпись */}
+          <p style={{
+            fontSize: 'clamp(10px, 3vw, 12px)',
+            color: '#221D5E',
+            letterSpacing: '0.06em',
+            textAlign: 'center',
+            marginTop: '8px',
+            lineHeight: 1.3
+          }}>
+            ID: {user.id} · {user.group} · {user.points} БАЛЛОВ
+          </p>
         </div>
       </div>
 
-      {/* Logout button */}
+      {/* Группа / Баллы */}
+      <NeonReveal>
+        <div className="hud-box">
+          <div className="stat-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', columnGap: '10px' }}>
+            <div className="stat-cell">
+              <p className="fit-nowrap fit-stat-l text-neon-lilac" style={{ marginBottom: '6px' }}>Группа</p>
+              <p className="fit-nowrap fit-stat-v text-white">{user.group}</p>
+            </div>
+            <div className="stat-cell" style={{ borderLeft: '1px solid rgba(223,183,239,.25)' }}>
+              <p className="fit-nowrap fit-stat-l text-neon-pink" style={{ marginBottom: '6px' }}>Баллы</p>
+              <p className="fit-nowrap fit-stat-v text-white">
+                <SpeedingText value={user.points} />
+              </p>
+            </div>
+          </div>
+        </div>
+      </NeonReveal>
+
+      {/* QR-код */}
+      <NeonReveal>
+        <div className="hud-box">
+          <span className="hud-label fit-flow fit-title">QR-КОД УЧАСТНИКА</span>
+          <div className="center-col">
+            <div className="qr-frame focus-glow">
+              <QRCodeSVG
+                value={qrValue}
+                level="H"
+                includeMargin={false}
+                fgColor="#221D5E"
+                bgColor="#F5F2FF"
+                style={{ width: '100%', height: 'auto', display: 'block', minWidth: '180px' }}
+              />
+            </div>
+            <p className="text-neon-cyan fit-flow fit-cap" style={{ marginTop: '12px' }}>
+              Покажите этот код куратору
+            </p>
+          </div>
+        </div>
+      </NeonReveal>
+
+      {/* Кнопка выхода */}
       <button
         onClick={onLogout}
-        className="btn-violet btn-violet-dark w-full py-4 text-base tracking-wider shadow-lg mt-6"
+        className="btn-neon btn-danger"
+        style={{ marginTop: 'var(--gap-block)' }}
       >
-        Выйти из аккаунта
+        <LogOut size={18} strokeWidth={1.5} style={{ marginRight: '8px' }} />
+        <span className="fit-btn-m2">Выйти из аккаунта</span>
       </button>
     </div>
   );

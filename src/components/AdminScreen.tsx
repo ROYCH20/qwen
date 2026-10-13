@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import { getGroupSummary, getUsersByRole, resetAllPoints, User } from '../database';
+import { LogOut, RotateCcw } from 'lucide-react';
+import { SignalType, SpeedingText, AnimatedList, AnimatedListItem, NeonReveal, GlimmerWrap, CipherText } from './animations';
 
 interface Props {
   user: User;
@@ -27,175 +29,203 @@ export default function AdminScreen({ user, onLogout }: Props) {
   };
 
   return (
-    <div className="p-4 pt-10">
-      {/* Title */}
-      <div className="center-content mb-6">
-        <h1 className="text-2xl text-gradient-violet tracking-wider font-bold">Панель администратора</h1>
+    <div style={{ paddingTop: '24px' }}>
+      {/* Заголовок */}
+      <div className="center-col screen-head" style={{ marginBottom: 'var(--gap-title)' }}>
+        <h1 className="screen-title text-chrome">
+          <SignalType>АДМИН</SignalType>
+        </h1>
+        <p className="text-neon-cyan fit-flow fit-sub" style={{ marginTop: '4px' }}>
+          <SignalType>Панель управления</SignalType>
+        </p>
       </div>
 
-      {/* Admin Header */}
-      <div className="card-violet p-4 mb-4">
-        <div className="mb-4 text-center">
-          <h2 className="text-sm text-violet-dark font-semibold tracking-wide">{user.fullName}</h2>
-          <p className="text-xs text-violet-muted tracking-wider font-medium">ID: {user.id}</p>
-        </div>
-
-        <div className="grid grid-cols-3 gap-2">
-          <div className="rounded-2xl p-2 text-center" style={{ background: '#ede9fe', border: '1.5px solid #c4b5fd' }}>
-            <p className="text-xl text-violet-primary font-bold tracking-wider">{totalParticipants}</p>
-            <p className="text-xs text-violet-muted tracking-wider font-medium">Участников</p>
-          </div>
-          <div className="rounded-2xl p-2 text-center" style={{ background: '#ede9fe', border: '1.5px solid #c4b5fd' }}>
-            <p className="text-xl text-violet-primary font-bold tracking-wider">{groupSummary.length}</p>
-            <p className="text-xs text-violet-muted tracking-wider font-medium">Групп</p>
-          </div>
-          <div className="rounded-2xl p-2 text-center" style={{ background: '#fef3c7', border: '1.5px solid #fcd34d' }}>
-            <p className="text-xl font-bold tracking-wider" style={{ color: '#d97706' }}>{totalPoints}</p>
-            <p className="text-xs tracking-wider font-medium" style={{ color: '#92400e' }}>Баллов</p>
-          </div>
-        </div>
+      {/* Шапка */}
+      <div className="center-col" style={{ marginBottom: 'var(--gap-block)' }}>
+        <h2 className="text-chrome-soft text-center user-name fit-flow" style={{ paddingInline: '16px' }}>
+          {user.fullName}
+        </h2>
       </div>
 
-      {/* Reset Button */}
+      {/* Статистика */}
+      <NeonReveal>
+        <div className="hud-box">
+          <div key={refreshKey} className="stat-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0, 1fr))', columnGap: '10px' }}>
+            <div className="stat-cell">
+              <p className="fit-nowrap fit-stat-v text-white">
+                <SpeedingText value={totalParticipants} />
+              </p>
+              <p className="fit-nowrap fit-stat-l text-neon-lilac" style={{ marginTop: '4px' }}>Участников</p>
+            </div>
+            <div className="stat-cell" style={{ borderLeft: '1px solid rgba(223,183,239,.25)' }}>
+              <p className="fit-nowrap fit-stat-v text-white">
+                <SpeedingText value={groupSummary.length} />
+              </p>
+              <p className="fit-nowrap fit-stat-l text-neon-lilac" style={{ marginTop: '4px' }}>Групп</p>
+            </div>
+            <div className="stat-cell" style={{ borderLeft: '1px solid rgba(223,183,239,.25)' }}>
+              <p className="fit-nowrap fit-stat-v text-neon-pink">
+                <SpeedingText value={totalPoints} />
+              </p>
+              <p className="fit-nowrap fit-stat-l text-neon-pink" style={{ marginTop: '4px' }}>Баллов</p>
+            </div>
+          </div>
+        </div>
+      </NeonReveal>
+
+      {/* Кнопка сброса */}
       <button
         onClick={() => setShowResetConfirm(true)}
-        className="btn-violet btn-violet-danger w-full py-4 text-sm tracking-wider mb-5 font-semibold px-2"
+        className="btn-neon btn-danger focus-glow fit-flow"
+        style={{ marginTop: 'var(--gap-block)' }}
       >
+        <RotateCcw size={18} strokeWidth={1.5} style={{ marginRight: '8px' }} />
         Сбросить баллы всех участников
       </button>
 
-      {/* Reset Success Modal */}
+      {/* Тумблер */}
+      <div className="btn-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: 'var(--gap-btn)', marginTop: 'var(--gap-btn)' }}>
+        <button
+          onClick={() => setActiveTab('groups')}
+          className={`btn-neon ${activeTab === 'groups' ? 'btn-cyan' : 'btn-ghost'}`}
+        >
+          <span className="fit-nowrap fit-btn2">По группам</span>
+        </button>
+        <button
+          onClick={() => setActiveTab('participants')}
+          className={`btn-neon ${activeTab === 'participants' ? 'btn-cyan' : 'btn-ghost'}`}
+        >
+          <span className="fit-nowrap fit-btn2">Участники</span>
+        </button>
+      </div>
+
+      {/* Рейтинг групп */}
+      {activeTab === 'groups' && (
+        <div style={{ marginTop: 'var(--gap-block)' }}>
+          <p className="fit-flow fit-stat-l text-neon-pink text-center" style={{ marginBottom: '14px' }}>
+            Рейтинг академических групп
+          </p>
+          
+          {groupSummary.length === 0 ? (
+            <div className="hud-box center-col">
+              <p className="text-neon-lilac" style={{ fontSize: 'clamp(13px, 3.6vw, 15px)' }}>Нет данных</p>
+            </div>
+          ) : (
+            <AnimatedList style={{ display: 'flex', flexDirection: 'column', gap: 'var(--gap-block)' }}>
+              {groupSummary.map((item, index) => {
+                const maxPoints = groupSummary[0]?.totalPoints || 1;
+                const percentage = (item.totalPoints / maxPoints) * 100;
+                const colors = ['#F79BE3', '#DFB7EF', '#6FE3EC', '#8E86E4'];
+                const color = colors[index] || '#B78FF2';
+                
+                return (
+                  <AnimatedListItem key={item.group}>
+                    <div className="hud-box" style={{ marginBottom: 0 }}>
+                      <div className="grp-row" style={{ marginBottom: '10px' }}>
+                        <div className="fit-box">
+                          <span className="fit-nowrap fit-val" style={{ color, display: 'block' }}>{item.group}</span>
+                        </div>
+                        <div className="fit-box" style={{ textAlign: 'right' }}>
+                          <span className="fit-nowrap fit-val" style={{ color, display: 'block' }}>
+                            <SpeedingText value={item.totalPoints} />
+                          </span>
+                        </div>
+                        <span className="fit-flow fit-small text-neon-lilac">{item.participants} участников</span>
+                        <span className="fit-nowrap fit-small text-neon-lilac">баллов</span>
+                      </div>
+                      <div className="progress-bar">
+                        <div
+                          className="progress-fill"
+                          style={{ width: `${percentage}%`, background: `linear-gradient(90deg, ${color}, ${color}cc)`, boxShadow: `0 0 8px ${color}66` }}
+                        ></div>
+                      </div>
+                    </div>
+                  </AnimatedListItem>
+                );
+              })}
+            </AnimatedList>
+          )}
+        </div>
+      )}
+
+      {/* Список участников */}
+      {activeTab === 'participants' && (
+        <div style={{ marginTop: 'var(--gap-block)' }}>
+          <p className="fit-flow fit-stat-l text-neon-pink text-center" style={{ marginBottom: '14px' }}>
+            Все участники
+          </p>
+          
+          <AnimatedList style={{ display: 'flex', flexDirection: 'column', gap: 'var(--gap-btn)' }}>
+            {participants.map((p) => (
+              <AnimatedListItem key={p.id}>
+                <div className="hud-box list-row" style={{ marginBottom: 0 }}>
+                  <div className="name">
+                    <p className="text-white" style={{ fontWeight: 600 }}>{p.fullName}</p>
+                    <p className="fit-nowrap fit-stat-l text-neon-lilac" style={{ marginTop: '2px' }}>
+                      {p.group} • {p.id}
+                    </p>
+                  </div>
+                  <div className="text-right">
+                    <p className="fit-nowrap fit-stat-v text-neon-pink">
+                      <SpeedingText value={p.points} />
+                    </p>
+                    <p className="fit-nowrap fit-stat-l text-neon-lilac" style={{ marginTop: '2px' }}>
+                      баллов
+                    </p>
+                  </div>
+                </div>
+              </AnimatedListItem>
+            ))}
+          </AnimatedList>
+        </div>
+      )}
+
+      {/* Модальное окно успеха */}
       {showResetSuccess && (
         <div className="modal-overlay">
-          <div className="card-violet p-6 w-full max-w-sm center-content">
-            <p className="text-base text-violet-dark tracking-wide mb-6 font-medium text-center">Баллы всех участников сброшены до 300!</p>
+          <div className="modal-card center-col">
+            <p className="text-white font-medium text-center fit-flow" style={{ marginBottom: '24px', fontSize: 'clamp(13px, 3.6vw, 15px)' }}>Баллы всех участников сброшены до 300!</p>
             <button
               onClick={() => setShowResetSuccess(false)}
-              className="btn-violet btn-violet-success px-8 py-3 text-base tracking-wider"
+              className="btn-neon btn-cyan"
+              style={{ width: 'auto', paddingInline: '32px' }}
             >
-              Отлично
+              <span className="fit-nowrap fit-btn3">ОТЛИЧНО</span>
             </button>
           </div>
         </div>
       )}
 
-      {/* Reset Confirmation Modal */}
+      {/* Модальное окно подтверждения */}
       {showResetConfirm && (
         <div className="modal-overlay">
-          <div className="card-violet p-6 w-full max-w-sm center-content">
-            <h3 className="text-lg text-violet-dark tracking-wider mb-3 font-bold">Подтверждение</h3>
-            <p className="text-base text-violet-muted tracking-wide mb-6 font-medium text-center">
+          <div className="modal-card center-col">
+            <h3 className="text-white font-bold text-center fit-flow fit-sub" style={{ marginBottom: '12px' }}>
+              Подтверждение
+            </h3>
+            <p className="text-white/80 font-medium text-center fit-flow" style={{ marginBottom: '24px', fontSize: 'clamp(13px, 3.6vw, 15px)' }}>
               Сбросить баллы всех участников до 300? Это действие нельзя отменить.
             </p>
-            <div className="grid grid-cols-2 gap-3 w-full">
-              <button
-                onClick={() => setShowResetConfirm(false)}
-                className="btn-violet btn-violet-secondary py-4 text-base tracking-wider font-semibold"
-              >
-                Отмена
+            <div className="btn-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: 'var(--gap-btn)', width: '100%' }}>
+              <button onClick={() => setShowResetConfirm(false)} className="btn-neon btn-ghost">
+                <span className="fit-nowrap fit-btn2">Отмена</span>
               </button>
-              <button
-                onClick={handleResetPoints}
-                className="btn-violet btn-violet-danger py-4 text-base tracking-wider font-semibold"
-              >
-                Сбросить
+              <button onClick={handleResetPoints} className="btn-neon btn-danger">
+                <span className="fit-nowrap fit-btn2">Сбросить</span>
               </button>
             </div>
           </div>
         </div>
       )}
 
-      {/* Tabs */}
-      <div key={refreshKey} className="flex rounded-2xl p-1.5 mb-5" style={{ background: '#ede9fe', border: '1.5px solid #c4b5fd' }}>
-        <button
-          onClick={() => setActiveTab('groups')}
-          className={`flex-1 py-3.5 text-base tracking-wider rounded-xl transition font-semibold ${
-            activeTab === 'groups'
-              ? 'btn-violet btn-violet-primary'
-              : 'text-violet-muted bg-transparent'
-          }`}
-        >
-          По группам
-        </button>
-        <button
-          onClick={() => setActiveTab('participants')}
-          className={`flex-1 py-3.5 text-base tracking-wider rounded-xl transition font-semibold ${
-            activeTab === 'participants'
-              ? 'btn-violet btn-violet-primary'
-              : 'text-violet-muted bg-transparent'
-          }`}
-        >
-          Участники
-        </button>
-      </div>
-
-      {/* Group Summary */}
-      {activeTab === 'groups' && (
-        <div className="space-y-3 mb-6">
-          <h3 className="text-base text-violet-primary font-semibold tracking-wider center-content">Рейтинг академических групп</h3>
-          
-          {groupSummary.length === 0 ? (
-            <div className="card-violet p-8 center-content">
-              <p className="text-base text-violet-muted tracking-wider font-medium">Нет данных</p>
-            </div>
-          ) : (
-            groupSummary.map((item, index) => {
-              const maxPoints = groupSummary[0]?.totalPoints || 1;
-              const percentage = (item.totalPoints / maxPoints) * 100;
-              const colors = ['#fbbf24', '#9ca3af', '#fb923c', '#8b5cf6'];
-              const color = colors[index] || '#a78bfa';
-              
-              return (
-                <div key={item.group} className="card-violet p-4" style={{ borderColor: `${color}66` }}>
-                  <div className="flex items-center justify-between mb-3">
-                    <div>
-                      <p className="text-lg font-bold tracking-wider text-center" style={{ color }}>{item.group}</p>
-                      <p className="text-sm text-violet-muted tracking-wider font-medium text-center">{item.participants} участников</p>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-2xl font-bold tracking-wider" style={{ color }}>{item.totalPoints}</p>
-                      <p className="text-sm text-violet-muted tracking-wider font-medium">баллов</p>
-                    </div>
-                  </div>
-                  <div className="w-full h-3 rounded-full" style={{ background: '#ede9fe' }}>
-                    <div
-                      className="h-full rounded-full transition-all duration-500"
-                      style={{ width: `${percentage}%`, background: `linear-gradient(90deg, ${color}, ${color}cc)`, boxShadow: `0 0 8px ${color}66` }}
-                    ></div>
-                  </div>
-                </div>
-              );
-            })
-          )}
-        </div>
-      )}
-
-      {/* Participants List */}
-      {activeTab === 'participants' && (
-        <div className="space-y-2 mb-6">
-          <h3 className="text-base text-violet-primary font-semibold tracking-wider center-content mb-4">Все участники</h3>
-          
-          {participants.map((p) => (
-            <div key={p.id} className="card-violet p-3 flex items-center justify-between gap-2">
-              <div className="flex-1 min-w-0">
-                <p className="text-sm text-violet-dark font-semibold tracking-wide truncate">{p.fullName}</p>
-                <p className="text-xs text-violet-muted tracking-wider font-medium">{p.group} • {p.id}</p>
-              </div>
-              <div className="text-right flex-shrink-0">
-                <p className="text-lg font-bold tracking-wider" style={{ color: '#d97706' }}>{p.points}</p>
-                <p className="text-xs tracking-wider font-medium" style={{ color: '#92400e' }}>баллов</p>
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
-
-      {/* Logout button */}
+      {/* Кнопка выхода */}
       <button
         onClick={onLogout}
-        className="btn-violet btn-violet-dark w-full py-4 text-base tracking-wider shadow-lg mt-6 mb-4 font-semibold"
+        className="btn-neon btn-danger"
+        style={{ marginTop: 'var(--gap-block)' }}
       >
-        Выйти из аккаунта
+        <LogOut size={18} strokeWidth={1.5} style={{ marginRight: '8px' }} />
+        <span className="fit-btn-m2">Выйти из аккаунта</span>
       </button>
     </div>
   );
