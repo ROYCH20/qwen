@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { getGroupSummary, getUsersByRole, User } from '../database';
+import { getGroupSummary, getUsersByRole, resetAllPoints, User } from '../database';
 
 interface Props {
   user: User;
@@ -7,11 +7,23 @@ interface Props {
 
 export default function AdminScreen({ user: _user } : Props) {
   const [activeTab, setActiveTab] = useState<'groups' | 'participants'>('groups');
+  const [showResetConfirm, setShowResetConfirm] = useState(false);
+  const [resetSuccess, setResetSuccess] = useState(false);
+  const [refreshKey, setRefreshKey] = useState(0);
+  
   const groupSummary = getGroupSummary();
   const participants = getUsersByRole('participant');
 
   const totalPoints = participants.reduce((sum, p) => sum + p.points, 0);
   const totalParticipants = participants.length;
+
+  const handleResetPoints = () => {
+    resetAllPoints();
+    setShowResetConfirm(false);
+    setResetSuccess(true);
+    setRefreshKey(k => k + 1);
+    setTimeout(() => setResetSuccess(false), 3000);
+  };
 
   return (
     <div className="p-4">
@@ -43,8 +55,66 @@ export default function AdminScreen({ user: _user } : Props) {
         </div>
       </div>
 
+      {/* Reset Success Message */}
+      {resetSuccess && (
+        <div className="bg-green-50 border border-green-200 rounded-2xl p-4 mb-4 flex items-center gap-2 animate-pulse">
+          <span className="text-green-500 text-lg">✅</span>
+          <p className="text-green-600 text-sm font-medium">Баллы всех участников успешно сброшены до 300!</p>
+        </div>
+      )}
+
+      {/* Reset Button */}
+      <button
+        onClick={() => setShowResetConfirm(true)}
+        className="w-full bg-red-50 border border-red-200 text-red-600 rounded-2xl p-4 mb-4 flex items-center justify-between hover:bg-red-100 transition active:scale-95"
+      >
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center text-lg">
+            🔄
+          </div>
+          <div className="text-left">
+            <p className="text-sm font-bold">Сбросить баллы</p>
+            <p className="text-xs text-red-400">Вернуть всем участникам 300 баллов</p>
+          </div>
+        </div>
+        <svg className="w-5 h-5 text-red-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+        </svg>
+      </button>
+
+      {/* Reset Confirmation Modal */}
+      {showResetConfirm && (
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl p-6 w-full max-w-sm shadow-2xl">
+            <div className="text-center mb-4">
+              <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center text-3xl mx-auto mb-3">
+                ⚠️
+              </div>
+              <h3 className="text-lg font-bold text-gray-800">Подтверждение</h3>
+              <p className="text-sm text-gray-500 mt-2">
+                Вы уверены, что хотите сбросить баллы всех участников до 300? Это действие нельзя отменить.
+              </p>
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <button
+                onClick={() => setShowResetConfirm(false)}
+                className="py-3 rounded-xl text-sm font-medium bg-gray-100 text-gray-600 hover:bg-gray-200 transition active:scale-95"
+              >
+                Отмена
+              </button>
+              <button
+                onClick={handleResetPoints}
+                className="py-3 rounded-xl text-sm font-bold bg-red-500 text-white hover:bg-red-600 transition active:scale-95"
+              >
+                Сбросить
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Tabs */}
-      <div className="flex bg-gray-100 rounded-xl p-1 mb-4">
+      <div key={refreshKey} className="flex bg-gray-100 rounded-xl p-1 mb-4">
         <button
           onClick={() => setActiveTab('groups')}
           className={`flex-1 py-2.5 rounded-lg text-sm font-medium transition ${

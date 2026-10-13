@@ -18,14 +18,14 @@ function initDB(): void {
   if (!existing) {
     const defaultUsers: User[] = [
       // Участники
-      { id: 'P001', role: 'participant', fullName: 'Иванов Иван Иванович', group: 'ИВТ-201', points: 200 },
-      { id: 'P002', role: 'participant', fullName: 'Петрова Мария Сергеевна', group: 'ИВТ-201', points: 150 },
+      { id: 'P001', role: 'participant', fullName: 'Иванов Иван Иванович', group: 'ИВТ-201', points: 300 },
+      { id: 'P002', role: 'participant', fullName: 'Петрова Мария Сергеевна', group: 'ИВТ-201', points: 300 },
       { id: 'P003', role: 'participant', fullName: 'Сидоров Алексей Дмитриевич', group: 'ИВТ-202', points: 300 },
-      { id: 'P004', role: 'participant', fullName: 'Козлова Анна Павловна', group: 'ИВТ-202', points: 100 },
-      { id: 'P005', role: 'participant', fullName: 'Морозов Дмитрий Алексеевич', group: 'ПИ-301', points: 250 },
-      { id: 'P006', role: 'participant', fullName: 'Новикова Елена Владимировна', group: 'ПИ-301', points: 50 },
-      { id: 'P007', role: 'participant', fullName: 'Волков Артём Николаевич', group: 'ПИ-302', points: 400 },
-      { id: 'P008', role: 'participant', fullName: 'Соколова Дарья Игоревна', group: 'ПИ-302', points: 175 },
+      { id: 'P004', role: 'participant', fullName: 'Козлова Анна Павловна', group: 'ИВТ-202', points: 300 },
+      { id: 'P005', role: 'participant', fullName: 'Морозов Дмитрий Алексеевич', group: 'ПИ-301', points: 300 },
+      { id: 'P006', role: 'participant', fullName: 'Новикова Елена Владимировна', group: 'ПИ-301', points: 300 },
+      { id: 'P007', role: 'participant', fullName: 'Волков Артём Николаевич', group: 'ПИ-302', points: 300 },
+      { id: 'P008', role: 'participant', fullName: 'Соколова Дарья Игоревна', group: 'ПИ-302', points: 300 },
       // Кураторы
       { id: 'C001', role: 'curator', fullName: 'Смирнова Ольга Викторовна', points: 0 },
       { id: 'C002', role: 'curator', fullName: 'Кузнецов Павел Андреевич', points: 0 },
@@ -84,6 +84,18 @@ export function getGroupSummary(): { group: string; totalPoints: number; partici
     totalPoints: data.totalPoints,
     participants: data.participants,
   })).sort((a, b) => b.totalPoints - a.totalPoints);
+}
+
+// Сбросить баллы всех участников до 300
+export function resetAllPoints(): void {
+  const users = getAllUsers();
+  const updatedUsers = users.map(u => {
+    if (u.role === 'participant') {
+      return { ...u, points: 300 };
+    }
+    return u;
+  });
+  localStorage.setItem(DB_KEY, JSON.stringify(updatedUsers));
 }
 
 // Сбросить базу данных
