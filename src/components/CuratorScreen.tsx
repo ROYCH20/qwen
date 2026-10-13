@@ -151,54 +151,54 @@ export default function CuratorScreen({ user, onLogout }: Props) {
       </div>
 
       {/* Curator Header */}
-      <div className="card-violet p-4 mb-4">
+      <div className="card-violet p-4 mb-4 text-center">
         <div>
-          <h2 className="text-base text-violet-dark font-semibold tracking-wide">{user.fullName}</h2>
-          <p className="text-sm text-violet-muted tracking-wider font-medium">ID: {user.id}</p>
+          <h2 className="text-sm text-violet-dark font-semibold tracking-wide">{user.fullName}</h2>
+          <p className="text-xs text-violet-muted tracking-wider font-medium">ID: {user.id}</p>
         </div>
       </div>
 
       {/* Scanner Section */}
-      <div className="card-violet-accent p-5 mb-4">
-        <h3 className="text-base text-violet-primary font-semibold tracking-wider mb-4 center-content">Сканирование QR-кода</h3>
+      <div className="card-violet-accent p-4 mb-4">
+        <h3 className="text-sm text-violet-primary font-semibold tracking-wider mb-3 text-center">Сканирование QR-кода</h3>
         
         {!isScanning ? (
-          <div className="space-y-4">
+          <div className="space-y-3">
             <button
               onClick={startScanner}
-              className="btn-violet btn-violet-primary w-full py-4 text-base tracking-wider"
+              className="btn-violet btn-violet-primary w-full py-3 text-sm tracking-wider"
             >
               Открыть камеру
             </button>
             
-            <div className="flex items-center gap-3 py-1">
+            <div className="flex items-center gap-2 py-1">
               <div className="flex-1 soft-divider"></div>
-              <span className="text-sm text-violet-muted tracking-wider font-medium">или введите ID</span>
+              <span className="text-xs text-violet-muted tracking-wider font-medium">или введите ID</span>
               <div className="flex-1 soft-divider"></div>
             </div>
 
-            <div className="flex gap-3">
+            <div className="flex gap-2">
               <input
                 type="text"
                 value={manualScan}
                 onChange={(e) => { setManualScan(e.target.value); setShowError(''); }}
                 placeholder="ID участника (P001)"
-                className="input-violet flex-1 px-4 py-3.5 text-base"
+                className="input-violet flex-1 px-3 py-3 text-sm"
               />
               <button
                 onClick={handleManualScan}
-                className="btn-violet btn-violet-success px-5 py-3.5 text-base tracking-wider"
+                className="btn-violet btn-violet-success px-4 py-3 text-sm tracking-wider"
               >
                 Найти
               </button>
             </div>
           </div>
         ) : (
-          <div className="space-y-4">
+          <div className="space-y-3">
             <div id={scannerContainerId} className="overflow-hidden"></div>
             <button
               onClick={stopScanner}
-              className="btn-violet btn-violet-danger w-full py-4 text-base tracking-wider"
+              className="btn-violet btn-violet-danger w-full py-3 text-sm tracking-wider"
             >
               Остановить сканирование
             </button>
@@ -238,21 +238,21 @@ export default function CuratorScreen({ user, onLogout }: Props) {
 
       {/* Scanned User Info */}
       {scannedUser && (
-        <div className="card-violet p-5 mb-4">
-          <h3 className="text-base text-violet-primary font-semibold tracking-wider mb-4 center-content">Участник найден</h3>
-          <div className="rounded-2xl p-4 mb-5" style={{ background: '#ede9fe', border: '1.5px solid #c4b5fd' }}>
-            <p className="text-base text-violet-dark font-semibold tracking-wide mb-1">{scannedUser.fullName}</p>
-            <p className="text-sm text-violet-muted tracking-wider font-medium">Группа: {scannedUser.group} • ID: {scannedUser.id}</p>
-            <p className="text-base text-violet-primary tracking-wider mt-2 font-bold">Баланс: {scannedUser.points}</p>
+        <div className="card-violet p-4 mb-4">
+          <h3 className="text-sm text-violet-primary font-semibold tracking-wider mb-3 text-center">Участник найден</h3>
+          <div className="rounded-2xl p-3 mb-4 text-center" style={{ background: '#ede9fe', border: '1.5px solid #c4b5fd' }}>
+            <p className="text-sm text-violet-dark font-semibold tracking-wide mb-1 truncate">{scannedUser.fullName}</p>
+            <p className="text-xs text-violet-muted tracking-wider font-medium">Группа: {scannedUser.group} • ID: {scannedUser.id}</p>
+            <p className="text-sm text-violet-primary tracking-wider mt-2 font-bold">Баланс: {scannedUser.points}</p>
           </div>
 
           {/* Action Selection */}
-          <div className="mb-5">
-            <p className="text-sm text-violet-primary font-semibold tracking-wider mb-3">Действие:</p>
-            <div className="grid grid-cols-2 gap-3">
+          <div className="mb-4">
+            <p className="text-xs text-violet-primary font-semibold tracking-wider mb-2 text-center">Действие:</p>
+            <div className="grid grid-cols-2 gap-2">
               <button
                 onClick={() => { setAction('credit'); setShowError(''); }}
-                className={`py-4 text-base tracking-wider rounded-2xl transition font-semibold ${
+                className={`py-3 text-sm tracking-wider rounded-2xl transition font-semibold ${
                   action === 'credit'
                     ? 'btn-violet btn-violet-success'
                     : 'btn-violet btn-violet-light'
@@ -262,7 +262,7 @@ export default function CuratorScreen({ user, onLogout }: Props) {
               </button>
               <button
                 onClick={() => { setAction('debit'); setShowError(''); }}
-                className={`py-4 text-base tracking-wider rounded-2xl transition font-semibold ${
+                className={`py-3 text-sm tracking-wider rounded-2xl transition font-semibold ${
                   action === 'debit'
                     ? 'btn-violet btn-violet-danger'
                     : 'btn-violet btn-violet-light'
@@ -274,14 +274,14 @@ export default function CuratorScreen({ user, onLogout }: Props) {
           </div>
 
           {/* Points Selection */}
-          <div className="mb-5">
-            <p className="text-sm text-violet-primary font-semibold tracking-wider mb-3">Количество баллов:</p>
-            <div className="grid grid-cols-3 gap-3">
+          <div className="mb-4">
+            <p className="text-xs text-violet-primary font-semibold tracking-wider mb-2 text-center">Количество баллов:</p>
+            <div className="grid grid-cols-3 gap-2">
               {[50, 100, 150].map(p => (
                 <button
                   key={p}
                   onClick={() => { setPoints(p); setShowError(''); }}
-                  className={`py-5 text-xl tracking-wider rounded-2xl transition font-bold ${
+                  className={`py-4 text-lg tracking-wider rounded-2xl transition font-bold ${
                     points === p
                       ? 'btn-violet btn-violet-warning'
                       : 'btn-violet btn-violet-light'
@@ -294,11 +294,11 @@ export default function CuratorScreen({ user, onLogout }: Props) {
           </div>
 
           {/* Submit */}
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-2 gap-2">
             <button
               onClick={handleSubmit}
               disabled={points === null}
-              className={`py-4 text-base tracking-wider rounded-2xl transition font-bold ${
+              className={`py-3 text-sm tracking-wider rounded-2xl transition font-bold ${
                 points !== null
                   ? action === 'credit'
                     ? 'btn-violet btn-violet-success'
@@ -310,7 +310,7 @@ export default function CuratorScreen({ user, onLogout }: Props) {
             </button>
             <button
               onClick={handleReset}
-              className="btn-violet btn-violet-secondary py-4 text-base tracking-wider font-semibold"
+              className="btn-violet btn-violet-secondary py-3 text-sm tracking-wider font-semibold"
             >
               Сброс
             </button>

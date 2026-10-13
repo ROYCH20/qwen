@@ -32,52 +32,52 @@ export default function RegistrationScreen({ onLogin }: Props) {
     <div className="p-4 pt-12">
       {/* Title */}
       <div className="center-content mb-8">
-        <h1 className="text-3xl text-gradient-violet tracking-wider mb-2 font-bold">
+        <h1 className="text-2xl text-gradient-violet tracking-wider mb-2 font-bold text-center">
           Система баллов
         </h1>
-        <p className="text-base text-violet-medium tracking-wide">
+        <p className="text-sm text-violet-medium tracking-wide text-center">
           Вход в аккаунт
         </p>
       </div>
 
       {/* QR Code Info Toggle */}
-      <div className="card-violet-accent p-5 mb-4">
+      <div className="card-violet-accent p-4 mb-4">
         <button
           onClick={() => setShowQRInfo(!showQRInfo)}
           className="w-full flex items-center justify-between text-left"
         >
-          <span className="text-base text-violet-primary font-semibold tracking-wide">
+          <span className="text-sm text-violet-primary font-semibold tracking-wide">
             Доступные ID пользователей
           </span>
           <span className="text-2xl text-violet-light">{showQRInfo ? '▾' : '▸'}</span>
         </button>
         
         {showQRInfo && (
-          <div className="mt-4 space-y-4 pt-4" style={{ borderTop: '1.5px solid #c4b5fd' }}>
+          <div className="mt-3 space-y-3 pt-3" style={{ borderTop: '1.5px solid #c4b5fd' }}>
             <div>
-              <p className="text-sm text-violet-primary font-semibold tracking-wider mb-3">Участники:</p>
+              <p className="text-xs text-violet-primary font-semibold tracking-wider mb-2">Участники:</p>
               {participants.map(p => (
-                <div key={p.id} className="flex justify-between items-center bg-white rounded-2xl px-4 py-3 mb-2">
-                  <span className="text-sm text-violet-dark font-medium">{p.fullName}</span>
-                  <span className="text-sm font-mono px-3 py-1 rounded-full badge-violet">{p.id}</span>
+                <div key={p.id} className="flex justify-between items-center bg-white rounded-xl px-3 py-2 mb-1.5 gap-2">
+                  <span className="text-xs text-violet-dark font-medium truncate flex-1">{p.fullName}</span>
+                  <span className="text-xs font-mono px-2 py-0.5 rounded-full badge-violet flex-shrink-0">{p.id}</span>
                 </div>
               ))}
             </div>
             <div>
-              <p className="text-sm text-violet-primary font-semibold tracking-wider mb-3">Кураторы:</p>
+              <p className="text-xs text-violet-primary font-semibold tracking-wider mb-2">Кураторы:</p>
               {curators.map(c => (
-                <div key={c.id} className="flex justify-between items-center bg-white rounded-2xl px-4 py-3 mb-2">
-                  <span className="text-sm text-violet-dark font-medium">{c.fullName}</span>
-                  <span className="text-sm font-mono px-3 py-1 rounded-full badge-violet">{c.id}</span>
+                <div key={c.id} className="flex justify-between items-center bg-white rounded-xl px-3 py-2 mb-1.5 gap-2">
+                  <span className="text-xs text-violet-dark font-medium truncate flex-1">{c.fullName}</span>
+                  <span className="text-xs font-mono px-2 py-0.5 rounded-full badge-violet flex-shrink-0">{c.id}</span>
                 </div>
               ))}
             </div>
             <div>
-              <p className="text-sm text-violet-primary font-semibold tracking-wider mb-3">Админ:</p>
+              <p className="text-xs text-violet-primary font-semibold tracking-wider mb-2">Админ:</p>
               {admins.map(a => (
-                <div key={a.id} className="flex justify-between items-center bg-white rounded-2xl px-4 py-3 mb-2">
-                  <span className="text-sm text-violet-dark font-medium">{a.fullName}</span>
-                  <span className="text-sm font-mono px-3 py-1 rounded-full badge-violet">{a.id}</span>
+                <div key={a.id} className="flex justify-between items-center bg-white rounded-xl px-3 py-2 mb-1.5 gap-2">
+                  <span className="text-xs text-violet-dark font-medium truncate flex-1">{a.fullName}</span>
+                  <span className="text-xs font-mono px-2 py-0.5 rounded-full badge-violet flex-shrink-0">{a.id}</span>
                 </div>
               ))}
             </div>
@@ -86,22 +86,22 @@ export default function RegistrationScreen({ onLogin }: Props) {
       </div>
 
       {/* Manual ID Input */}
-      <div className="card-violet p-5 mb-4">
-        <label className="block text-base text-violet-primary font-semibold tracking-wide mb-3">
+      <div className="card-violet p-4 mb-4">
+        <label className="block text-sm text-violet-primary font-semibold tracking-wide mb-2 text-center">
           Введите ID пользователя
         </label>
-        <div className="flex gap-3">
+        <div className="flex gap-2">
           <input
             type="text"
             value={manualId}
             onChange={(e) => { setManualId(e.target.value); setShowError(''); }}
             placeholder="Например: P001"
-            className="input-violet flex-1 px-4 py-3.5 text-base"
+            className="input-violet flex-1 px-3 py-3 text-sm"
             onKeyDown={(e) => e.key === 'Enter' && handleManualLogin()}
           />
           <button
             onClick={handleManualLogin}
-            className="btn-violet btn-violet-primary px-6 py-3.5 text-base tracking-wider"
+            className="btn-violet btn-violet-primary px-4 py-3 text-sm tracking-wider"
           >
             Войти
           </button>
@@ -151,9 +151,9 @@ export default function RegistrationScreen({ onLogin }: Props) {
       </div>
 
       {/* Info */}
-      <div className="card-violet p-5">
-        <h3 className="text-base text-violet-primary font-semibold tracking-wider mb-4 center-content">Как это работает</h3>
-        <ul className="text-sm text-violet-dark space-y-3 tracking-wide">
+      <div className="card-violet p-4">
+        <h3 className="text-sm text-violet-primary font-semibold tracking-wider mb-3 text-center">Как это работает</h3>
+        <ul className="text-xs text-violet-dark space-y-2 tracking-wide text-center">
           <li className="font-medium">Участники показывают QR-код кураторам</li>
           <li className="font-medium">Кураторы сканируют QR и начисляют/списывают баллы</li>
           <li className="font-medium">Администратор отслеживает рейтинг групп</li>

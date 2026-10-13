@@ -21,20 +21,20 @@ export default function ParticipantScreen({ user, onLogout }: Props) {
       </div>
 
       {/* Profile Card */}
-      <div className="card-violet p-5 mb-4">
-        <div className="mb-5">
-          <h2 className="text-lg text-violet-dark font-semibold tracking-wide">{user.fullName}</h2>
+      <div className="card-violet p-4 mb-4">
+        <div className="mb-4 text-center">
+          <h2 className="text-base text-violet-dark font-semibold tracking-wide">{user.fullName}</h2>
           <p className="text-sm text-violet-muted tracking-wider font-medium">ID: {user.id}</p>
         </div>
         
-        <div className="grid grid-cols-2 gap-3">
-          <div className="rounded-2xl p-4 text-center" style={{ background: '#ede9fe', border: '1.5px solid #c4b5fd' }}>
+        <div className="grid grid-cols-2 gap-2">
+          <div className="rounded-2xl p-3 text-center" style={{ background: '#ede9fe', border: '1.5px solid #c4b5fd' }}>
             <p className="text-xs text-violet-muted tracking-wider mb-1 font-medium">Группа</p>
-            <p className="text-xl text-violet-primary font-bold tracking-wider">{user.group}</p>
+            <p className="text-lg text-violet-primary font-bold tracking-wider">{user.group}</p>
           </div>
-          <div className="rounded-2xl p-4 text-center" style={{ background: '#fef3c7', border: '1.5px solid #fcd34d' }}>
+          <div className="rounded-2xl p-3 text-center" style={{ background: '#fef3c7', border: '1.5px solid #fcd34d' }}>
             <p className="text-xs tracking-wider mb-1 font-medium" style={{ color: '#92400e' }}>Баллы</p>
-            <p className="text-xl font-bold tracking-wider" style={{ color: '#d97706' }}>{user.points}</p>
+            <p className="text-lg font-bold tracking-wider" style={{ color: '#d97706' }}>{user.points}</p>
           </div>
         </div>
       </div>
@@ -60,24 +60,24 @@ export default function ParticipantScreen({ user, onLogout }: Props) {
       </div>
 
       {/* Info */}
-      <div className="card-violet p-5 mb-4">
-        <h4 className="text-base text-violet-primary font-semibold tracking-wider mb-4 center-content">Информация</h4>
-        <div className="space-y-4">
-          <div className="flex justify-between items-center pb-3" style={{ borderBottom: '1.5px solid #ede9fe' }}>
-            <span className="text-sm text-violet-muted tracking-wider font-medium">ФИО:</span>
-            <span className="text-sm text-violet-dark tracking-wide font-semibold">{user.fullName}</span>
+      <div className="card-violet p-4 mb-4">
+        <h4 className="text-sm text-violet-primary font-semibold tracking-wider mb-3 text-center">Информация</h4>
+        <div className="space-y-3">
+          <div className="flex justify-between items-center pb-2" style={{ borderBottom: '1.5px solid #ede9fe' }}>
+            <span className="text-xs text-violet-muted tracking-wider font-medium">ФИО:</span>
+            <span className="text-xs text-violet-dark tracking-wide font-semibold truncate ml-2">{user.fullName}</span>
           </div>
-          <div className="flex justify-between items-center pb-3" style={{ borderBottom: '1.5px solid #ede9fe' }}>
-            <span className="text-sm text-violet-muted tracking-wider font-medium">Группа:</span>
-            <span className="text-sm text-violet-dark tracking-wide font-semibold">{user.group}</span>
+          <div className="flex justify-between items-center pb-2" style={{ borderBottom: '1.5px solid #ede9fe' }}>
+            <span className="text-xs text-violet-muted tracking-wider font-medium">Группа:</span>
+            <span className="text-xs text-violet-dark tracking-wide font-semibold">{user.group}</span>
           </div>
-          <div className="flex justify-between items-center pb-3" style={{ borderBottom: '1.5px solid #ede9fe' }}>
-            <span className="text-sm text-violet-muted tracking-wider font-medium">Баллы:</span>
-            <span className="text-base text-violet-primary tracking-wider font-bold">{user.points}</span>
+          <div className="flex justify-between items-center pb-2" style={{ borderBottom: '1.5px solid #ede9fe' }}>
+            <span className="text-xs text-violet-muted tracking-wider font-medium">Баллы:</span>
+            <span className="text-sm text-violet-primary tracking-wider font-bold">{user.points}</span>
           </div>
           <div className="flex justify-between items-center">
-            <span className="text-sm text-violet-muted tracking-wider font-medium">Роль:</span>
-            <span className="badge-violet">Участник</span>
+            <span className="text-xs text-violet-muted tracking-wider font-medium">Роль:</span>
+            <span className="badge-violet text-xs">Участник</span>
           </div>
         </div>
       </div>

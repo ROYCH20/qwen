@@ -34,23 +34,23 @@ export default function AdminScreen({ user, onLogout }: Props) {
       </div>
 
       {/* Admin Header */}
-      <div className="card-violet p-5 mb-4">
-        <div className="mb-5">
-          <h2 className="text-base text-violet-dark font-semibold tracking-wide">{user.fullName}</h2>
-          <p className="text-sm text-violet-muted tracking-wider font-medium">ID: {user.id}</p>
+      <div className="card-violet p-4 mb-4">
+        <div className="mb-4 text-center">
+          <h2 className="text-sm text-violet-dark font-semibold tracking-wide">{user.fullName}</h2>
+          <p className="text-xs text-violet-muted tracking-wider font-medium">ID: {user.id}</p>
         </div>
 
-        <div className="grid grid-cols-3 gap-3">
-          <div className="rounded-2xl p-3 text-center" style={{ background: '#ede9fe', border: '1.5px solid #c4b5fd' }}>
-            <p className="text-2xl text-violet-primary font-bold tracking-wider">{totalParticipants}</p>
+        <div className="grid grid-cols-3 gap-2">
+          <div className="rounded-2xl p-2 text-center" style={{ background: '#ede9fe', border: '1.5px solid #c4b5fd' }}>
+            <p className="text-xl text-violet-primary font-bold tracking-wider">{totalParticipants}</p>
             <p className="text-xs text-violet-muted tracking-wider font-medium">Участников</p>
           </div>
-          <div className="rounded-2xl p-3 text-center" style={{ background: '#ede9fe', border: '1.5px solid #c4b5fd' }}>
-            <p className="text-2xl text-violet-primary font-bold tracking-wider">{groupSummary.length}</p>
+          <div className="rounded-2xl p-2 text-center" style={{ background: '#ede9fe', border: '1.5px solid #c4b5fd' }}>
+            <p className="text-xl text-violet-primary font-bold tracking-wider">{groupSummary.length}</p>
             <p className="text-xs text-violet-muted tracking-wider font-medium">Групп</p>
           </div>
-          <div className="rounded-2xl p-3 text-center" style={{ background: '#fef3c7', border: '1.5px solid #fcd34d' }}>
-            <p className="text-2xl font-bold tracking-wider" style={{ color: '#d97706' }}>{totalPoints}</p>
+          <div className="rounded-2xl p-2 text-center" style={{ background: '#fef3c7', border: '1.5px solid #fcd34d' }}>
+            <p className="text-xl font-bold tracking-wider" style={{ color: '#d97706' }}>{totalPoints}</p>
             <p className="text-xs tracking-wider font-medium" style={{ color: '#92400e' }}>Баллов</p>
           </div>
         </div>
@@ -59,7 +59,7 @@ export default function AdminScreen({ user, onLogout }: Props) {
       {/* Reset Button */}
       <button
         onClick={() => setShowResetConfirm(true)}
-        className="btn-violet btn-violet-danger w-full py-4 text-base tracking-wider mb-5 font-semibold"
+        className="btn-violet btn-violet-danger w-full py-4 text-sm tracking-wider mb-5 font-semibold px-2"
       >
         Сбросить баллы всех участников
       </button>
@@ -148,14 +148,9 @@ export default function AdminScreen({ user, onLogout }: Props) {
               return (
                 <div key={item.group} className="card-violet p-4" style={{ borderColor: `${color}66` }}>
                   <div className="flex items-center justify-between mb-3">
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-full flex items-center justify-center text-base font-bold" style={{ background: `${color}33`, color, border: `2px solid ${color}66` }}>
-                        {index + 1}
-                      </div>
-                      <div className="text-left">
-                        <p className="text-base font-bold tracking-wider" style={{ color }}>{item.group}</p>
-                        <p className="text-sm text-violet-muted tracking-wider font-medium">{item.participants} участников</p>
-                      </div>
+                    <div>
+                      <p className="text-lg font-bold tracking-wider text-center" style={{ color }}>{item.group}</p>
+                      <p className="text-sm text-violet-muted tracking-wider font-medium text-center">{item.participants} участников</p>
                     </div>
                     <div className="text-right">
                       <p className="text-2xl font-bold tracking-wider" style={{ color }}>{item.totalPoints}</p>
@@ -181,19 +176,19 @@ export default function AdminScreen({ user, onLogout }: Props) {
           <h3 className="text-base text-violet-primary font-semibold tracking-wider center-content mb-4">Все участники</h3>
           
           {participants.map((p, index) => (
-            <div key={p.id} className="card-violet p-4 flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold" style={{ background: '#ede9fe', color: '#6b21a8', border: '2px solid #c4b5fd' }}>
+            <div key={p.id} className="card-violet p-3 flex items-center justify-between gap-2">
+              <div className="flex items-center gap-2 flex-1 min-w-0">
+                <div className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0" style={{ background: '#ede9fe', color: '#6b21a8', border: '2px solid #c4b5fd' }}>
                   {index + 1}
                 </div>
-                <div className="text-left">
-                  <p className="text-base text-violet-dark font-semibold tracking-wide">{p.fullName}</p>
-                  <p className="text-sm text-violet-muted tracking-wider font-medium">{p.group} • {p.id}</p>
+                <div className="min-w-0 flex-1">
+                  <p className="text-sm text-violet-dark font-semibold tracking-wide truncate">{p.fullName}</p>
+                  <p className="text-xs text-violet-muted tracking-wider font-medium">{p.group} • {p.id}</p>
                 </div>
               </div>
-              <div className="text-right">
-                <p className="text-xl font-bold tracking-wider" style={{ color: '#d97706' }}>{p.points}</p>
-                <p className="text-sm tracking-wider font-medium" style={{ color: '#92400e' }}>баллов</p>
+              <div className="text-right flex-shrink-0">
+                <p className="text-lg font-bold tracking-wider" style={{ color: '#d97706' }}>{p.points}</p>
+                <p className="text-xs tracking-wider font-medium" style={{ color: '#92400e' }}>баллов</p>
               </div>
             </div>
           ))}
