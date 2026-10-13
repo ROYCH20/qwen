@@ -144,37 +144,36 @@ export default function CuratorScreen({ user, onLogout }: Props) {
   };
 
   return (
-    <div className="p-4 pt-10">
-      {/* Title */}
-      <div className="center-content mb-6">
-        <h1 className="text-2xl text-gradient-violet tracking-wider font-bold">Панель куратора</h1>
+    <div className="pt-8">
+      {/* Заголовок */}
+      <div className="center-col mb-6">
+        <h1 className="text-2xl text-chrome tracking-wider font-bold">КУРАТОР</h1>
+        <p className="text-sm text-neon-cyan tracking-wider mt-1">Панель управления</p>
       </div>
 
-      {/* Curator Header */}
-      <div className="card-violet p-4 mb-4 text-center">
-        <div>
-          <h2 className="text-sm text-violet-dark font-semibold tracking-wide">{user.fullName}</h2>
-          <p className="text-xs text-violet-muted tracking-wider font-medium">ID: {user.id}</p>
-        </div>
+      {/* Карточка куратора */}
+      <div className="glass-panel mb-4 text-center relative">
+        <h2 className="text-sm text-white font-semibold tracking-wide truncate">{user.fullName}</h2>
+        <p className="text-xs text-neon-lilac tracking-wider font-medium mt-1">ID: {user.id}</p>
       </div>
 
-      {/* Scanner Section */}
-      <div className="card-violet-accent p-4 mb-4">
-        <h3 className="text-sm text-violet-primary font-semibold tracking-wider mb-3 text-center">Сканирование QR-кода</h3>
+      {/* Сканирование */}
+      <div className="glass-panel-strong mb-4 relative">
+        <h3 className="text-sm text-neon-pink font-semibold tracking-wider mb-3 text-center">Сканирование QR-кода</h3>
         
         {!isScanning ? (
           <div className="space-y-3">
             <button
               onClick={startScanner}
-              className="btn-violet btn-violet-primary w-full py-3 text-sm tracking-wider"
+              className="btn-neon btn-cyan w-full text-sm tracking-wider"
             >
               Открыть камеру
             </button>
             
             <div className="flex items-center gap-2 py-1">
-              <div className="flex-1 soft-divider"></div>
-              <span className="text-xs text-violet-muted tracking-wider font-medium">или введите ID</span>
-              <div className="flex-1 soft-divider"></div>
+              <div className="flex-1 neon-divider"></div>
+              <span className="text-xs text-neon-lilac tracking-wider font-medium">или введите ID</span>
+              <div className="flex-1 neon-divider"></div>
             </div>
 
             <div className="flex gap-2">
@@ -183,11 +182,11 @@ export default function CuratorScreen({ user, onLogout }: Props) {
                 value={manualScan}
                 onChange={(e) => { setManualScan(e.target.value); setShowError(''); }}
                 placeholder="ID участника (P001)"
-                className="input-violet flex-1 px-3 py-3 text-sm"
+                className="input-neon flex-1 text-sm"
               />
               <button
                 onClick={handleManualScan}
-                className="btn-violet btn-violet-success px-4 py-3 text-sm tracking-wider"
+                className="btn-neon btn-lilac px-4 text-sm tracking-wider"
               >
                 Найти
               </button>
@@ -198,7 +197,7 @@ export default function CuratorScreen({ user, onLogout }: Props) {
             <div id={scannerContainerId} className="overflow-hidden"></div>
             <button
               onClick={stopScanner}
-              className="btn-violet btn-violet-danger w-full py-3 text-sm tracking-wider"
+              className="btn-neon btn-danger w-full text-sm tracking-wider"
             >
               Остановить сканирование
             </button>
@@ -206,14 +205,14 @@ export default function CuratorScreen({ user, onLogout }: Props) {
         )}
       </div>
 
-      {/* Error Modal */}
+      {/* Модальное окно ошибки */}
       {showError && (
         <div className="modal-overlay">
-          <div className="card-violet p-6 w-full max-w-sm center-content">
-            <p className="text-base text-violet-dark tracking-wide mb-6 font-medium text-center">{showError}</p>
+          <div className="modal-card center-col">
+            <p className="text-base text-white tracking-wide mb-6 font-medium text-center">{showError}</p>
             <button
               onClick={() => setShowError('')}
-              className="btn-violet btn-violet-warning px-8 py-3 text-base tracking-wider"
+              className="btn-neon btn-pink px-8 text-sm tracking-wider"
             >
               Понятно
             </button>
@@ -221,14 +220,14 @@ export default function CuratorScreen({ user, onLogout }: Props) {
         </div>
       )}
 
-      {/* Success Modal */}
+      {/* Модальное окно успеха */}
       {showSuccess && (
         <div className="modal-overlay">
-          <div className="card-violet p-6 w-full max-w-sm center-content">
-            <p className="text-base text-violet-dark tracking-wide mb-6 font-medium text-center">{showSuccess}</p>
+          <div className="modal-card center-col">
+            <p className="text-base text-white tracking-wide mb-6 font-medium text-center">{showSuccess}</p>
             <button
               onClick={() => setShowSuccess('')}
-              className="btn-violet btn-violet-success px-8 py-3 text-base tracking-wider"
+              className="btn-neon btn-cyan px-8 text-sm tracking-wider"
             >
               Отлично
             </button>
@@ -236,36 +235,32 @@ export default function CuratorScreen({ user, onLogout }: Props) {
         </div>
       )}
 
-      {/* Scanned User Info */}
+      {/* Информация о найденном участнике */}
       {scannedUser && (
-        <div className="card-violet p-4 mb-4">
-          <h3 className="text-sm text-violet-primary font-semibold tracking-wider mb-3 text-center">Участник найден</h3>
-          <div className="rounded-2xl p-3 mb-4 text-center" style={{ background: '#ede9fe', border: '1.5px solid #c4b5fd' }}>
-            <p className="text-sm text-violet-dark font-semibold tracking-wide mb-1 truncate">{scannedUser.fullName}</p>
-            <p className="text-xs text-violet-muted tracking-wider font-medium">Группа: {scannedUser.group} • ID: {scannedUser.id}</p>
-            <p className="text-sm text-violet-primary tracking-wider mt-2 font-bold">Баланс: {scannedUser.points}</p>
+        <div className="glass-panel mb-4 relative">
+          <h3 className="text-sm text-neon-pink font-semibold tracking-wider mb-3 text-center">Участник найден</h3>
+          <div className="rounded-2xl p-3 mb-4 text-center" style={{ background: 'rgba(108, 99, 201, 0.2)', border: '1.5px solid rgba(142, 134, 228, 0.4)' }}>
+            <p className="text-sm text-white font-semibold tracking-wide mb-1 truncate">{scannedUser.fullName}</p>
+            <p className="text-xs text-neon-lilac tracking-wider font-medium">Группа: {scannedUser.group} • ID: {scannedUser.id}</p>
+            <p className="text-sm text-neon-cyan tracking-wider mt-2 font-bold">Баланс: {scannedUser.points}</p>
           </div>
 
-          {/* Action Selection */}
+          {/* Выбор действия */}
           <div className="mb-4">
-            <p className="text-xs text-violet-primary font-semibold tracking-wider mb-2 text-center">Действие:</p>
+            <p className="text-xs text-neon-lilac font-semibold tracking-wider mb-2 text-center">Действие:</p>
             <div className="grid grid-cols-2 gap-2">
               <button
                 onClick={() => { setAction('credit'); setShowError(''); }}
-                className={`py-3 text-sm tracking-wider rounded-2xl transition font-semibold ${
-                  action === 'credit'
-                    ? 'btn-violet btn-violet-success'
-                    : 'btn-violet btn-violet-light'
+                className={`btn-neon text-sm tracking-wider ${
+                  action === 'credit' ? 'btn-cyan' : 'btn-ghost'
                 }`}
               >
                 Зачисление
               </button>
               <button
                 onClick={() => { setAction('debit'); setShowError(''); }}
-                className={`py-3 text-sm tracking-wider rounded-2xl transition font-semibold ${
-                  action === 'debit'
-                    ? 'btn-violet btn-violet-danger'
-                    : 'btn-violet btn-violet-light'
+                className={`btn-neon text-sm tracking-wider ${
+                  action === 'debit' ? 'btn-danger' : 'btn-ghost'
                 }`}
               >
                 Списание
@@ -273,18 +268,16 @@ export default function CuratorScreen({ user, onLogout }: Props) {
             </div>
           </div>
 
-          {/* Points Selection */}
+          {/* Выбор количества баллов */}
           <div className="mb-4">
-            <p className="text-xs text-violet-primary font-semibold tracking-wider mb-2 text-center">Количество баллов:</p>
+            <p className="text-xs text-neon-lilac font-semibold tracking-wider mb-2 text-center">Количество баллов:</p>
             <div className="grid grid-cols-3 gap-2">
               {[50, 100, 150].map(p => (
                 <button
                   key={p}
                   onClick={() => { setPoints(p); setShowError(''); }}
-                  className={`py-4 text-lg tracking-wider rounded-2xl transition font-bold ${
-                    points === p
-                      ? 'btn-violet btn-violet-warning'
-                      : 'btn-violet btn-violet-light'
+                  className={`btn-neon text-lg tracking-wider ${
+                    points === p ? 'btn-chrome' : 'btn-ghost'
                   }`}
                 >
                   {p}
@@ -293,24 +286,22 @@ export default function CuratorScreen({ user, onLogout }: Props) {
             </div>
           </div>
 
-          {/* Submit */}
+          {/* Подтверждение */}
           <div className="grid grid-cols-2 gap-2">
             <button
               onClick={handleSubmit}
               disabled={points === null}
-              className={`py-3 text-sm tracking-wider rounded-2xl transition font-bold ${
+              className={`btn-neon text-sm tracking-wider ${
                 points !== null
-                  ? action === 'credit'
-                    ? 'btn-violet btn-violet-success'
-                    : 'btn-violet btn-violet-danger'
-                  : 'btn-violet btn-violet-light opacity-50 cursor-not-allowed'
+                  ? action === 'credit' ? 'btn-cyan' : 'btn-danger'
+                  : 'btn-ghost opacity-50 cursor-not-allowed'
               }`}
             >
               {action === 'credit' ? `+${points || 0}` : `-${points || 0}`}
             </button>
             <button
               onClick={handleReset}
-              className="btn-violet btn-violet-secondary py-3 text-sm tracking-wider font-semibold"
+              className="btn-neon btn-ghost text-sm tracking-wider"
             >
               Сброс
             </button>
@@ -318,10 +309,10 @@ export default function CuratorScreen({ user, onLogout }: Props) {
         </div>
       )}
 
-      {/* Logout button */}
+      {/* Кнопка выхода */}
       <button
         onClick={onLogout}
-        className="btn-violet btn-violet-dark w-full py-4 text-base tracking-wider shadow-lg mt-6 mb-4 font-semibold"
+        className="btn-neon btn-danger w-full text-sm tracking-wider mt-6"
       >
         Выйти из аккаунта
       </button>

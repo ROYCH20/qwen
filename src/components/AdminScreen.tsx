@@ -27,51 +27,52 @@ export default function AdminScreen({ user, onLogout }: Props) {
   };
 
   return (
-    <div className="p-4 pt-10">
-      {/* Title */}
-      <div className="center-content mb-6">
-        <h1 className="text-2xl text-gradient-violet tracking-wider font-bold">Панель администратора</h1>
+    <div className="pt-8">
+      {/* Заголовок */}
+      <div className="center-col mb-6">
+        <h1 className="text-2xl text-chrome tracking-wider font-bold">АДМИН</h1>
+        <p className="text-sm text-neon-cyan tracking-wider mt-1">Панель управления</p>
       </div>
 
-      {/* Admin Header */}
-      <div className="card-violet p-4 mb-4">
+      {/* Карточка админа */}
+      <div className="glass-panel-strong mb-4 relative">
         <div className="mb-4 text-center">
-          <h2 className="text-sm text-violet-dark font-semibold tracking-wide">{user.fullName}</h2>
-          <p className="text-xs text-violet-muted tracking-wider font-medium">ID: {user.id}</p>
+          <h2 className="text-sm text-white font-semibold tracking-wide truncate">{user.fullName}</h2>
+          <p className="text-xs text-neon-lilac tracking-wider font-medium mt-1">ID: {user.id}</p>
         </div>
 
         <div className="grid grid-cols-3 gap-2">
-          <div className="rounded-2xl p-2 text-center" style={{ background: '#ede9fe', border: '1.5px solid #c4b5fd' }}>
-            <p className="text-xl text-violet-primary font-bold tracking-wider">{totalParticipants}</p>
-            <p className="text-xs text-violet-muted tracking-wider font-medium">Участников</p>
+          <div className="rounded-2xl p-2 text-center" style={{ background: 'rgba(108, 99, 201, 0.2)', border: '1.5px solid rgba(142, 134, 228, 0.4)' }}>
+            <p className="text-xl text-white font-bold tracking-wider">{totalParticipants}</p>
+            <p className="text-xs text-neon-lilac tracking-wider font-medium">Участников</p>
           </div>
-          <div className="rounded-2xl p-2 text-center" style={{ background: '#ede9fe', border: '1.5px solid #c4b5fd' }}>
-            <p className="text-xl text-violet-primary font-bold tracking-wider">{groupSummary.length}</p>
-            <p className="text-xs text-violet-muted tracking-wider font-medium">Групп</p>
+          <div className="rounded-2xl p-2 text-center" style={{ background: 'rgba(108, 99, 201, 0.2)', border: '1.5px solid rgba(142, 134, 228, 0.4)' }}>
+            <p className="text-xl text-white font-bold tracking-wider">{groupSummary.length}</p>
+            <p className="text-xs text-neon-lilac tracking-wider font-medium">Групп</p>
           </div>
-          <div className="rounded-2xl p-2 text-center" style={{ background: '#fef3c7', border: '1.5px solid #fcd34d' }}>
-            <p className="text-xl font-bold tracking-wider" style={{ color: '#d97706' }}>{totalPoints}</p>
-            <p className="text-xs tracking-wider font-medium" style={{ color: '#92400e' }}>Баллов</p>
+          <div className="rounded-2xl p-2 text-center" style={{ background: 'rgba(247, 155, 227, 0.15)', border: '1.5px solid rgba(247, 155, 227, 0.4)' }}>
+            <p className="text-xl text-neon-pink font-bold tracking-wider">{totalPoints}</p>
+            <p className="text-xs text-neon-pink tracking-wider font-medium">Баллов</p>
           </div>
         </div>
       </div>
 
-      {/* Reset Button */}
+      {/* Кнопка сброса */}
       <button
         onClick={() => setShowResetConfirm(true)}
-        className="btn-violet btn-violet-danger w-full py-4 text-sm tracking-wider mb-5 font-semibold px-2"
+        className="btn-neon btn-danger w-full text-sm tracking-wider mb-4"
       >
         Сбросить баллы всех участников
       </button>
 
-      {/* Reset Success Modal */}
+      {/* Модальное окно успеха */}
       {showResetSuccess && (
         <div className="modal-overlay">
-          <div className="card-violet p-6 w-full max-w-sm center-content">
-            <p className="text-base text-violet-dark tracking-wide mb-6 font-medium text-center">Баллы всех участников сброшены до 300!</p>
+          <div className="modal-card center-col">
+            <p className="text-base text-white tracking-wide mb-6 font-medium text-center">Баллы всех участников сброшены до 300!</p>
             <button
               onClick={() => setShowResetSuccess(false)}
-              className="btn-violet btn-violet-success px-8 py-3 text-base tracking-wider"
+              className="btn-neon btn-cyan px-8 text-sm tracking-wider"
             >
               Отлично
             </button>
@@ -79,24 +80,24 @@ export default function AdminScreen({ user, onLogout }: Props) {
         </div>
       )}
 
-      {/* Reset Confirmation Modal */}
+      {/* Модальное окно подтверждения */}
       {showResetConfirm && (
         <div className="modal-overlay">
-          <div className="card-violet p-6 w-full max-w-sm center-content">
-            <h3 className="text-lg text-violet-dark tracking-wider mb-3 font-bold">Подтверждение</h3>
-            <p className="text-base text-violet-muted tracking-wide mb-6 font-medium text-center">
+          <div className="modal-card center-col">
+            <h3 className="text-lg text-white tracking-wider mb-3 font-bold">Подтверждение</h3>
+            <p className="text-sm text-white/80 tracking-wide mb-6 font-medium text-center">
               Сбросить баллы всех участников до 300? Это действие нельзя отменить.
             </p>
             <div className="grid grid-cols-2 gap-3 w-full">
               <button
                 onClick={() => setShowResetConfirm(false)}
-                className="btn-violet btn-violet-secondary py-4 text-base tracking-wider font-semibold"
+                className="btn-neon btn-ghost text-sm tracking-wider"
               >
                 Отмена
               </button>
               <button
                 onClick={handleResetPoints}
-                className="btn-violet btn-violet-danger py-4 text-base tracking-wider font-semibold"
+                className="btn-neon btn-danger text-sm tracking-wider"
               >
                 Сбросить
               </button>
@@ -105,61 +106,61 @@ export default function AdminScreen({ user, onLogout }: Props) {
         </div>
       )}
 
-      {/* Tabs */}
-      <div key={refreshKey} className="flex rounded-2xl p-1.5 mb-5" style={{ background: '#ede9fe', border: '1.5px solid #c4b5fd' }}>
+      {/* Табы */}
+      <div key={refreshKey} className="flex rounded-full p-1 mb-4" style={{ background: 'rgba(108, 99, 201, 0.2)', border: '1.5px solid rgba(142, 134, 228, 0.3)' }}>
         <button
           onClick={() => setActiveTab('groups')}
-          className={`flex-1 py-3.5 text-base tracking-wider rounded-xl transition font-semibold ${
+          className={`flex-1 py-3 text-sm tracking-wider rounded-full transition font-semibold ${
             activeTab === 'groups'
-              ? 'btn-violet btn-violet-primary'
-              : 'text-violet-muted bg-transparent'
+              ? 'btn-neon btn-cyan'
+              : 'text-neon-lilac bg-transparent'
           }`}
         >
           По группам
         </button>
         <button
           onClick={() => setActiveTab('participants')}
-          className={`flex-1 py-3.5 text-base tracking-wider rounded-xl transition font-semibold ${
+          className={`flex-1 py-3 text-sm tracking-wider rounded-full transition font-semibold ${
             activeTab === 'participants'
-              ? 'btn-violet btn-violet-primary'
-              : 'text-violet-muted bg-transparent'
+              ? 'btn-neon btn-cyan'
+              : 'text-neon-lilac bg-transparent'
           }`}
         >
           Участники
         </button>
       </div>
 
-      {/* Group Summary */}
+      {/* Рейтинг групп */}
       {activeTab === 'groups' && (
-        <div className="space-y-3 mb-6">
-          <h3 className="text-base text-violet-primary font-semibold tracking-wider center-content">Рейтинг академических групп</h3>
+        <div className="space-y-3 mb-4">
+          <h3 className="text-sm text-neon-pink font-semibold tracking-wider text-center">Рейтинг академических групп</h3>
           
           {groupSummary.length === 0 ? (
-            <div className="card-violet p-8 center-content">
-              <p className="text-base text-violet-muted tracking-wider font-medium">Нет данных</p>
+            <div className="glass-panel center-col">
+              <p className="text-sm text-neon-lilac tracking-wider font-medium">Нет данных</p>
             </div>
           ) : (
             groupSummary.map((item, index) => {
               const maxPoints = groupSummary[0]?.totalPoints || 1;
               const percentage = (item.totalPoints / maxPoints) * 100;
-              const colors = ['#fbbf24', '#9ca3af', '#fb923c', '#8b5cf6'];
-              const color = colors[index] || '#a78bfa';
+              const colors = ['#F79BE3', '#DFB7EF', '#6FE3EC', '#8E86E4'];
+              const color = colors[index] || '#B78FF2';
               
               return (
-                <div key={item.group} className="card-violet p-4" style={{ borderColor: `${color}66` }}>
+                <div key={item.group} className="glass-panel relative" style={{ borderColor: `${color}44` }}>
                   <div className="flex items-center justify-between mb-3">
-                    <div>
-                      <p className="text-lg font-bold tracking-wider text-center" style={{ color }}>{item.group}</p>
-                      <p className="text-sm text-violet-muted tracking-wider font-medium text-center">{item.participants} участников</p>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-base font-bold tracking-wider text-center" style={{ color }}>{item.group}</p>
+                      <p className="text-xs text-neon-lilac tracking-wider font-medium text-center">{item.participants} участников</p>
                     </div>
-                    <div className="text-right">
-                      <p className="text-2xl font-bold tracking-wider" style={{ color }}>{item.totalPoints}</p>
-                      <p className="text-sm text-violet-muted tracking-wider font-medium">баллов</p>
+                    <div className="text-right flex-shrink-0">
+                      <p className="text-xl font-bold tracking-wider" style={{ color }}>{item.totalPoints}</p>
+                      <p className="text-xs text-neon-lilac tracking-wider font-medium">баллов</p>
                     </div>
                   </div>
-                  <div className="w-full h-3 rounded-full" style={{ background: '#ede9fe' }}>
+                  <div className="progress-bar">
                     <div
-                      className="h-full rounded-full transition-all duration-500"
+                      className="progress-fill"
                       style={{ width: `${percentage}%`, background: `linear-gradient(90deg, ${color}, ${color}cc)`, boxShadow: `0 0 8px ${color}66` }}
                     ></div>
                   </div>
@@ -170,30 +171,30 @@ export default function AdminScreen({ user, onLogout }: Props) {
         </div>
       )}
 
-      {/* Participants List */}
+      {/* Список участников */}
       {activeTab === 'participants' && (
-        <div className="space-y-2 mb-6">
-          <h3 className="text-base text-violet-primary font-semibold tracking-wider center-content mb-4">Все участники</h3>
+        <div className="space-y-2 mb-4">
+          <h3 className="text-sm text-neon-pink font-semibold tracking-wider text-center mb-3">Все участники</h3>
           
           {participants.map((p) => (
-            <div key={p.id} className="card-violet p-3 flex items-center justify-between gap-2">
+            <div key={p.id} className="glass-panel flex items-center justify-between gap-2 relative">
               <div className="flex-1 min-w-0">
-                <p className="text-sm text-violet-dark font-semibold tracking-wide truncate">{p.fullName}</p>
-                <p className="text-xs text-violet-muted tracking-wider font-medium">{p.group} • {p.id}</p>
+                <p className="text-sm text-white font-semibold tracking-wide truncate">{p.fullName}</p>
+                <p className="text-xs text-neon-lilac tracking-wider font-medium">{p.group} • {p.id}</p>
               </div>
               <div className="text-right flex-shrink-0">
-                <p className="text-lg font-bold tracking-wider" style={{ color: '#d97706' }}>{p.points}</p>
-                <p className="text-xs tracking-wider font-medium" style={{ color: '#92400e' }}>баллов</p>
+                <p className="text-lg text-neon-pink font-bold tracking-wider">{p.points}</p>
+                <p className="text-xs text-neon-lilac tracking-wider font-medium">баллов</p>
               </div>
             </div>
           ))}
         </div>
       )}
 
-      {/* Logout button */}
+      {/* Кнопка выхода */}
       <button
         onClick={onLogout}
-        className="btn-violet btn-violet-dark w-full py-4 text-base tracking-wider shadow-lg mt-6 mb-4 font-semibold"
+        className="btn-neon btn-danger w-full text-sm tracking-wider mt-4"
       >
         Выйти из аккаунта
       </button>
