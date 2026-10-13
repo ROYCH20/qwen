@@ -1,7 +1,7 @@
 import { QRCodeSVG } from 'qrcode.react';
 import { User } from '../database';
 import { LogOut } from 'lucide-react';
-import { CipherText, SpeedingText, AnimatedList, AnimatedListItem, NeonReveal, SignalType } from './animations';
+import { SpeedingText, NeonReveal, SignalType } from './animations';
 
 interface Props {
   user: User;
@@ -18,20 +18,13 @@ export default function ParticipantScreen({ user, onLogout }: Props) {
   return (
     <div style={{ paddingTop: '24px' }}>
       {/* Заголовок */}
-      <div className="center-col screen-head" style={{ marginBottom: '8px' }}>
+      <div className="center-col screen-head" style={{ marginBottom: 'var(--gap-title)' }}>
         <h1 className="screen-title text-chrome">
           <SignalType>ПРОФИЛЬ</SignalType>
         </h1>
         <p className="text-neon-lilac fit-flow fit-sub" style={{ marginTop: '4px' }}>
           <SignalType>Участник</SignalType>
         </p>
-      </div>
-
-      {/* ASCII-маркиза */}
-      <div className="ascii-marquee">
-        <div className="ascii-marquee-inner">
-          ░▒▓█▓▒░・アィウエオ・01 ░▒▓█▓▒░・アィウエオ・01 ░▒▓█▓▒░・アィウエオ・01 ░▒▓█▓▒░・アィウエオ・01
-        </div>
       </div>
 
       {/* Holo-card */}
@@ -61,19 +54,23 @@ export default function ParticipantScreen({ user, onLogout }: Props) {
             {user.fullName}
           </h2>
 
-          {/* Моно-чипы */}
-          <div className="mono-chips">
-            <span className="mono-chip">[ID: {user.id}]</span>
-            <span className="mono-chip">[ГРУППА: {user.group}]</span>
-            <span className="mono-chip">[{user.points} PTS]</span>
-          </div>
+          {/* Строка-подпись */}
+          <p style={{
+            fontSize: 'clamp(10px, 3vw, 12px)',
+            color: '#221D5E',
+            letterSpacing: '0.06em',
+            textAlign: 'center',
+            marginTop: '8px',
+            lineHeight: 1.3
+          }}>
+            ID: {user.id} · {user.group} · {user.points} БАЛЛОВ
+          </p>
         </div>
       </div>
 
       {/* Группа / Баллы */}
       <NeonReveal>
-        <div className="hud-box" style={{ position: 'relative' }}>
-          <span className="hud-tag">[SYS://STATS]</span>
+        <div className="hud-box">
           <div className="stat-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', columnGap: '10px' }}>
             <div className="stat-cell">
               <p className="fit-nowrap fit-stat-l text-neon-lilac" style={{ marginBottom: '6px' }}>Группа</p>
@@ -91,8 +88,7 @@ export default function ParticipantScreen({ user, onLogout }: Props) {
 
       {/* QR-код */}
       <NeonReveal>
-        <div className="hud-box" style={{ position: 'relative' }}>
-          <span className="hud-tag">[SYS://QR]</span>
+        <div className="hud-box">
           <span className="hud-label fit-flow fit-title">QR-КОД УЧАСТНИКА</span>
           <div className="center-col">
             <div className="qr-frame focus-glow">
@@ -109,55 +105,6 @@ export default function ParticipantScreen({ user, onLogout }: Props) {
               Покажите этот код куратору
             </p>
           </div>
-        </div>
-      </NeonReveal>
-
-      {/* Информация */}
-      <NeonReveal>
-        <div className="hud-box" style={{ position: 'relative' }}>
-          <span className="hud-tag">[SYS://INFO]</span>
-          <span className="hud-label fit-flow fit-title">ИНФОРМАЦИЯ</span>
-          <AnimatedList style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-            <AnimatedListItem>
-              <div className="kv-row" style={{ padding: '4px 0' }}>
-                <span className="k">ФИО</span>
-                <div className="v fit-box">
-                  <span className="text-white fit-flow" style={{ display: 'block', textAlign: 'right' }}>{user.fullName}</span>
-                </div>
-              </div>
-            </AnimatedListItem>
-            <div className="hud-divider"></div>
-            <AnimatedListItem>
-              <div className="kv-row" style={{ padding: '4px 0' }}>
-                <span className="k">Группа</span>
-                <div className="v fit-box">
-                  <span className="text-white fit-nowrap fit-val" style={{ display: 'block', textAlign: 'right' }}>{user.group}</span>
-                </div>
-              </div>
-            </AnimatedListItem>
-            <div className="hud-divider"></div>
-            <AnimatedListItem>
-              <div className="kv-row" style={{ padding: '4px 0' }}>
-                <span className="k">Баллы</span>
-                <div className="v fit-box">
-                  <span className="text-neon-pink fit-nowrap fit-val" style={{ display: 'block', textAlign: 'right' }}>
-                    <SpeedingText value={user.points} />
-                  </span>
-                </div>
-              </div>
-            </AnimatedListItem>
-            <div className="hud-divider"></div>
-            <AnimatedListItem>
-              <div className="kv-row" style={{ padding: '4px 0' }}>
-                <span className="k">Роль</span>
-                <div className="v fit-box" style={{ display: 'flex', justifyContent: 'flex-end' }}>
-                  <span className="badge-neon">
-                    <span className="fit-nowrap">Участник</span>
-                  </span>
-                </div>
-              </div>
-            </AnimatedListItem>
-          </AnimatedList>
         </div>
       </NeonReveal>
 

@@ -40,29 +40,16 @@ export default function AdminScreen({ user, onLogout }: Props) {
         </p>
       </div>
 
-      {/* ASCII-маркиза */}
-      <div className="ascii-marquee">
-        <div className="ascii-marquee-inner">
-          ░▒▓█▓▒░・アィウエオ・01 ░▒▓█▓▒░・アィウエオ・01 ░▒▓█▓▒░・アィウエオ・01 ░▒▓█▓▒░・アィウエオ・01
-        </div>
-      </div>
-
-      {/* Шапка с моно-чипами */}
+      {/* Шапка */}
       <div className="center-col" style={{ marginBottom: 'var(--gap-block)' }}>
         <h2 className="text-chrome-soft text-center user-name fit-flow" style={{ paddingInline: '16px' }}>
           {user.fullName}
         </h2>
-        <div className="mono-chips" style={{ marginTop: '12px' }}>
-          <span className="mono-chip">[ID: {user.id}]</span>
-          <span className="mono-chip">[ROLE: ADMIN]</span>
-          <span className="mono-chip">[DB: LOCAL]</span>
-        </div>
       </div>
 
       {/* Статистика */}
       <NeonReveal>
-        <div className="hud-box" style={{ position: 'relative' }}>
-          <span className="hud-tag">[SYS://STATS]</span>
+        <div className="hud-box">
           <div key={refreshKey} className="stat-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0, 1fr))', columnGap: '10px' }}>
             <div className="stat-cell">
               <p className="fit-nowrap fit-stat-v text-white">
@@ -120,8 +107,7 @@ export default function AdminScreen({ user, onLogout }: Props) {
           </p>
           
           {groupSummary.length === 0 ? (
-            <div className="hud-box center-col" style={{ position: 'relative' }}>
-              <span className="hud-tag">[SYS://EMPTY]</span>
+            <div className="hud-box center-col">
               <p className="text-neon-lilac" style={{ fontSize: 'clamp(13px, 3.6vw, 15px)' }}>Нет данных</p>
             </div>
           ) : (
@@ -134,8 +120,7 @@ export default function AdminScreen({ user, onLogout }: Props) {
                 
                 return (
                   <AnimatedListItem key={item.group}>
-                    <div className="hud-box" style={{ marginBottom: 0, position: 'relative' }}>
-                      <span className="hud-tag">[SYS://GRP]</span>
+                    <div className="hud-box" style={{ marginBottom: 0 }}>
                       <div className="grp-row" style={{ marginBottom: '10px' }}>
                         <div className="fit-box">
                           <span className="fit-nowrap fit-val" style={{ color, display: 'block' }}>{item.group}</span>
@@ -173,8 +158,7 @@ export default function AdminScreen({ user, onLogout }: Props) {
           <AnimatedList style={{ display: 'flex', flexDirection: 'column', gap: 'var(--gap-btn)' }}>
             {participants.map((p) => (
               <AnimatedListItem key={p.id}>
-                <div className="hud-box list-row" style={{ marginBottom: 0, position: 'relative' }}>
-                  <span className="hud-tag">[SYS://USR]</span>
+                <div className="hud-box list-row" style={{ marginBottom: 0 }}>
                   <div className="name">
                     <p className="text-white" style={{ fontWeight: 600 }}>{p.fullName}</p>
                     <p className="fit-nowrap fit-stat-l text-neon-lilac" style={{ marginTop: '2px' }}>

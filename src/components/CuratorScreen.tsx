@@ -157,13 +157,6 @@ export default function CuratorScreen({ user, onLogout }: Props) {
         </p>
       </div>
 
-      {/* ASCII-маркиза */}
-      <div className="ascii-marquee">
-        <div className="ascii-marquee-inner">
-          ░▒▓█▓▒░・アィウエオ・01 ░▒▓█▓▒░・アィウエオ・01 ░▒▓█▓▒░・アィウエオ・01 ░▒▓█▓▒░・アィウエオ・01
-        </div>
-      </div>
-
       {/* Holo-card */}
       <div className="holo-card">
         <div className="holo-card-inner center-col" style={{ paddingInline: '16px' }}>
@@ -191,18 +184,23 @@ export default function CuratorScreen({ user, onLogout }: Props) {
             {user.fullName}
           </h2>
 
-          {/* Моно-чипы */}
-          <div className="mono-chips">
-            <span className="mono-chip">[ID: {user.id}]</span>
-            <span className="mono-chip">[ROLE: CURATOR]</span>
-          </div>
+          {/* Строка-подпись */}
+          <p style={{
+            fontSize: 'clamp(10px, 3vw, 12px)',
+            color: '#221D5E',
+            letterSpacing: '0.06em',
+            textAlign: 'center',
+            marginTop: '8px',
+            lineHeight: 1.3
+          }}>
+            ID: {user.id} · КУРАТОР
+          </p>
         </div>
       </div>
 
       {/* Сканирование */}
       <NeonReveal>
-        <div className="hud-box" style={{ position: 'relative' }}>
-          <span className="hud-tag">[SYS://SCAN]</span>
+        <div className="hud-box">
           <span className="hud-label fit-flow fit-title">СКАНИРОВАНИЕ QR-КОДА</span>
           
           {!isScanning ? (
@@ -248,8 +246,7 @@ export default function CuratorScreen({ user, onLogout }: Props) {
       {/* Информация о найденном участнике */}
       {scannedUser && (
         <NeonReveal>
-          <div className="hud-box" style={{ position: 'relative' }}>
-            <span className="hud-tag">[SYS://FOUND]</span>
+          <div className="hud-box">
             <span className="hud-label fit-flow fit-title">УЧАСТНИК НАЙДЕН</span>
             
             <div className="center-col" style={{ padding: '10px 0', marginBottom: '10px' }}>
