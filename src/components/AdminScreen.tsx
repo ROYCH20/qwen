@@ -175,16 +175,11 @@ export default function AdminScreen({ user, onLogout }: Props) {
         <div className="space-y-2 mb-6">
           <h3 className="text-base text-violet-primary font-semibold tracking-wider center-content mb-4">Все участники</h3>
           
-          {participants.map((p, index) => (
+          {participants.map((p) => (
             <div key={p.id} className="card-violet p-3 flex items-center justify-between gap-2">
-              <div className="flex items-center gap-2 flex-1 min-w-0">
-                <div className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0" style={{ background: '#ede9fe', color: '#6b21a8', border: '2px solid #c4b5fd' }}>
-                  {index + 1}
-                </div>
-                <div className="min-w-0 flex-1">
-                  <p className="text-sm text-violet-dark font-semibold tracking-wide truncate">{p.fullName}</p>
-                  <p className="text-xs text-violet-muted tracking-wider font-medium">{p.group} • {p.id}</p>
-                </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm text-violet-dark font-semibold tracking-wide truncate">{p.fullName}</p>
+                <p className="text-xs text-violet-muted tracking-wider font-medium">{p.group} • {p.id}</p>
               </div>
               <div className="text-right flex-shrink-0">
                 <p className="text-lg font-bold tracking-wider" style={{ color: '#d97706' }}>{p.points}</p>
