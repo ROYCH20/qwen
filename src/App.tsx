@@ -5,12 +5,26 @@ import ParticipantScreen from './components/ParticipantScreen';
 import CuratorScreen from './components/CuratorScreen';
 import AdminScreen from './components/AdminScreen';
 import { getUserById, User } from './database';
+import { Preloader, PerspectiveGrid, BlinkingSquares, FilmGrain, Vignette } from './components/animations';
 
 type Screen = 'registration' | 'participant' | 'curator' | 'admin';
 
 function App() {
   const [currentScreen, setCurrentScreen] = useState<Screen>('registration');
   const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const [showPreloader, setShowPreloader] = useState(false);
+
+  useEffect(() => {
+    const hasSeenPreloader = sessionStorage.getItem('preloader_shown');
+    if (!hasSeenPreloader) {
+      setShowPreloader(true);
+    }
+  }, []);
+
+  const handlePreloaderComplete = () => {
+    setShowPreloader(false);
+    sessionStorage.setItem('preloader_shown', 'true');
+  };
 
   const handleLogin = (userId: string) => {
     const user = getUserById(userId);
@@ -28,45 +42,44 @@ function App() {
   };
 
   return (
-    <div className="min-h-screen flex justify-center relative">
-      {/* Фоновые слои */}
-      <div className="bg-smoke" />
-      <div className="prism-flare prism-flare-1" />
-      <div className="prism-flare prism-flare-2" />
-      <div className="prism-flare prism-flare-3" />
-      <div className="prism-flare prism-flare-4" />
-      <div className="prism-flare prism-flare-5" />
-      <div className="prism-flare prism-flare-6" />
-      <div className="scale-ring" />
-      <div className="bg-lens" />
-      <div className="vignette-strong" />
-      <div className="film-grain" />
+    <div className="min-h-screen bg-night-sky crt-scanlines flex justify-center relative">
+      {/* Глобальные слои */}
+      <PerspectiveGrid />
+      <BlinkingSquares />
+      <FilmGrain />
+      <Vignette />
 
-      <div className="w-full max-w-[430px] min-h-screen relative crt-scanlines" style={{ zIndex: 4 }}>
-        {/* Контент с анимацией перехода */}
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={currentScreen + (currentUser?.id || '')}
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            transition={{ duration: 0.3, ease: [0.22, 0.61, 0.36, 1] }}
-            className="p-4 pb-24"
-          >
-            {currentScreen === 'registration' && (
-              <RegistrationScreen onLogin={handleLogin} />
-            )}
-            {currentScreen === 'participant' && currentUser && (
-              <ParticipantScreen user={currentUser} onLogout={handleLogout} />
-            )}
-            {currentScreen === 'curator' && currentUser && (
-              <CuratorScreen user={currentUser} onLogout={handleLogout} />
-            )}
-            {currentScreen === 'admin' && currentUser && (
-              <AdminScreen user={currentUser} onLogout={handleLogout} />
-            )}
-          </motion.div>
-        </AnimatePresence>
+      {/* Preloader */}
+      {showPreloader && <Preloader onComplete={handlePreloaderComplete} />}
+
+      <div className="w-full max-w-[430px] min-h-screen relative z-10">
+        {/* CRT-рамка */}
+        <div className="crt-frame min-h-screen">
+          {/* Контент с анимацией перехода */}
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={currentScreen + (currentUser?.id || '')}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.3, ease: [0.22, 0.61, 0.36, 1] }}
+              className="p-4 pb-24"
+            >
+              {currentScreen === 'registration' && (
+                <RegistrationScreen onLogin={handleLogin} />
+              )}
+              {currentScreen === 'participant' && currentUser && (
+                <ParticipantScreen user={currentUser} onLogout={handleLogout} />
+              )}
+              {currentScreen === 'curator' && currentUser && (
+                <CuratorScreen user={currentUser} onLogout={handleLogout} />
+              )}
+              {currentScreen === 'admin' && currentUser && (
+                <AdminScreen user={currentUser} onLogout={handleLogout} />
+              )}
+            </motion.div>
+          </AnimatePresence>
+        </div>
       </div>
     </div>
   );

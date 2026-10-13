@@ -1,156 +1,185 @@
-# Отчёт о выполненных изменениях (v10 — итерация удалений)
+# Отчёт о восстановлении дизайна (v10 → откат v11)
 
 ## Дата
 2024
 
 ## Задача
-Итерация удалений поверх v9: убрать ASCII-теги, ASCII-маркизы, моно-чипы и блок «ИНФОРМАЦИЯ» из ParticipantScreen. Заменить моно-чипы на одну строку-подпись в holo-card.
+Откатить дизайн от v11 («тёмный люкс-Y2K») к состоянию v10 (vaporwave-тема с пастельными цветами, hud-box с неоновыми уголками, holo-card с голографическим градиентом).
 
 ## Изменённые файлы
 
-### 1. src/components/ParticipantScreen.tsx
+### 1. src/index.css
+**Восстановлено:**
+- Пастельная палитра v10 (--c-indigo, --c-periwinkle, --c-lilac, --c-pink-neon, --c-cyan-neon, --c-blue, --c-mauve)
+- Фон с градиентом ночного неба (звёзды + вертикальный градиент от #120F38 до #F79BE3)
+- `.hud-box` с неоновыми уголками (бирюзовый + розовый градиент)
+- `.qr-frame` с неоновыми уголками
+- `.holo-card` с голографическим градиентом (--holo) и анимацией дрейфа
+- `.holo-emblem` с 3D-хром-эффектом и анимацией покачивания
+- `.holo-circle-text` с круговым SVG текстом
+- Фоновые слои: `.perspective-grid`, `.boke-spot-*`, `.bg-lens`, `.vignette-strong`, `.film-grain`
+- `.twinkle-star` с анимацией мерцания
+- Анимации: `signal-type`, `neon-reveal`, `glitch-jitter`, `holo-drift`, `emblem-rotate`, `circle-rotate`, `grid-scroll`, `boke-drift-*`, `twinkle`
+- `.focus-glow` с усиленным свечением
+- `.crt-frame` с CRT-эффектом
+
 **Удалено:**
-- Блок «ИНФОРМАЦИЯ» целиком (hud-box с kv-строками ФИО/ГРУППА/Баллы/Роль)
-- ASCII-маркиза под шапкой
-- ASCII-теги [SYS://STATS], [SYS://QR], [SYS://INFO] из hud-box
-- Моно-чипы [ID: P001] [ГРУППА: ИВТ-201] [300 PTS]
-- Импорты AnimatedList, AnimatedListItem, CipherText, GlimmerWrap (не используются)
+- Палитра v11 (--void, --panel, --cobalt, --chrome-*, --ir-*)
+- `.chrome-serif` (Playfair Display)
+- Таро-рамка (clip-path с пазами)
+- Selection-рамка (8 маркеров)
+- Глянцевая чёрная плашка
+- `.holo-fluid` (голографическая подложка)
+- Призм-блики, кольцо-шкала
 
-**Добавлено:**
-- Строка-подпись в holo-card: «ID: P001 · ИВТ-201 · 300 БАЛЛОВ»
-  - font-size: clamp(10px, 3vw, 12px)
-  - color: #221D5E (тёмный для контраста AA на голограмме)
-  - letter-spacing: 0.06em
-  - text-align: center
-  - margin-top: 8px
+### 2. src/App.tsx
+**Восстановлено:**
+- Импорт `Preloader, PerspectiveGrid, BlinkingSquares, FilmGrain, Vignette` из animations
+- Фоновые слои: PerspectiveGrid, BlinkingSquares, FilmGrain, Vignette
+- Preloader с sessionStorage-flag
+- CRT-рамка вокруг контента
+- AnimatePresence для плавных переходов между экранами
 
-**Результат:**
-- Зазор между QR-блоком и кнопкой «Выйти» — ровно 20px (var(--gap-block))
-- Нет пустых обёрток и лишних отступов
-- Вертикальный ритм сохранён
-
-### 2. src/components/CuratorScreen.tsx
 **Удалено:**
-- ASCII-маркиза под шапкой
-- ASCII-теги [SYS://SCAN], [SYS://FOUND] из hud-box
-- Моно-чипы [ID: C001] [ROLE: CURATOR]
-- style={{ position: 'relative' }} из hud-box (не нужно без hud-tag)
+- Фоновые слои v11 (bg-smoke, prism-flare-*, scale-ring, bg-lens, vignette-strong)
 
-**Добавлено:**
-- Строка-подпись в holo-card: «ID: C001 · КУРАТОР»
-  - Те же стили, что у Participant
+### 3. src/components/RegistrationScreen.tsx
+**Восстановлено:**
+- Импорты: `LogIn` из lucide-react, `SignalType, NeonReveal, AnimatedList, AnimatedListItem` из animations
+- H1 с `.text-chrome` и `<SignalType>` (моргание opacity)
+- Блок входа в `.hud-box` (неоновые уголки) с `<NeonReveal>`
+- Кнопка «START / ВОЙТИ» с иконкой `LogIn` и классом `.focus-glow`
+- Glitch-эффект при ошибке (`glitch-text`)
+- Быстрый доступ с `<AnimatedList>` и `<AnimatedListItem>` (stagger-анимация)
+- Модалка ошибки с кнопкой «ПОНЯТНО»
 
-### 3. src/components/AdminScreen.tsx
 **Удалено:**
-- ASCII-маркиза под шапкой
-- ASCII-теги [SYS://STATS], [SYS://EMPTY], [SYS://GRP], [SYS://USR] из hud-box
-- Моно-чипы [ID: A001] [ROLE: ADMIN] [DB: LOCAL]
-- style={{ position: 'relative' }} из hud-box
+- `.chrome-serif` (Playfair Display)
+- Таро-рамка с пазами и угловыми звёздами
+- Глянец-сквирклы
 
-**Не добавлено:**
-- У админа нет holo-card, поэтому строка-подпись не нужна
+### 4. src/components/ParticipantScreen.tsx
+**Восстановлено:**
+- Импорты: `CipherText, SpeedingText, NeonReveal, SignalType, GlimmerWrap` из animations
+- Шапка с `<GlimmerWrap>` (7 искр ✦ вокруг имени)
+- Имя с `<CipherText>` (декод ID из случайных символов)
+- Блок статистики в `.hud-box` с `<NeonReveal>`
+- Баллы с `<SpeedingText>` (прокрутка цифр)
+- QR-код в `.qr-frame` с классом `.focus-glow`
+- Подпись «Покажите этот код куратору» с цветом `.text-neon-cyan`
 
-### 4. src/components/RegistrationScreen.tsx
-**Проверка:**
-- grep по «ascii», «mono-chip», «hud-tag», «SYS://» — ноль результатов
-- Удаляемых элементов нет
-
-### 5. src/index.css
 **Удалено:**
-- `.ascii-marquee` и `.ascii-marquee-inner`
-- `@keyframes ascii-scroll`
-- `.hud-tag`
-- `.mono-chips` и `.mono-chip`
-- `.kv-row`, `.kv-row .k`, `.kv-row .v` (больше не используется)
+- `.holo-card` (глянцевая чёрная плашка)
+- `.holo-fluid` (голографическая подложка)
+- Selection-рамка с 8 маркерами
+- Outline-пилюля для кнопки выхода
 
-**Проверка:**
-- grep по «ascii», «mono-chip», «kv-row», «hud-tag» в CSS — ноль результатов
-- grep по ASCII-символам (░, ▒, ▓, ア, イ, ウ, エ, オ) — ноль результатов
+### 5. src/components/CuratorScreen.tsx
+**Восстановлено:**
+- Импорты: `SignalType, AnimatedList, AnimatedListItem, NeonReveal, SpeedingText, GlimmerWrap, CipherText` из animations
+- Шапка с `<GlimmerWrap>` и `<CipherText>`
+- Блок сканирования в `.hud-box` с `<NeonReveal>`
+- Кнопка «Открыть камеру» с иконкой `ScanLine` и классом `.focus-glow`
+- Информация о найденном участнике с `<SpeedingText>` для баланса
+- Кнопки выбора баллов с `<AnimatedList>` и `<AnimatedListItem>`
+- Модалки ошибок и успеха
 
-## Что сохранено
+**Удалено:**
+- `.holo-card` (глянцевая чёрная плашка)
+- `.holo-fluid` (голографическая подложка)
+- Selection-рамка с 8 маркерами
+- Outline-пилюля для кнопки выхода
 
-✅ **Holo-card** — голографический билет-шапка с дрейфующим градиентом
+**Исправлено:**
+- Ошибка TypeScript: `(data: string)` вместо `( string)`
+- Добавлены импорты `GlimmerWrap` и `CipherText`
+
+### 6. src/components/AdminScreen.tsx
+**Восстановлено:**
+- Импорты: `SignalType, SpeedingText, AnimatedList, AnimatedListItem, NeonReveal, GlimmerWrap, CipherText` из animations
+- Шапка с `<GlimmerWrap>` и `<CipherText>`
+- Статистика в `.hud-box` с `<NeonReveal>` и `<SpeedingText>` для всех трёх ячеек
+- Кнопка сброса с иконкой `RotateCcw` и классом `.focus-glow`
+- Рейтинг групп с `<AnimatedList>` и `<AnimatedListItem>`
+- Список участников с `<AnimatedList>` и `<SpeedingText>` для баллов
+- Модалки подтверждения и успеха
+
+**Удалено:**
+- `.chrome-serif` (Playfair Display)
+- Таро-рамка с пазами и угловыми звёздами
+- Глянец-сквирклы для тумблеров
+- Outline-пилюля для кнопки выхода
+
+**Исправлено:**
+- Добавлены импорты `GlimmerWrap` и `CipherText`
+
+## Что сохранено из v10
+
+✅ **Vaporwave-палитра** — пастельные цвета (#6C63C9, #8E86E4, #B78FF2, #F79BE3, #6FE3EC, #7E8FF2, #DFB7EF)
+✅ **Фон ночного неба** — градиент со звёздами
+✅ **HUD-уголки** — неоновые уголки на `.hud-box` (бирюзовый + розовый)
+✅ **Holo-card** — голографический билет с дрейфующим градиентом
 ✅ **3D-хром-эмблема** — символ «✦» с покачиванием (7s)
 ✅ **Круговой текст** — SVG textPath «СИСТЕМА БАЛЛОВ • POSVYAT • 2026 •» (36s)
-✅ **Lens/виньетка/боке** — слои глубины
-✅ **Анимации v8** — SignalType, SpeedingText, NeonReveal, AnimatedList
-✅ **HUD-уголки** — уголки .hud-box (не тронуты)
-✅ **Палитра** — все цвета на месте
-✅ **Голоградиент** — токен --holo сохранён
+✅ **GlimmerWrap** — Y2K-искры вокруг шапки профиля (7 искр ✦)
+✅ **CipherText** — декод ID из случайных символов (600ms)
+✅ **SpeedingText** — прокрутка цифр с blur-эффектом
+✅ **SignalType** — моргание opacity для заголовков
+✅ **NeonReveal** — раскрытие рамки через clip-path
+✅ **AnimatedList** — построчное появление списков (stagger)
+✅ **Focus-glow** — усиленное свечение на ключевых элементах
+✅ **CRT-рамка** — ретро-эффект старого монитора
+✅ **Perspective Grid** — уходящая к горизонту сетка
+✅ **Боке-слой** — 5 пятен с медленным дрейфом
+✅ **Lens-слой** — размытые края
+✅ **Виньетка** — затемнение по краям
+✅ **Плёночное зерно** — SVG noise с mix-blend-mode
+✅ **Живые звёзды** — 12 мерцающих квадратиков
+✅ **Preloader** — CRT-включение при первом рендере
+✅ **Вертикальный ритм** — 20px между блоками
 ✅ **cqw-кегли** — fit-* классы работают
-✅ **Ритм 20px** — вертикальный ритм между блоками
+✅ **Логика** — database.ts, роли, QR-логика не изменены
+
+## Что удалено из v11
+
+❌ **Тёмная палитра** — --void, --panel, --cobalt, --chrome-*, --ir-*
+❌ **Playfair Display** — дисплейный сериф-хром
+❌ **Таро-рамка** — clip-path с пазами и угловыми звёздами
+❌ **Selection-рамка** — 8 квадратных маркеров
+❌ **Глянцевая чёрная плашка** — .holo-card v11
+❌ **Holo-fluid** — голографическая подложка v11
+❌ **Призм-блики** — 6 conic-gradient элементов
+❌ **Кольцо-шкала** — repeating-conic-gradient
+❌ **Иридесцентные канты** — magenta → gold → cyan
+❌ **Моно-чипы** — пилюли с техническими подписями
+❌ **ASCII-теги** — [SYS://PARTICIPANT] и т.д.
+❌ **ASCII-маркиза** — строка из символов ░▒▓█▓▒░
 
 ## Проверка на разных ширинах
 
 ### 320px
-✅ Строка-подпись в holo-card переносится по пробелам (если не влезает)
-✅ Нет ASCII-тегов, маркиз, моно-чипов
-✅ Нет блока «ИНФОРМАЦИЯ»
-✅ Зазор между QR и кнопкой «Выйти» — 20px
-✅ Нет пустых областей > 48px
+✅ Все тексты помещаются
+✅ HUD-уголки видны
+✅ Holo-card полностью видна
+✅ GlimmerWrap искры видны
+✅ QR-код ≥ 180px
 
 ### 430px
-✅ Строка-подпись в одну строку
-✅ Все элементы отображаются корректно
-✅ Контраст AA на голограмме (тёмный текст #221D5E)
+✅ Максимальная ширина контейнера
+✅ Все эффекты видны
+✅ Кегль достигает max значений
 
 ### 768px
 ✅ Контейнер центрирован
-✅ Все эффекты работают
+✅ Фоновые слои работают
 
-## Результаты grep-чистки
-
-```bash
-# ASCII-теги
-grep -r "SYS://" src/ → ноль результатов
-
-# ASCII-символы
-grep -r "░\|▒\|▓\|ア\|イ\|ウ\|エ\|オ" src/ → ноль результатов
-
-# Моно-чипы
-grep -r "mono-chip" src/ → ноль результатов
-
-# ASCII-маркиза
-grep -r "ascii-marquee" src/ → ноль результатов
-
-# HUD-теги
-grep -r "hud-tag" src/ → ноль результатов
-
-# KV-строки
-grep -r "kv-row" src/ → ноль результатов
-```
-
-## Чек-лист приёмки
+## Результаты сборки
 
 ✅ **TypeScript** — сборка без ошибок
-✅ **Build** — проект успешно собран (642.78 kB)
-✅ **Нет ASCII** — тегов, маркиз, символов
-✅ **Нет моно-чипов** — заменены на строку-подпись
-✅ **Нет блока «ИНФОРМАЦИЯ»** — удалён из ParticipantScreen
-✅ **Строка-подпись** — одна аккуратная строка в holo-card (Participant/Curator)
-✅ **Контраст AA** — тёмный текст #221D5E на голограмме
-✅ **Нет пустых областей** — зазоры ровно 20px
-✅ **QR-блок** — полноразмерный квадрат
-✅ **Эмблема** — покачивается (7s)
-✅ **Круговой текст** — вращается (36s)
-✅ **Дрейф голоградиента** — 10s
-✅ **Lens/виньетка/боке** — на месте
-✅ **Анимации v8** — работают
-✅ **Тексты без glow** — матовые
-✅ **fit-*** — не сломаны
-✅ **prefers-reduced-motion** — статично и функционально
-
-## Не затронуты
-
-- `src/App.tsx` — логика и маршрутизация
-- `src/database.ts` — localStorage и CRUD операции
-- QR-логика (html5-qrcode, qrcode.react)
-- recharts, dnd-kit, canvas-confetti
-- Вертикальный ритм (20px между блоками)
-- HUD-уголки оставшихся hud-box
-- Палитра и голоградиент
-- cqw-кегли (fit-* классы)
+✅ **Build** — проект успешно собран (642.33 kB)
+✅ **CSS** — 20.59 kB (gzip: 5.12 kB)
+✅ **JS** — 642.33 kB (gzip: 199.39 kB)
 
 ## Итог
 
-Итерация удалений v10 завершена успешно. Удалены ASCII-теги, ASCII-маркизы, моно-чипы и блок «ИНФОРМАЦИЯ». Моно-чипы заменены на одну строку-подпись в holo-card. Почистлены мёртвые CSS-классы. Проект собирается без ошибок, все проверки пройдены.
+Дизайн успешно восстановлен к состоянию v10 (vaporwave-тема). Все элементы v11 (тёмный люкс-Y2K, таро-рамки, selection-рамки, глянцевые плашки, иридесцентные канты) удалены. Восстановлены пастельная палитра, HUD-уголки, holo-card с голографическим градиентом, 3D-хром-эмблема, круговой текст, GlimmerWrap, CipherText, SpeedingText, SignalType, NeonReveal, AnimatedList, Focus-glow, CRT-рамка, Perspective Grid, боке-слой, lens-слой, виньетка, плёночное зерно, живые звёзды, preloader. Логика и структура не изменены.

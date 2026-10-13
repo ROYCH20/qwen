@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { Html5Qrcode } from 'html5-qrcode';
 import { getUserById, updatePoints, User } from '../database';
 import { LogOut, ScanLine } from 'lucide-react';
-import { SignalType, AnimatedList, AnimatedListItem, NeonReveal, SpeedingText } from './animations';
+import { SignalType, AnimatedList, AnimatedListItem, NeonReveal, SpeedingText, GlimmerWrap, CipherText } from './animations';
 
 interface Props {
   user: User;
@@ -149,66 +149,27 @@ export default function CuratorScreen({ user, onLogout }: Props) {
     <div style={{ paddingTop: '24px' }}>
       {/* Заголовок */}
       <div className="center-col screen-head" style={{ marginBottom: 'var(--gap-title)' }}>
-        <h1 className="screen-title chrome-serif">
+        <h1 className="screen-title text-chrome">
           <SignalType>КУРАТОР</SignalType>
         </h1>
-        <p className="fit-flow fit-sub" style={{ marginTop: '4px', color: 'var(--muted)' }}>
+        <p className="text-neon-cyan fit-flow fit-sub" style={{ marginTop: '4px' }}>
           <SignalType>Панель управления</SignalType>
         </p>
       </div>
 
-      {/* Holo-card */}
-      <div className="holo-card">
-        <div className="center-col" style={{ paddingInline: '16px', position: 'relative', zIndex: 1 }}>
-          {/* Holo-fluid подложка */}
-          <div className="holo-fluid" style={{ width: '100%', marginBottom: '16px' }}></div>
+      {/* Шапка с Glimmer Wrap */}
+      <GlimmerWrap className="center-col" style={{ marginBottom: 'var(--gap-block)' }}>
+        <h2 className="text-chrome-soft text-center user-name fit-flow">
+          {user.fullName}
+        </h2>
+        <span className="badge-neon" style={{ marginTop: '10px' }}>
+          <CipherText text={`ID: ${user.id}`} duration={600} />
+        </span>
+      </GlimmerWrap>
 
-          {/* 3D-хром-эмблема */}
-          <div style={{ position: 'relative', marginBottom: '12px' }}>
-            <svg style={{ width: '120px', height: '120px', position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', animation: 'circle-rotate 36s linear infinite' }} viewBox="0 0 120 120">
-              <defs>
-                <path id="circle-path" d="M 60, 60 m -45, 0 a 45,45 0 1,1 90,0 a 45,45 0 1,1 -90,0" />
-              </defs>
-              <text style={{ fontFamily: 'Grafmassa, sans-serif', fontSize: '8px', letterSpacing: '2px', fill: 'var(--muted)' }}>
-                <textPath href="#circle-path">СИСТЕМА БАЛЛОВ • POSVYAT • 2026 •</textPath>
-              </text>
-            </svg>
-            <div className="chrome-serif" style={{ fontSize: '56px', position: 'relative', zIndex: 2, textShadow: '0 1px 0 rgba(34,29,94,.4), 0 2px 0 rgba(34,29,94,.35), 0 3px 0 rgba(34,29,94,.3), 0 4px 0 rgba(34,29,94,.25), 0 6px 12px rgba(34,29,94,.35)', animation: 'emblem-rotate 7s ease-in-out infinite' }}>
-              ✦
-            </div>
-          </div>
-
-          {/* Имя — chrome-serif */}
-          <h2 className="text-center fit-flow chrome-serif" style={{ 
-            fontSize: 'clamp(14px, 4.5vw, 18px)', 
-            fontWeight: 700, 
-            lineHeight: 1.25,
-            maxWidth: '100%'
-          }}>
-            {user.fullName}
-          </h2>
-
-          {/* Строка-подпись */}
-          <p style={{
-            fontSize: 'clamp(10px, 3vw, 12px)',
-            color: 'var(--muted)',
-            letterSpacing: '0.06em',
-            textAlign: 'center',
-            marginTop: '8px',
-            lineHeight: 1.3
-          }}>
-            ID: {user.id} · КУРАТОР
-          </p>
-        </div>
-      </div>
-
-      {/* Сканирование — таро-рамка */}
+      {/* Сканирование */}
       <NeonReveal>
         <div className="hud-box">
-          <span className="star-tl">✦</span>
-          <span className="star-tr">✦</span>
-          <span className="star-bl">✦</span>
-          <span className="star-br">✦</span>
           <span className="hud-label fit-flow fit-title">СКАНИРОВАНИЕ QR-КОДА</span>
           
           {!isScanning ? (
@@ -218,7 +179,7 @@ export default function CuratorScreen({ user, onLogout }: Props) {
                 <span className="fit-btn-m">Открыть камеру</span>
               </button>
               
-              <p className="fit-flow fit-sub text-center" style={{ margin: '0', color: 'var(--muted)' }}>
+              <p className="text-neon-lilac fit-flow fit-sub text-center" style={{ margin: '0' }}>
                 или введите ID
               </p>
 
@@ -233,23 +194,14 @@ export default function CuratorScreen({ user, onLogout }: Props) {
                 <button onClick={handleManualScan} className="btn-neon btn-lilac">
                   <span className="fit-btn-m">Найти участника</span>
                 </button>
-                <p style={{ fontSize: '10px', color: 'var(--muted)', textAlign: 'center', lineHeight: 1.3 }}>
+                <p style={{ fontSize: '10px', color: '#B9B0E6', textAlign: 'center', lineHeight: 1.3 }}>
                   ID участника, которому начисляются или списываются баллы
                 </p>
               </div>
             </div>
           ) : (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
-              {/* Selection-рамка для камеры */}
               <div className="qr-frame">
-                <div className="marker tl"></div>
-                <div className="marker tc"></div>
-                <div className="marker tr"></div>
-                <div className="marker ml"></div>
-                <div className="marker mr"></div>
-                <div className="marker bl"></div>
-                <div className="marker bc"></div>
-                <div className="marker br"></div>
                 <div id={scannerContainerId} className="overflow-hidden"></div>
               </div>
               <button onClick={stopScanner} className="btn-neon btn-danger">
@@ -264,18 +216,14 @@ export default function CuratorScreen({ user, onLogout }: Props) {
       {scannedUser && (
         <NeonReveal>
           <div className="hud-box">
-            <span className="star-tl">✦</span>
-            <span className="star-tr">✦</span>
-            <span className="star-bl">✦</span>
-            <span className="star-br">✦</span>
             <span className="hud-label fit-flow fit-title">УЧАСТНИК НАЙДЕН</span>
             
             <div className="center-col" style={{ padding: '10px 0', marginBottom: '10px' }}>
-              <p className="user-name text-center fit-flow" style={{ color: 'var(--text)' }}>{scannedUser.fullName}</p>
-              <p className="fit-flow fit-sub" style={{ marginTop: '4px', color: 'var(--muted)' }}>
-                Группа: {scannedUser.group} · ID: {scannedUser.id}
+              <p className="user-name text-white text-center fit-flow">{scannedUser.fullName}</p>
+              <p className="fit-flow fit-sub text-neon-lilac" style={{ marginTop: '4px' }}>
+                Группа: {scannedUser.group} • ID: {scannedUser.id}
               </p>
-              <p className="fit-nowrap fit-stat-v" style={{ marginTop: '8px', color: 'var(--ir-cyan)' }}>
+              <p className="fit-nowrap fit-stat-v text-neon-cyan" style={{ marginTop: '8px' }}>
                 Баланс: <SpeedingText value={scannedUser.points} />
               </p>
             </div>
@@ -284,7 +232,7 @@ export default function CuratorScreen({ user, onLogout }: Props) {
 
             {/* Действие */}
             <div style={{ marginTop: '10px', marginBottom: '14px' }}>
-              <p className="fit-nowrap fit-stat-l text-center" style={{ marginBottom: '10px', color: 'var(--muted)' }}>
+              <p className="fit-nowrap fit-stat-l text-neon-lilac text-center" style={{ marginBottom: '10px' }}>
                 Действие
               </p>
               <div className="btn-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: 'var(--gap-btn)' }}>
@@ -305,7 +253,7 @@ export default function CuratorScreen({ user, onLogout }: Props) {
 
             {/* Количество баллов */}
             <div style={{ marginBottom: '14px' }}>
-              <p className="fit-flow fit-stat-l text-center" style={{ marginBottom: '10px', color: 'var(--muted)' }}>
+              <p className="fit-flow fit-stat-l text-neon-lilac text-center" style={{ marginBottom: '10px' }}>
                 Количество баллов
               </p>
               <AnimatedList className="btn-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0, 1fr))', gap: 'var(--gap-btn)' }}>
@@ -351,7 +299,7 @@ export default function CuratorScreen({ user, onLogout }: Props) {
       {showError && (
         <div className="modal-overlay">
           <div className="modal-card center-col">
-            <p className="font-medium text-center fit-flow" style={{ marginBottom: '24px', fontSize: 'clamp(13px, 3.6vw, 15px)', color: 'var(--text)' }}>{showError}</p>
+            <p className="text-white font-medium text-center fit-flow" style={{ marginBottom: '24px', fontSize: 'clamp(13px, 3.6vw, 15px)' }}>{showError}</p>
             <button
               onClick={() => setShowError('')}
               className="btn-neon btn-pink"
@@ -367,7 +315,7 @@ export default function CuratorScreen({ user, onLogout }: Props) {
       {showSuccess && (
         <div className="modal-overlay">
           <div className="modal-card center-col">
-            <p className="font-medium text-center fit-flow" style={{ marginBottom: '24px', fontSize: 'clamp(13px, 3.6vw, 15px)', color: 'var(--text)' }}>{showSuccess}</p>
+            <p className="text-white font-medium text-center fit-flow" style={{ marginBottom: '24px', fontSize: 'clamp(13px, 3.6vw, 15px)' }}>{showSuccess}</p>
             <button
               onClick={() => setShowSuccess('')}
               className="btn-neon btn-cyan"
@@ -379,17 +327,11 @@ export default function CuratorScreen({ user, onLogout }: Props) {
         </div>
       )}
 
-      {/* Кнопка выхода — outline-пилюля */}
+      {/* Кнопка выхода */}
       <button
         onClick={onLogout}
-        className="btn-neon"
-        style={{ 
-          marginTop: 'var(--gap-block)',
-          background: 'transparent',
-          border: '1px solid var(--ir-magenta)',
-          color: 'var(--ir-magenta)',
-          boxShadow: '0 0 18px rgba(255,92,208,.25)'
-        }}
+        className="btn-neon btn-danger"
+        style={{ marginTop: 'var(--gap-block)' }}
       >
         <LogOut size={18} strokeWidth={1.5} style={{ marginRight: '8px' }} />
         <span className="fit-btn-m2">Выйти из аккаунта</span>
