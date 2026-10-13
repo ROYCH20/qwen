@@ -18,6 +18,8 @@ export default function CuratorScreen({ user, onLogout }: Props) {
   const scannerRef = useRef<Html5Qrcode | null>(null);
   const scannerContainerId = 'qr-scanner-container';
 
+  const isLongName = user.fullName.length > 24;
+
   useEffect(() => {
     return () => {
       if (scannerRef.current) {
@@ -144,35 +146,32 @@ export default function CuratorScreen({ user, onLogout }: Props) {
   };
 
   return (
-    <div className="pt-8">
+    <div style={{ paddingTop: '24px' }}>
       {/* Заголовок */}
       <div className="center-col" style={{ marginBottom: 'var(--gap-title)' }}>
-        <h1 className="h-screen text-chrome font-bold">КУРАТОР</h1>
-        <p className="text-neon-cyan t-small" style={{ marginTop: '4px', letterSpacing: '0.08em' }}>Панель управления</p>
+        <h1 className="screen-title text-chrome">КУРАТОР</h1>
+        <p className="text-neon-cyan screen-subtitle" style={{ marginTop: '4px' }}>Панель управления</p>
       </div>
 
-      {/* Карточка куратора — имя целиком */}
+      {/* Шапка — ВНЕ контейнера */}
       <div className="center-col" style={{ marginBottom: 'var(--gap-block)' }}>
-        <h2 className="text-chrome-soft font-bold text-center h-card" style={{ maxWidth: '100%' }}>
+        <h2 className={`text-chrome-soft text-center ${isLongName ? 'user-name user-name--long' : 'user-name'}`}>
           {user.fullName}
         </h2>
         <span className="badge-neon" style={{ marginTop: '10px' }}>ID: {user.id}</span>
       </div>
 
-      {/* Сканирование — func-zone */}
-      <div className="func-zone">
-        <span className="func-zone-label">Сканирование QR-кода</span>
+      {/* Сканирование — hud-box */}
+      <div className="hud-box">
+        <span className="hud-label">Сканирование QR-кода</span>
         
         {!isScanning ? (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
-            <button
-              onClick={startScanner}
-              className="btn-neon btn-cyan"
-            >
+            <button onClick={startScanner} className="btn-neon btn-cyan">
               Открыть камеру
             </button>
             
-            <p className="text-neon-lilac t-small font-medium text-center" style={{ margin: '4px 0 8px' }}>
+            <p className="text-neon-lilac screen-subtitle text-center" style={{ margin: '0' }}>
               или введите ID
             </p>
 
@@ -197,16 +196,9 @@ export default function CuratorScreen({ user, onLogout }: Props) {
         ) : (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
             <div className="qr-frame" style={{ display: 'block', width: '100%' }}>
-              <span className="qr-frame-corner tl"></span>
-              <span className="qr-frame-corner tr"></span>
-              <span className="qr-frame-corner bl"></span>
-              <span className="qr-frame-corner br"></span>
               <div id={scannerContainerId} className="overflow-hidden"></div>
             </div>
-            <button
-              onClick={stopScanner}
-              className="btn-neon btn-danger"
-            >
+            <button onClick={stopScanner} className="btn-neon btn-danger">
               Остановить сканирование
             </button>
           </div>
@@ -215,31 +207,34 @@ export default function CuratorScreen({ user, onLogout }: Props) {
 
       {/* Информация о найденном участнике */}
       {scannedUser && (
-        <div className="panel-glass">
-          <h3 className="t-label text-neon-pink text-center" style={{ marginBottom: '14px' }}>Участник найден</h3>
-          <div className="center-col" style={{ padding: '14px', background: 'rgba(108, 99, 201, 0.18)', borderRadius: '16px', border: '1px solid rgba(142, 134, 228, 0.35)', marginBottom: '16px' }}>
-            <p className="h-card text-white font-semibold text-center" style={{ maxWidth: '100%' }}>{scannedUser.fullName}</p>
-            <p className="t-small text-neon-lilac font-medium text-center" style={{ marginTop: '4px' }}>
+        <div className="hud-box">
+          <span className="hud-label">Участник найден</span>
+          
+          <div className="center-col" style={{ padding: '10px 0', marginBottom: '10px' }}>
+            <p className="user-name text-white text-center">{scannedUser.fullName}</p>
+            <p className="screen-subtitle text-neon-lilac" style={{ marginTop: '4px' }}>
               Группа: {scannedUser.group} • ID: {scannedUser.id}
             </p>
-            <p className="h-card text-neon-cyan font-bold text-center" style={{ marginTop: '8px' }}>
+            <p className="stat-value text-neon-cyan" style={{ marginTop: '8px' }}>
               Баланс: {scannedUser.points}
             </p>
           </div>
 
+          <div className="hud-divider"></div>
+
           {/* Действие */}
-          <div style={{ marginBottom: '16px' }}>
-            <p className="t-label text-neon-lilac text-center" style={{ marginBottom: '10px' }}>Действие</p>
+          <div style={{ marginTop: '10px', marginBottom: '14px' }}>
+            <p className="stat-label text-neon-lilac text-center" style={{ marginBottom: '10px' }}>Действие</p>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: 'var(--gap-btn)' }}>
               <button
                 onClick={() => { setAction('credit'); setShowError(''); }}
-                className={`btn-neon ${action === 'credit' ? 'btn-cyan' : 'btn-ghost'}`}
+                className={`btn-neon btn-grid ${action === 'credit' ? 'btn-cyan' : 'btn-ghost'}`}
               >
                 Зачисление
               </button>
               <button
                 onClick={() => { setAction('debit'); setShowError(''); }}
-                className={`btn-neon ${action === 'debit' ? 'btn-danger' : 'btn-ghost'}`}
+                className={`btn-neon btn-grid ${action === 'debit' ? 'btn-danger' : 'btn-ghost'}`}
               >
                 Списание
               </button>
@@ -247,15 +242,15 @@ export default function CuratorScreen({ user, onLogout }: Props) {
           </div>
 
           {/* Количество баллов */}
-          <div style={{ marginBottom: '16px' }}>
-            <p className="t-label text-neon-lilac text-center" style={{ marginBottom: '10px' }}>Количество баллов</p>
+          <div style={{ marginBottom: '14px' }}>
+            <p className="stat-label text-neon-lilac text-center" style={{ marginBottom: '10px' }}>Количество баллов</p>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0, 1fr))', gap: 'var(--gap-btn)' }}>
               {[50, 100, 150].map(p => (
                 <button
                   key={p}
                   onClick={() => { setPoints(p); setShowError(''); }}
-                  className={`btn-neon ${points === p ? 'btn-chrome' : 'btn-ghost'}`}
-                  style={{ fontSize: 'clamp(16px, 4.5vw, 20px)', fontWeight: 700 }}
+                  className={`btn-neon btn-grid ${points === p ? 'btn-chrome' : 'btn-ghost'}`}
+                  style={{ fontSize: 'clamp(14px, 4vw, 18px)', fontWeight: 700 }}
                 >
                   {p}
                 </button>
@@ -263,12 +258,14 @@ export default function CuratorScreen({ user, onLogout }: Props) {
             </div>
           </div>
 
+          <div className="hud-divider"></div>
+
           {/* Подтверждение */}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: 'var(--gap-btn)' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: 'var(--gap-btn)', marginTop: '10px' }}>
             <button
               onClick={handleSubmit}
               disabled={points === null}
-              className={`btn-neon ${
+              className={`btn-neon btn-grid ${
                 points !== null
                   ? action === 'credit' ? 'btn-cyan' : 'btn-danger'
                   : 'btn-ghost'
@@ -277,10 +274,7 @@ export default function CuratorScreen({ user, onLogout }: Props) {
             >
               {action === 'credit' ? `+${points || 0}` : `-${points || 0}`}
             </button>
-            <button
-              onClick={handleReset}
-              className="btn-neon btn-ghost"
-            >
+            <button onClick={handleReset} className="btn-neon btn-grid btn-ghost">
               Сброс
             </button>
           </div>
@@ -291,7 +285,7 @@ export default function CuratorScreen({ user, onLogout }: Props) {
       {showError && (
         <div className="modal-overlay">
           <div className="modal-card center-col">
-            <p className="t-body text-white font-medium text-center" style={{ marginBottom: '24px' }}>{showError}</p>
+            <p className="text-white font-medium text-center" style={{ marginBottom: '24px', fontSize: 'clamp(13px, 3.6vw, 15px)', lineHeight: 1.3 }}>{showError}</p>
             <button
               onClick={() => setShowError('')}
               className="btn-neon btn-pink"
@@ -307,7 +301,7 @@ export default function CuratorScreen({ user, onLogout }: Props) {
       {showSuccess && (
         <div className="modal-overlay">
           <div className="modal-card center-col">
-            <p className="t-body text-white font-medium text-center" style={{ marginBottom: '24px' }}>{showSuccess}</p>
+            <p className="text-white font-medium text-center" style={{ marginBottom: '24px', fontSize: 'clamp(13px, 3.6vw, 15px)', lineHeight: 1.3 }}>{showSuccess}</p>
             <button
               onClick={() => setShowSuccess('')}
               className="btn-neon btn-cyan"

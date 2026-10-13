@@ -13,45 +13,44 @@ export default function ParticipantScreen({ user, onLogout }: Props) {
     type: 'participant_qr'
   });
 
+  const isLongName = user.fullName.length > 24;
+
   return (
-    <div className="pt-8">
-      {/* Заголовок */}
+    <div style={{ paddingTop: '24px' }}>
+      {/* Заголовок экрана */}
       <div className="center-col" style={{ marginBottom: 'var(--gap-title)' }}>
-        <h1 className="h-screen text-chrome font-bold">ПРОФИЛЬ</h1>
-        <p className="text-neon-lilac t-small" style={{ marginTop: '4px', letterSpacing: '0.08em' }}>Участник</p>
+        <h1 className="screen-title text-chrome">ПРОФИЛЬ</h1>
+        <p className="text-neon-lilac screen-subtitle" style={{ marginTop: '4px' }}>Участник</p>
       </div>
 
-      {/* Карточка профиля — имя целиком хром-градиентом */}
+      {/* Шапка профиля — ВНЕ контейнера */}
       <div className="center-col" style={{ marginBottom: 'var(--gap-block)' }}>
-        <h2 className="text-chrome-soft font-bold text-center h-card" style={{ maxWidth: '100%' }}>
+        <h2 className={`text-chrome-soft text-center ${isLongName ? 'user-name user-name--long' : 'user-name'}`}>
           {user.fullName}
         </h2>
         <span className="badge-neon" style={{ marginTop: '10px' }}>ID: {user.id}</span>
       </div>
 
-      {/* Статистика Группа / Баллы */}
-      <div className="panel-glass">
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: '12px' }}>
-          <div className="center-col" style={{ padding: '14px 10px', background: 'rgba(108, 99, 201, 0.18)', borderRadius: '16px', border: '1px solid rgba(142, 134, 228, 0.35)' }}>
-            <p className="t-label text-neon-lilac" style={{ marginBottom: '6px' }}>Группа</p>
-            <p className="h-card text-white font-bold">{user.group}</p>
+      {/* Группа / Баллы — hud-box с двумя колонками и hud-vdiv */}
+      <div className="hud-box">
+        <div className="flex items-stretch justify-around" style={{ gap: '12px' }}>
+          <div className="flex-1 center-col" style={{ padding: '8px 0' }}>
+            <p className="stat-label text-neon-lilac" style={{ marginBottom: '6px' }}>Группа</p>
+            <p className="stat-value text-white">{user.group}</p>
           </div>
-          <div className="center-col" style={{ padding: '14px 10px', background: 'rgba(247, 155, 227, 0.12)', borderRadius: '16px', border: '1px solid rgba(247, 155, 227, 0.35)' }}>
-            <p className="t-label text-neon-pink" style={{ marginBottom: '6px' }}>Баллы</p>
-            <p className="h-card text-white font-bold">{user.points}</p>
+          <div className="hud-vdiv"></div>
+          <div className="flex-1 center-col" style={{ padding: '8px 0' }}>
+            <p className="stat-label text-neon-pink" style={{ marginBottom: '6px' }}>Баллы</p>
+            <p className="stat-value text-white">{user.points}</p>
           </div>
         </div>
       </div>
 
-      {/* QR-код — func-zone + qr-frame */}
-      <div className="func-zone">
-        <span className="func-zone-label">QR-код участника</span>
+      {/* QR-код — hud-box */}
+      <div className="hud-box">
+        <span className="hud-label">QR-код участника</span>
         <div className="center-col">
           <div className="qr-frame">
-            <span className="qr-frame-corner tl"></span>
-            <span className="qr-frame-corner tr"></span>
-            <span className="qr-frame-corner bl"></span>
-            <span className="qr-frame-corner br"></span>
             <QRCodeSVG
               value={qrValue}
               size={200}
@@ -62,32 +61,33 @@ export default function ParticipantScreen({ user, onLogout }: Props) {
               style={{ width: '100%', height: 'auto', maxWidth: '220px', display: 'block' }}
             />
           </div>
-          <p className="text-neon-cyan t-small font-medium text-center" style={{ marginTop: '12px', textShadow: '0 0 8px rgba(111, 227, 236, 0.5)' }}>
+          <p className="text-neon-cyan screen-subtitle" style={{ marginTop: '12px' }}>
             Покажите этот код куратору
           </p>
         </div>
       </div>
 
-      {/* Информация — panel-glass */}
-      <div className="panel-glass">
-        <h4 className="t-label text-neon-lilac text-center" style={{ marginBottom: '14px' }}>Информация</h4>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-          <div className="flex justify-between items-start" style={{ gap: '12px', paddingBottom: '10px', borderBottom: '1px solid rgba(223, 183, 239, 0.15)' }}>
-            <span className="t-small text-neon-lilac font-medium" style={{ flexShrink: 0 }}>ФИО:</span>
-            <span className="t-body text-white font-semibold text-right" style={{ maxWidth: '70%' }}>{user.fullName}</span>
-          </div>
-          <div className="flex justify-between items-center" style={{ gap: '12px', paddingBottom: '10px', borderBottom: '1px solid rgba(223, 183, 239, 0.15)' }}>
-            <span className="t-small text-neon-lilac font-medium" style={{ flexShrink: 0 }}>Группа:</span>
-            <span className="t-body text-white font-semibold text-right">{user.group}</span>
-          </div>
-          <div className="flex justify-between items-center" style={{ gap: '12px', paddingBottom: '10px', borderBottom: '1px solid rgba(223, 183, 239, 0.15)' }}>
-            <span className="t-small text-neon-lilac font-medium" style={{ flexShrink: 0 }}>Баллы:</span>
-            <span className="h-card text-neon-pink font-bold text-right">{user.points}</span>
-          </div>
-          <div className="flex justify-between items-center" style={{ gap: '12px' }}>
-            <span className="t-small text-neon-lilac font-medium" style={{ flexShrink: 0 }}>Роль:</span>
-            <span className="badge-neon">Участник</span>
-          </div>
+      {/* Информация — hud-box */}
+      <div className="hud-box">
+        <span className="hud-label">Информация</span>
+        <div className="flex justify-between items-center" style={{ padding: '4px 0' }}>
+          <span className="info-label text-neon-lilac">ФИО</span>
+          <span className="info-value text-white">{user.fullName}</span>
+        </div>
+        <div className="hud-divider"></div>
+        <div className="flex justify-between items-center" style={{ padding: '4px 0' }}>
+          <span className="info-label text-neon-lilac">Группа</span>
+          <span className="info-value text-white">{user.group}</span>
+        </div>
+        <div className="hud-divider"></div>
+        <div className="flex justify-between items-center" style={{ padding: '4px 0' }}>
+          <span className="info-label text-neon-lilac">Баллы</span>
+          <span className="info-value text-neon-pink">{user.points}</span>
+        </div>
+        <div className="hud-divider"></div>
+        <div className="flex justify-between items-center" style={{ padding: '4px 0' }}>
+          <span className="info-label text-neon-lilac">Роль</span>
+          <span className="badge-neon">Участник</span>
         </div>
       </div>
 

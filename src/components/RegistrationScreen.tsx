@@ -24,20 +24,16 @@ export default function RegistrationScreen({ onLogin }: Props) {
   };
 
   return (
-    <div className="pt-8">
-      {/* Заголовок с хром-эффектом */}
+    <div style={{ paddingTop: '24px' }}>
+      {/* Заголовок */}
       <div className="center-col" style={{ marginBottom: 'var(--gap-title)' }}>
-        <h1 className="h-screen text-chrome font-bold flicker">
-          СИСТЕМА
-        </h1>
-        <h2 className="text-chrome-soft font-bold" style={{ fontSize: 'clamp(18px, 5vw, 24px)', letterSpacing: '0.08em', lineHeight: 1.2 }}>
-          БАЛЛОВ
-        </h2>
+        <h1 className="screen-title text-chrome flicker">СИСТЕМА</h1>
+        <h2 className="text-chrome-soft" style={{ fontSize: 'clamp(16px, 5vw, 22px)', letterSpacing: '0.08em', lineHeight: 1.2, fontWeight: 700 }}>БАЛЛОВ</h2>
       </div>
 
-      {/* Блок ввода ID — func-zone */}
-      <div className="func-zone">
-        <span className="func-zone-label">Вход в систему</span>
+      {/* Вход в систему — hud-box */}
+      <div className="hud-box">
+        <span className="hud-label">Вход в систему</span>
         <div className="flex items-stretch" style={{ gap: '10px' }}>
           <input
             type="text"
@@ -59,28 +55,11 @@ export default function RegistrationScreen({ onLogin }: Props) {
 
       {/* Быстрый доступ */}
       <div style={{ marginBottom: 'var(--gap-block)' }}>
-        <p className="center-col t-small text-neon-lilac font-medium" style={{ marginBottom: '12px', letterSpacing: '0.08em' }}>
-          Быстрый доступ
-        </p>
+        <p className="center-col text-neon-lilac screen-subtitle" style={{ marginBottom: '12px' }}>Быстрый доступ</p>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0, 1fr))', gap: 'var(--gap-btn)' }}>
-          <button
-            onClick={() => onLogin('P001')}
-            className="btn-neon btn-cyan"
-          >
-            Участник
-          </button>
-          <button
-            onClick={() => onLogin('C001')}
-            className="btn-neon btn-lilac"
-          >
-            Куратор
-          </button>
-          <button
-            onClick={() => onLogin('A001')}
-            className="btn-neon btn-danger"
-          >
-            Админ
-          </button>
+          <button onClick={() => onLogin('P001')} className="btn-neon btn-cyan btn-grid">Участник</button>
+          <button onClick={() => onLogin('C001')} className="btn-neon btn-lilac btn-grid">Куратор</button>
+          <button onClick={() => onLogin('A001')} className="btn-neon btn-danger btn-grid">Админ</button>
         </div>
       </div>
 
@@ -88,7 +67,7 @@ export default function RegistrationScreen({ onLogin }: Props) {
       {showError && (
         <div className="modal-overlay">
           <div className="modal-card center-col">
-            <p className="t-body text-white font-medium text-center" style={{ marginBottom: '24px' }}>{showError}</p>
+            <p className="text-white font-medium text-center" style={{ marginBottom: '24px', fontSize: 'clamp(13px, 3.6vw, 15px)', lineHeight: 1.3 }}>{showError}</p>
             <button
               onClick={() => setShowError('')}
               className="btn-neon btn-pink"
