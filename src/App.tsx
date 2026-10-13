@@ -27,17 +27,23 @@ function App() {
   };
 
   return (
-    <div className="min-h-screen bg-retro-dark flex justify-center">
-      <div className="w-full max-w-[430px] min-h-screen relative retro-grid overflow-hidden">
+    <div className="min-h-screen bg-soft-pink flex justify-center">
+      <div className="w-full max-w-[430px] min-h-screen relative overflow-hidden">
         {/* Background decorations */}
-        <div className="absolute top-0 left-0 w-full h-full pointer-events-none overflow-hidden">
-          <div className="absolute top-10 left-5 text-4xl opacity-20 float-animation">★</div>
-          <div className="absolute top-32 right-8 text-3xl opacity-15 float-animation" style={{ animationDelay: '1s' }}>✦</div>
-          <div className="absolute top-60 left-12 text-2xl opacity-10 float-animation" style={{ animationDelay: '2s' }}>◆</div>
+        <div className="fixed top-0 left-1/2 -translate-x-1/2 w-full max-w-[430px] h-full pointer-events-none overflow-hidden z-0">
+          <div className="absolute top-10 left-6 text-3xl opacity-30 float-animation" style={{ color: '#ffb6c1' }}>✿</div>
+          <div className="absolute top-28 right-8 text-2xl opacity-25 float-animation-delayed" style={{ color: '#c8a2c8' }}>♡</div>
+          <div className="absolute top-52 left-10 text-2xl opacity-20 float-animation" style={{ color: '#87ceeb', animationDelay: '1.5s' }}>✧</div>
+          <div className="absolute bottom-32 right-6 text-3xl opacity-25 float-animation-delayed" style={{ color: '#98fb98' }}>✿</div>
+          <div className="absolute bottom-48 left-8 text-2xl opacity-20 float-animation" style={{ color: '#ffeb99', animationDelay: '2s' }}>♡</div>
+          {/* Soft gradient blobs */}
+          <div className="absolute top-20 -right-20 w-60 h-60 rounded-full opacity-20" style={{ background: 'radial-gradient(circle, #ffb6c1, transparent)' }}></div>
+          <div className="absolute top-96 -left-20 w-48 h-48 rounded-full opacity-15" style={{ background: 'radial-gradient(circle, #c8a2c8, transparent)' }}></div>
+          <div className="absolute bottom-40 -right-10 w-52 h-52 rounded-full opacity-15" style={{ background: 'radial-gradient(circle, #87ceeb, transparent)' }}></div>
         </div>
 
         {/* Content */}
-        <div className="relative z-10 pb-20">
+        <div className="relative z-10 pb-24">
           {currentScreen === 'registration' && (
             <RegistrationScreen onLogin={handleLogin} />
           )}
@@ -52,14 +58,14 @@ function App() {
           )}
         </div>
 
-        {/* Logout button at bottom */}
+        {/* Logout button at bottom - visible on all screens */}
         {currentUser && (
-          <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[430px] p-4 z-50">
+          <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[430px] p-4 z-50" style={{ background: 'linear-gradient(0deg, #fef0f5 60%, transparent)' }}>
             <button
               onClick={handleLogout}
-              className="btn-retro btn-retro-red w-full py-3 text-sm tracking-widest"
+              className="btn-soft btn-soft-pink w-full py-3.5 text-base tracking-wider shadow-lg"
             >
-              ◄ ВЫЙТИ ►
+              ✿ Выйти ✿
             </button>
           </div>
         )}

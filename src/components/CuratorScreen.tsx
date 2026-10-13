@@ -124,7 +124,7 @@ export default function CuratorScreen({ user }: Props) {
     const success = updatePoints(scannedUser.id, newPoints);
     if (success) {
       setShowSuccess(
-        `${action === 'credit' ? 'ЗАЧИСЛЕНО' : 'СПИСАНО'} ${points} БАЛЛОВ. БАЛАНС: ${newPoints}`
+        `${action === 'credit' ? 'Зачислено' : 'Списано'} ${points} баллов. Новый баланс: ${newPoints}`
       );
       setShowError('');
       setScannedUser({ ...scannedUser, points: newPoints });
@@ -143,43 +143,45 @@ export default function CuratorScreen({ user }: Props) {
   };
 
   return (
-    <div className="p-4 pt-8">
+    <div className="p-4 pt-10">
       {/* Title */}
       <div className="text-center mb-6">
-        <h1 className="text-3xl neon-green tracking-wider">КУРАТОР</h1>
-        <div className="w-20 h-1 bg-[#39ff14] mx-auto mt-2 shadow-[0_0_10px_#39ff14]"></div>
+        <div className="w-16 h-16 mx-auto mb-3 rounded-full flex items-center justify-center soft-glow-mint" style={{ background: 'linear-gradient(135deg, #98fb98, #7fdbca)' }}>
+          <span className="text-3xl">✿</span>
+        </div>
+        <h1 className="text-2xl text-gradient-mint tracking-wider">Куратор</h1>
       </div>
 
       {/* Curator Header */}
-      <div className="card-retro rounded-none p-4 mb-4 relative" style={{ borderColor: '#39ff14', boxShadow: '0 0 15px rgba(57, 255, 20, 0.3), 4px 4px 0px #000' }}>
+      <div className="card-soft-mint p-4 mb-4">
         <div className="flex items-center gap-3">
-          <div className="w-14 h-14 border-2 border-[#39ff14] flex items-center justify-center text-2xl bg-black/50">
+          <div className="w-14 h-14 rounded-2xl flex items-center justify-center text-2xl" style={{ background: 'linear-gradient(135deg, #98fb98, #7fdbca)' }}>
             🎓
           </div>
           <div>
-            <h2 className="text-base text-[#39ff14] tracking-wide">{user.fullName}</h2>
-            <p className="text-[#39ff14]/60 text-sm tracking-wider">ID: {user.id}</p>
+            <h2 className="text-base tracking-wide" style={{ color: '#4a3154' }}>{user.fullName}</h2>
+            <p className="text-sm tracking-wider" style={{ color: '#5ba37a' }}>ID: {user.id}</p>
           </div>
         </div>
       </div>
 
       {/* Scanner Section */}
-      <div className="card-retro-cyan rounded-none p-4 mb-4">
-        <h3 className="text-sm text-[#00ffff] tracking-wider mb-3">◆ СКАНИРОВАНИЕ QR ◆</h3>
+      <div className="card-soft-sky p-4 mb-4">
+        <h3 className="text-sm tracking-wider mb-3" style={{ color: '#5ba3c4' }}>✧ Сканирование QR ✧</h3>
         
         {!isScanning ? (
           <div className="space-y-3">
             <button
               onClick={startScanner}
-              className="btn-retro btn-retro-cyan w-full py-3 text-sm tracking-wider"
+              className="btn-soft btn-soft-sky w-full py-3 text-sm tracking-wider"
             >
-              ◄ КАМЕРА ►
+              ✿ Открыть камеру
             </button>
             
-            <div className="flex items-center gap-3">
-              <div className="flex-1 h-px bg-[#ff00ff]/30"></div>
-              <span className="text-xs text-[#ff00ff]/50 tracking-wider">ИЛИ ВВЕДИТЕ ID</span>
-              <div className="flex-1 h-px bg-[#ff00ff]/30"></div>
+            <div className="flex items-center gap-3 py-1">
+              <div className="flex-1 h-px" style={{ background: 'linear-gradient(90deg, transparent, rgba(200, 162, 200, 0.4), transparent)' }}></div>
+              <span className="text-xs tracking-wider" style={{ color: '#c8a2c8' }}>или введите ID</span>
+              <div className="flex-1 h-px" style={{ background: 'linear-gradient(90deg, transparent, rgba(200, 162, 200, 0.4), transparent)' }}></div>
             </div>
 
             <div className="flex gap-2">
@@ -188,13 +190,13 @@ export default function CuratorScreen({ user }: Props) {
                 value={manualScan}
                 onChange={(e) => { setManualScan(e.target.value); setShowError(''); }}
                 placeholder="ID участника (P001)"
-                className="input-retro flex-1 px-4 py-3 text-sm"
+                className="input-soft flex-1 px-4 py-3 text-sm"
               />
               <button
                 onClick={handleManualScan}
-                className="btn-retro btn-retro-green px-4 py-3 text-sm"
+                className="btn-soft btn-soft-mint px-4 py-3 text-sm tracking-wider"
               >
-                НАЙТИ
+                Найти
               </button>
             </div>
           </div>
@@ -203,9 +205,9 @@ export default function CuratorScreen({ user }: Props) {
             <div id={scannerContainerId} className="overflow-hidden"></div>
             <button
               onClick={stopScanner}
-              className="btn-retro btn-retro-red w-full py-3 text-sm tracking-wider"
+              className="btn-soft btn-soft-red w-full py-3 text-sm tracking-wider"
             >
-              СТОП
+              Остановить
             </button>
           </div>
         )}
@@ -214,14 +216,16 @@ export default function CuratorScreen({ user }: Props) {
       {/* Error Modal */}
       {showError && (
         <div className="modal-overlay">
-          <div className="card-retro-yellow rounded-none p-6 w-full max-w-sm text-center">
-            <div className="text-4xl mb-3">⚠</div>
-            <p className="text-[#ffff00] text-sm tracking-wider mb-4">{showError}</p>
+          <div className="card-soft-yellow p-6 w-full max-w-sm text-center">
+            <div className="w-16 h-16 mx-auto mb-3 rounded-full flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #ffeb99, #ffd966)' }}>
+              <span className="text-3xl">⚠</span>
+            </div>
+            <p className="text-sm tracking-wide mb-5" style={{ color: '#4a3154' }}>{showError}</p>
             <button
               onClick={() => setShowError('')}
-              className="btn-retro btn-retro-yellow px-6 py-2 text-sm"
+              className="btn-soft btn-soft-yellow px-8 py-2.5 text-sm tracking-wider"
             >
-              OK
+              Понятно
             </button>
           </div>
         </div>
@@ -230,14 +234,16 @@ export default function CuratorScreen({ user }: Props) {
       {/* Success Modal */}
       {showSuccess && (
         <div className="modal-overlay">
-          <div className="card-retro rounded-none p-6 w-full max-w-sm text-center" style={{ borderColor: '#39ff14', boxShadow: '0 0 15px rgba(57, 255, 20, 0.3), 4px 4px 0px #000' }}>
-            <div className="text-4xl mb-3">✓</div>
-            <p className="text-[#39ff14] text-sm tracking-wider mb-4">{showSuccess}</p>
+          <div className="card-soft-mint p-6 w-full max-w-sm text-center">
+            <div className="w-16 h-16 mx-auto mb-3 rounded-full flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #98fb98, #7fdbca)' }}>
+              <span className="text-3xl">✓</span>
+            </div>
+            <p className="text-sm tracking-wide mb-5" style={{ color: '#4a3154' }}>{showSuccess}</p>
             <button
               onClick={() => setShowSuccess('')}
-              className="btn-retro btn-retro-green px-6 py-2 text-sm"
+              className="btn-soft btn-soft-mint px-8 py-2.5 text-sm tracking-wider"
             >
-              OK
+              Отлично
             </button>
           </div>
         </div>
@@ -245,57 +251,55 @@ export default function CuratorScreen({ user }: Props) {
 
       {/* Scanned User Info */}
       {scannedUser && (
-        <div className="card-retro rounded-none p-4 mb-4">
-          <h3 className="text-sm text-[#ff00ff] tracking-wider mb-3">◆ УЧАСТНИК НАЙДЕН ◆</h3>
-          <div className="border-2 border-[#00ffff] p-3 bg-black/30 mb-4">
-            <p className="text-sm text-[#00ffff] tracking-wide">{scannedUser.fullName}</p>
-            <p className="text-xs text-[#00ffff]/60 tracking-wider">Группа: {scannedUser.group} • ID: {scannedUser.id}</p>
-            <p className="text-sm text-[#ffff00] tracking-wider mt-1">БАЛАНС: {scannedUser.points} ★</p>
+        <div className="card-soft-lavender p-4 mb-4">
+          <h3 className="text-sm tracking-wider mb-3" style={{ color: '#b19cd9' }}>✧ Участник найден ✧</h3>
+          <div className="rounded-2xl p-3 mb-4" style={{ background: 'rgba(135, 206, 235, 0.15)', border: '1.5px solid rgba(135, 206, 235, 0.3)' }}>
+            <p className="text-sm tracking-wide" style={{ color: '#4a3154' }}>{scannedUser.fullName}</p>
+            <p className="text-xs tracking-wider" style={{ color: '#5ba3c4' }}>Группа: {scannedUser.group} • ID: {scannedUser.id}</p>
+            <p className="text-sm tracking-wider mt-1" style={{ color: '#d4a82f' }}>Баланс: {scannedUser.points} ★</p>
           </div>
 
           {/* Action Selection */}
           <div className="mb-4">
-            <p className="text-xs text-[#ff00ff]/70 tracking-wider mb-2">ДЕЙСТВИЕ:</p>
+            <p className="text-xs tracking-wider mb-2" style={{ color: '#b19cd9' }}>Действие:</p>
             <div className="grid grid-cols-2 gap-2">
               <button
                 onClick={() => { setAction('credit'); setShowError(''); }}
-                className={`py-3 text-sm tracking-wider border-3 transition ${
+                className={`py-3 text-sm tracking-wider rounded-2xl transition ${
                   action === 'credit'
-                    ? 'btn-retro bg-[#39ff14] text-black'
-                    : 'border-2 border-[#39ff14]/30 text-[#39ff14]/50 bg-black/30'
+                    ? 'btn-soft btn-soft-mint'
+                    : 'bg-white/50 text-gray-400 border-2 border-gray-200'
                 }`}
-                style={{ borderWidth: action === 'credit' ? '3px' : '2px' }}
               >
-                + ЗАЧИСЛЕНИЕ
+                ✿ Зачисление
               </button>
               <button
                 onClick={() => { setAction('debit'); setShowError(''); }}
-                className={`py-3 text-sm tracking-wider border-3 transition ${
+                className={`py-3 text-sm tracking-wider rounded-2xl transition ${
                   action === 'debit'
-                    ? 'btn-retro bg-[#ff3131] text-white'
-                    : 'border-2 border-[#ff3131]/30 text-[#ff3131]/50 bg-black/30'
+                    ? 'btn-soft btn-soft-red'
+                    : 'bg-white/50 text-gray-400 border-2 border-gray-200'
                 }`}
-                style={{ borderWidth: action === 'debit' ? '3px' : '2px' }}
               >
-                - СПИСАНИЕ
+                ✿ Списание
               </button>
             </div>
           </div>
 
           {/* Points Selection */}
           <div className="mb-4">
-            <p className="text-xs text-[#ff00ff]/70 tracking-wider mb-2">КОЛ-ВО БАЛЛОВ:</p>
+            <p className="text-xs tracking-wider mb-2" style={{ color: '#b19cd9' }}>Количество баллов:</p>
             <div className="grid grid-cols-3 gap-2">
               {[50, 100, 150].map(p => (
                 <button
                   key={p}
                   onClick={() => { setPoints(p); setShowError(''); }}
-                  className={`py-4 text-lg tracking-wider border-3 transition ${
+                  className={`py-4 text-lg tracking-wider rounded-2xl transition ${
                     points === p
-                      ? 'btn-retro bg-[#ffff00] text-black'
-                      : 'border-2 border-[#ffff00]/30 text-[#ffff00]/50 bg-black/30'
+                      ? 'btn-soft btn-soft-yellow'
+                      : 'bg-white/50 border-2 border-gray-200'
                   }`}
-                  style={{ borderWidth: points === p ? '3px' : '2px' }}
+                  style={points === p ? {} : { color: '#999' }}
                 >
                   {p}
                 </button>
@@ -308,22 +312,22 @@ export default function CuratorScreen({ user }: Props) {
             <button
               onClick={handleSubmit}
               disabled={points === null}
-              className={`py-3 text-sm tracking-wider border-3 transition ${
+              className={`py-3 text-sm tracking-wider rounded-2xl transition ${
                 points !== null
                   ? action === 'credit'
-                    ? 'btn-retro bg-[#39ff14] text-black'
-                    : 'btn-retro bg-[#ff3131] text-white'
-                  : 'border-2 border-gray-600 text-gray-600 bg-black/30 cursor-not-allowed'
+                    ? 'btn-soft btn-soft-mint'
+                    : 'btn-soft btn-soft-red'
+                  : 'bg-gray-100 text-gray-300 border-2 border-gray-200 cursor-not-allowed'
               }`}
-              style={{ borderWidth: points !== null ? '3px' : '2px' }}
             >
               {action === 'credit' ? `+${points || 0}` : `-${points || 0}`}
             </button>
             <button
               onClick={handleReset}
-              className="btn-retro border-2 border-[#ff00ff]/50 text-[#ff00ff]/70 py-3 text-sm tracking-wider bg-black/30"
+              className="btn-soft py-3 text-sm tracking-wider bg-white/50 border-2 border-gray-200"
+              style={{ color: '#c8a2c8' }}
             >
-              СБРОС
+              Сброс
             </button>
           </div>
         </div>

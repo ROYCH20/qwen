@@ -26,40 +26,39 @@ export default function AdminScreen({ user }: Props) {
   };
 
   return (
-    <div className="p-4 pt-8">
+    <div className="p-4 pt-10">
       {/* Title */}
       <div className="text-center mb-6">
-        <h1 className="text-3xl neon-yellow tracking-wider">АДМИН</h1>
-        <div className="w-20 h-1 bg-[#ffff00] mx-auto mt-2 shadow-[0_0_10px_#ffff00]"></div>
+        <div className="w-16 h-16 mx-auto mb-3 rounded-full flex items-center justify-center soft-glow-pink" style={{ background: 'linear-gradient(135deg, #ffeb99, #ffd966)' }}>
+          <span className="text-3xl">✿</span>
+        </div>
+        <h1 className="text-2xl tracking-wider" style={{ background: 'linear-gradient(135deg, #ffd966, #ffb6c1)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Админ</h1>
       </div>
 
       {/* Admin Header */}
-      <div className="card-retro-yellow rounded-none p-4 mb-4 relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-12 h-12 border-l-2 border-b-2 border-[#ffff00]/30"></div>
-        <div className="absolute bottom-0 left-0 w-12 h-12 border-r-2 border-t-2 border-[#ffff00]/30"></div>
-        
+      <div className="card-soft-yellow p-4 mb-4">
         <div className="flex items-center gap-3 mb-4">
-          <div className="w-14 h-14 border-2 border-[#ffff00] flex items-center justify-center text-2xl bg-black/50">
+          <div className="w-14 h-14 rounded-2xl flex items-center justify-center text-2xl" style={{ background: 'linear-gradient(135deg, #ffeb99, #ffd966)' }}>
             👑
           </div>
           <div>
-            <h2 className="text-base text-[#ffff00] tracking-wide">{user.fullName}</h2>
-            <p className="text-[#ffff00]/60 text-sm tracking-wider">ID: {user.id}</p>
+            <h2 className="text-base tracking-wide" style={{ color: '#4a3154' }}>{user.fullName}</h2>
+            <p className="text-sm tracking-wider" style={{ color: '#b8a44a' }}>ID: {user.id}</p>
           </div>
         </div>
 
         <div className="grid grid-cols-3 gap-2">
-          <div className="border-2 border-[#ff00ff] p-2 text-center bg-black/30">
-            <p className="text-xl text-[#ff00ff] tracking-wider">{totalParticipants}</p>
-            <p className="text-[#ff00ff]/60 text-xs tracking-wider">УЧАСТНИКОВ</p>
+          <div className="rounded-2xl p-2 text-center" style={{ background: 'rgba(255, 182, 193, 0.15)', border: '1.5px solid rgba(255, 182, 193, 0.3)' }}>
+            <p className="text-xl tracking-wider" style={{ color: '#ff9ecd' }}>{totalParticipants}</p>
+            <p className="text-xs tracking-wider" style={{ color: '#c47a8a' }}>Участников</p>
           </div>
-          <div className="border-2 border-[#00ffff] p-2 text-center bg-black/30">
-            <p className="text-xl text-[#00ffff] tracking-wider">{groupSummary.length}</p>
-            <p className="text-[#00ffff]/60 text-xs tracking-wider">ГРУПП</p>
+          <div className="rounded-2xl p-2 text-center" style={{ background: 'rgba(135, 206, 235, 0.15)', border: '1.5px solid rgba(135, 206, 235, 0.3)' }}>
+            <p className="text-xl tracking-wider" style={{ color: '#5ba3c4' }}>{groupSummary.length}</p>
+            <p className="text-xs tracking-wider" style={{ color: '#5ba3c4' }}>Групп</p>
           </div>
-          <div className="border-2 border-[#ffff00] p-2 text-center bg-black/30">
-            <p className="text-xl text-[#ffff00] tracking-wider">{totalPoints}</p>
-            <p className="text-[#ffff00]/60 text-xs tracking-wider">БАЛЛОВ</p>
+          <div className="rounded-2xl p-2 text-center" style={{ background: 'rgba(255, 235, 153, 0.15)', border: '1.5px solid rgba(255, 235, 153, 0.4)' }}>
+            <p className="text-xl tracking-wider" style={{ color: '#d4a82f' }}>{totalPoints}</p>
+            <p className="text-xs tracking-wider" style={{ color: '#b8a44a' }}>Баллов</p>
           </div>
         </div>
       </div>
@@ -67,22 +66,24 @@ export default function AdminScreen({ user }: Props) {
       {/* Reset Button */}
       <button
         onClick={() => setShowResetConfirm(true)}
-        className="btn-retro btn-retro-red w-full py-4 text-sm tracking-widest mb-4"
+        className="btn-soft btn-soft-red w-full py-4 text-sm tracking-wider mb-4"
       >
-        ◄ СБРОСИТЬ БАЛЛЫ ►
+        ✿ Сбросить баллы ✿
       </button>
 
       {/* Reset Success Modal */}
       {showResetSuccess && (
         <div className="modal-overlay">
-          <div className="card-retro rounded-none p-6 w-full max-w-sm text-center" style={{ borderColor: '#39ff14', boxShadow: '0 0 15px rgba(57, 255, 20, 0.3), 4px 4px 0px #000' }}>
-            <div className="text-4xl mb-3">✓</div>
-            <p className="text-[#39ff14] text-sm tracking-wider mb-4">БАЛЛЫ ВСЕХ УЧАСТНИКОВ СБРОШЕНЫ ДО 300!</p>
+          <div className="card-soft-mint p-6 w-full max-w-sm text-center">
+            <div className="w-16 h-16 mx-auto mb-3 rounded-full flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #98fb98, #7fdbca)' }}>
+              <span className="text-3xl">✓</span>
+            </div>
+            <p className="text-sm tracking-wide mb-5" style={{ color: '#4a3154' }}>Баллы всех участников сброшены до 300!</p>
             <button
               onClick={() => setShowResetSuccess(false)}
-              className="btn-retro btn-retro-green px-6 py-2 text-sm"
+              className="btn-soft btn-soft-mint px-8 py-2.5 text-sm tracking-wider"
             >
-              OK
+              Отлично
             </button>
           </div>
         </div>
@@ -91,24 +92,27 @@ export default function AdminScreen({ user }: Props) {
       {/* Reset Confirmation Modal */}
       {showResetConfirm && (
         <div className="modal-overlay">
-          <div className="card-retro-yellow rounded-none p-6 w-full max-w-sm text-center">
-            <div className="text-4xl mb-3">⚠</div>
-            <h3 className="text-lg text-[#ffff00] tracking-wider mb-3">ПОДТВЕРЖДЕНИЕ</h3>
-            <p className="text-sm text-white/80 tracking-wide mb-5">
-              Сбросить баллы всех участников до 300? Действие нельзя отменить.
+          <div className="card-soft-yellow p-6 w-full max-w-sm text-center">
+            <div className="w-16 h-16 mx-auto mb-3 rounded-full flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #ffeb99, #ffd966)' }}>
+              <span className="text-3xl">⚠</span>
+            </div>
+            <h3 className="text-lg tracking-wider mb-3" style={{ color: '#4a3154' }}>Подтверждение</h3>
+            <p className="text-sm tracking-wide mb-5" style={{ color: '#6b4d7a' }}>
+              Сбросить баллы всех участников до 300? Это действие нельзя отменить.
             </p>
             <div className="grid grid-cols-2 gap-3">
               <button
                 onClick={() => setShowResetConfirm(false)}
-                className="btn-retro border-2 border-[#ff00ff]/50 text-[#ff00ff] py-3 text-sm tracking-wider bg-black/30"
+                className="btn-soft py-3 text-sm tracking-wider bg-white/50 border-2 border-gray-200"
+                style={{ color: '#c8a2c8' }}
               >
-                ОТМЕНА
+                Отмена
               </button>
               <button
                 onClick={handleResetPoints}
-                className="btn-retro btn-retro-red py-3 text-sm tracking-wider"
+                className="btn-soft btn-soft-red py-3 text-sm tracking-wider"
               >
-                СБРОС
+                Сбросить
               </button>
             </div>
           </div>
@@ -116,67 +120,67 @@ export default function AdminScreen({ user }: Props) {
       )}
 
       {/* Tabs */}
-      <div key={refreshKey} className="flex border-2 border-[#ff00ff] mb-4">
+      <div key={refreshKey} className="flex rounded-2xl p-1 mb-4" style={{ background: 'rgba(255, 255, 255, 0.5)', border: '1.5px solid rgba(255, 182, 193, 0.3)' }}>
         <button
           onClick={() => setActiveTab('groups')}
-          className={`flex-1 py-3 text-sm tracking-wider transition ${
+          className={`flex-1 py-3 text-sm tracking-wider rounded-xl transition ${
             activeTab === 'groups'
-              ? 'bg-[#ff00ff] text-white'
-              : 'bg-black/30 text-[#ff00ff]/50'
+              ? 'btn-soft btn-soft-pink'
+              : 'text-gray-400'
           }`}
         >
-          ◆ ПО ГРУППАМ
+          ✿ По группам
         </button>
         <button
           onClick={() => setActiveTab('participants')}
-          className={`flex-1 py-3 text-sm tracking-wider transition border-l-2 border-[#ff00ff] ${
+          className={`flex-1 py-3 text-sm tracking-wider rounded-xl transition ${
             activeTab === 'participants'
-              ? 'bg-[#ff00ff] text-white'
-              : 'bg-black/30 text-[#ff00ff]/50'
+              ? 'btn-soft btn-soft-pink'
+              : 'text-gray-400'
           }`}
         >
-          ◆ УЧАСТНИКИ
+          ✿ Участники
         </button>
       </div>
 
       {/* Group Summary */}
       {activeTab === 'groups' && (
         <div className="space-y-3">
-          <h3 className="text-sm text-[#00ffff] tracking-wider">◆ РЕЙТИНГ ГРУПП ◆</h3>
+          <h3 className="text-sm tracking-wider" style={{ color: '#5ba3c4' }}>✧ Рейтинг групп ✧</h3>
           
           {groupSummary.length === 0 ? (
-            <div className="card-retro rounded-none p-8 text-center">
-              <p className="text-4xl mb-2">◆</p>
-              <p className="text-sm text-[#ff00ff]/60 tracking-wider">НЕТ ДАННЫХ</p>
+            <div className="card-soft p-8 text-center">
+              <p className="text-4xl mb-2">✿</p>
+              <p className="text-sm tracking-wider" style={{ color: '#c8a2c8' }}>Нет данных</p>
             </div>
           ) : (
             groupSummary.map((item, index) => {
               const maxPoints = groupSummary[0]?.totalPoints || 1;
               const percentage = (item.totalPoints / maxPoints) * 100;
-              const colors = ['#ffff00', '#c0c0c0', '#ff8c00', '#00ffff'];
-              const color = colors[index] || '#ff00ff';
+              const colors = ['#ffd966', '#c0c0c0', '#ffb366', '#87ceeb'];
+              const color = colors[index] || '#ffb6c1';
               
               return (
-                <div key={item.group} className="card-retro rounded-none p-4" style={{ borderColor: color, boxShadow: `0 0 10px ${color}33, 4px 4px 0px #000` }}>
+                <div key={item.group} className="card-soft p-4" style={{ borderColor: `${color}66` }}>
                   <div className="flex items-center justify-between mb-3">
                     <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 border-2 flex items-center justify-center text-sm tracking-wider" style={{ borderColor: color, color: color }}>
+                      <div className="w-8 h-8 rounded-full flex items-center justify-center text-sm tracking-wider" style={{ background: `${color}33`, color, border: `1.5px solid ${color}66` }}>
                         {index + 1}
                       </div>
                       <div>
                         <p className="text-sm tracking-wider" style={{ color }}>{item.group}</p>
-                        <p className="text-xs text-white/40 tracking-wider">{item.participants} УЧАСТНИКОВ</p>
+                        <p className="text-xs tracking-wider" style={{ color: '#999' }}>{item.participants} участников</p>
                       </div>
                     </div>
                     <div className="text-right">
                       <p className="text-xl tracking-wider" style={{ color }}>{item.totalPoints}</p>
-                      <p className="text-xs text-white/40 tracking-wider">БАЛЛОВ</p>
+                      <p className="text-xs tracking-wider" style={{ color: '#999' }}>баллов</p>
                     </div>
                   </div>
-                  <div className="w-full h-2 bg-black/50 border border-white/10">
+                  <div className="w-full h-2 rounded-full" style={{ background: 'rgba(0,0,0,0.05)' }}>
                     <div
-                      className="h-full transition-all duration-500"
-                      style={{ width: `${percentage}%`, background: color, boxShadow: `0 0 8px ${color}` }}
+                      className="h-full rounded-full transition-all duration-500"
+                      style={{ width: `${percentage}%`, background: `linear-gradient(90deg, ${color}, ${color}cc)`, boxShadow: `0 0 8px ${color}66` }}
                     ></div>
                   </div>
                 </div>
@@ -189,22 +193,22 @@ export default function AdminScreen({ user }: Props) {
       {/* Participants List */}
       {activeTab === 'participants' && (
         <div className="space-y-2">
-          <h3 className="text-sm text-[#00ffff] tracking-wider">◆ ВСЕ УЧАСТНИКИ ◆</h3>
+          <h3 className="text-sm tracking-wider" style={{ color: '#5ba3c4' }}>✧ Все участники ✧</h3>
           
           {participants.map((p, index) => (
-            <div key={p.id} className="card-retro-cyan rounded-none p-3 flex items-center justify-between">
+            <div key={p.id} className="card-soft-sky p-3 flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="w-8 h-8 border-2 border-[#00ffff] flex items-center justify-center text-xs text-[#00ffff] tracking-wider">
+                <div className="w-8 h-8 rounded-full flex items-center justify-center text-xs tracking-wider" style={{ background: 'rgba(135, 206, 235, 0.2)', color: '#5ba3c4', border: '1.5px solid rgba(135, 206, 235, 0.4)' }}>
                   {index + 1}
                 </div>
                 <div>
-                  <p className="text-sm text-[#00ffff] tracking-wide">{p.fullName}</p>
-                  <p className="text-xs text-[#00ffff]/40 tracking-wider">{p.group} • {p.id}</p>
+                  <p className="text-sm tracking-wide" style={{ color: '#4a3154' }}>{p.fullName}</p>
+                  <p className="text-xs tracking-wider" style={{ color: '#5ba3c4' }}>{p.group} • {p.id}</p>
                 </div>
               </div>
               <div className="text-right">
-                <p className="text-sm text-[#ffff00] tracking-wider">{p.points}</p>
-                <p className="text-xs text-[#ffff00]/40 tracking-wider">БАЛЛОВ</p>
+                <p className="text-sm tracking-wider" style={{ color: '#d4a82f' }}>{p.points}</p>
+                <p className="text-xs tracking-wider" style={{ color: '#b8a44a' }}>баллов</p>
               </div>
             </div>
           ))}
