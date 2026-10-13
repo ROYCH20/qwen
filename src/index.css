@@ -553,6 +553,28 @@
   text-align: center;
 }
 
+/* ═══════════════════════════════════════════
+   ЦЕПОЧКА ОГРАНИЧЕНИЙ ДЛЯ FITTEXT
+   ═══════════════════════════════════════════ */
+.hud-box, .hud-box *, .qr-frame, .qr-frame *, .btn-neon, .btn-neon *,
+.stat-cell, .screen-title, .user-name, .fit-wrap {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.flex > *, .grid > * {
+  min-width: 0;
+}
+
+.stat-cell {
+  padding-inline: 12px;
+  text-align: center;
+}
+
+.app-frame, #root {
+  overflow-x: clip;
+}
+
 /* CRT-рамка */
 .crt-frame {
   position: relative;
