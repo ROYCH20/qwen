@@ -110,23 +110,15 @@ export default function AdminScreen({ user, onLogout }: Props) {
                 
                 return (
                   <div key={item.group} className="hud-box" style={{ marginBottom: 0 }}>
-                    <div className="flex items-center justify-between" style={{ gap: '12px', marginBottom: '12px' }}>
-                      <div className="flex-1 min-w-0">
-                        <p className="fit-nowrap fit-stat-v text-center" style={{ color }}>
-                          {item.group}
-                        </p>
-                        <p className="fit-nowrap fit-stat-l text-neon-lilac text-center" style={{ marginTop: '2px' }}>
-                          {item.participants} участников
-                        </p>
+                    <div className="grp-row" style={{ marginBottom: '10px' }}>
+                      <div className="fit-box">
+                        <span className="fit-nowrap fit-val" style={{ color, display: 'block' }}>{item.group}</span>
                       </div>
-                      <div className="text-right flex-shrink-0">
-                        <p className="fit-nowrap fit-stat-v text-right" style={{ color }}>
-                          {item.totalPoints}
-                        </p>
-                        <p className="fit-nowrap fit-stat-l text-neon-lilac text-right" style={{ marginTop: '2px' }}>
-                          баллов
-                        </p>
+                      <div className="fit-box" style={{ textAlign: 'right' }}>
+                        <span className="fit-nowrap fit-val" style={{ color, display: 'block' }}>{item.totalPoints}</span>
                       </div>
+                      <span className="fit-flow fit-small text-neon-lilac">{item.participants} участников</span>
+                      <span className="fit-nowrap fit-small text-neon-lilac">баллов</span>
                     </div>
                     <div className="progress-bar">
                       <div
@@ -214,7 +206,7 @@ export default function AdminScreen({ user, onLogout }: Props) {
         className="btn-neon btn-danger"
         style={{ marginTop: 'var(--gap-block)' }}
       >
-        <span className="fit-nowrap fit-btn3">Выйти из аккаунта</span>
+        <span className="fit-btn-m2">Выйти из аккаунта</span>
       </button>
     </div>
   );

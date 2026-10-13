@@ -193,7 +193,7 @@
    ═══════════════════════════════════════════ */
 .qr-frame {
   position: relative;
-  padding: 14px;
+  padding: 12px;
   border-radius: 6px;
   background:
     linear-gradient(#6FE3EC, #6FE3EC) left top / 20px 2px no-repeat,
@@ -206,16 +206,24 @@
     linear-gradient(#6FE3EC, #6FE3EC) right bottom / 2px 20px no-repeat,
     rgba(18, 15, 56, 0.35);
   box-shadow: 0 0 26px rgba(111,227,236,.15);
-  display: inline-block;
-  container-type: inline-size;
+  width: min(100%, 260px);
+  margin-inline: auto;
+  /* container-type: normal — НЕ контейнер для cqw */
 }
 
 /* ═══════════════════════════════════════════
    CSS-СИСТЕМА АВТОКЕГЛЯ (container query units)
    ═══════════════════════════════════════════ */
 
-/* Контейнеры для cqw */
-.btn-neon, .stat-cell, .screen-head {
+/* Универсальная обёртка для точного скоупа кегля */
+.fit-box {
+  container-type: inline-size;
+  min-width: 0;
+  max-width: 100%;
+}
+
+/* Контейнеры для cqw — только элементы с шириной, заданной раскладкой */
+.btn-neon, .stat-cell, .screen-head, .fit-box {
   container-type: inline-size;
 }
 
@@ -239,7 +247,11 @@
 }
 
 .fit-stat-v {
-  font-size: clamp(10px, calc((100cqw - 24px) / 9.2), 20px);
+  font-size: clamp(10px, calc((100cqw - 8px) / 9.2), 16px);
+}
+
+.fit-val {
+  font-size: clamp(10px, calc((100cqw - 8px) / 9.2), 16px);
 }
 
 /* Б) МНОГОСЛОВНЫЕ — перенос разрешён */
@@ -263,6 +275,23 @@
 
 .fit-name {
   font-size: clamp(10px, calc((100cqw - 32px) / 28), 20px);
+}
+
+/* Многословные кнопки — перенос разрешён */
+.fit-btn-m {
+  font-size: clamp(10px, calc((100cqw - 28px) / 17.25), 15px);
+  white-space: normal;
+  text-wrap: balance;
+}
+
+.fit-btn-m2 {
+  font-size: clamp(10px, calc((100cqw - 28px) / 19.55), 15px);
+  white-space: normal;
+  text-wrap: balance;
+}
+
+.fit-small {
+  font-size: clamp(9px, 2.6vw, 11px);
 }
 
 /* В) СТРУКТУРНЫЕ ФОЛБЭКИ для узких экранов */
@@ -313,19 +342,26 @@
 .kv-row {
   display: grid;
   grid-template-columns: auto minmax(0, 1fr);
-  gap: 10px;
+  gap: 12px;
   align-items: baseline;
 }
 
 .kv-row .k {
   white-space: nowrap;
+  color: #B9B0E6;
   font-size: clamp(9px, 2.6vw, 12px);
 }
 
 .kv-row .v {
   text-align: right;
-  font-size: clamp(11px, 3.4vw, 15px);
-  overflow-wrap: normal;
+}
+
+/* Е) СТРОКИ ГРУПП (AdminScreen) */
+.grp-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 6px 12px;
+  align-items: baseline;
 }
 
 /* ═══════════════════════════════════════════
@@ -478,7 +514,6 @@
   color: #120F38;
   box-shadow: 0 0 12px rgba(142, 134, 228, 0.4);
   border: 1px solid rgba(255, 255, 255, 0.2);
-  white-space: nowrap;
 }
 
 /* ═══════════════════════════════════════════
@@ -501,7 +536,6 @@
   font-size: clamp(18px, 6vw, 28px);
   line-height: 1.2;
   letter-spacing: 0.05em;
-  white-space: nowrap;
   font-weight: 700;
 }
 

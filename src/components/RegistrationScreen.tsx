@@ -45,15 +45,15 @@ export default function RegistrationScreen({ onLogin }: Props) {
             className="input-neon"
             onKeyDown={(e) => e.key === 'Enter' && handleManualLogin()}
           />
+          <p style={{ fontSize: '10px', color: '#B9B0E6', textAlign: 'center', lineHeight: 1.3 }}>
+            Формат ID: буква роли и номер, например: P001
+          </p>
           <button
             onClick={handleManualLogin}
             className="btn-neon btn-chrome"
           >
             <span className="fit-nowrap fit-btn3">START / ВОЙТИ</span>
           </button>
-          <p style={{ fontSize: '10px', color: '#B9B0E6', textAlign: 'center', lineHeight: 1.3 }}>
-            Формат ID: буква роли и номер, например: P001
-          </p>
         </div>
       </div>
 

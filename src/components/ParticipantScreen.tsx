@@ -54,12 +54,11 @@ export default function ParticipantScreen({ user, onLogout }: Props) {
           <div className="qr-frame">
             <QRCodeSVG
               value={qrValue}
-              size={200}
               level="H"
               includeMargin={false}
               fgColor="#221D5E"
               bgColor="#F5F2FF"
-              style={{ width: '100%', height: 'auto', maxWidth: '220px', display: 'block' }}
+              style={{ width: '100%', height: 'auto', display: 'block', minWidth: '180px' }}
             />
           </div>
           <p className="text-neon-cyan fit-flow fit-cap" style={{ marginTop: '12px' }}>
@@ -73,25 +72,33 @@ export default function ParticipantScreen({ user, onLogout }: Props) {
         <span className="hud-label fit-flow fit-title">ИНФОРМАЦИЯ</span>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
           <div className="kv-row" style={{ padding: '4px 0' }}>
-            <span className="k text-neon-lilac">ФИО</span>
-            <span className="v text-white fit-flow">{user.fullName}</span>
+            <span className="k">ФИО</span>
+            <div className="v fit-box">
+              <span className="text-white fit-flow" style={{ display: 'block', textAlign: 'right' }}>{user.fullName}</span>
+            </div>
           </div>
           <div className="hud-divider"></div>
           <div className="kv-row" style={{ padding: '4px 0' }}>
-            <span className="k text-neon-lilac">Группа</span>
-            <span className="v text-white fit-nowrap fit-stat-v">{user.group}</span>
+            <span className="k">Группа</span>
+            <div className="v fit-box">
+              <span className="text-white fit-nowrap fit-val" style={{ display: 'block', textAlign: 'right' }}>{user.group}</span>
+            </div>
           </div>
           <div className="hud-divider"></div>
           <div className="kv-row" style={{ padding: '4px 0' }}>
-            <span className="k text-neon-lilac">Баллы</span>
-            <span className="v text-neon-pink fit-nowrap fit-stat-v">{user.points}</span>
+            <span className="k">Баллы</span>
+            <div className="v fit-box">
+              <span className="text-neon-pink fit-nowrap fit-val" style={{ display: 'block', textAlign: 'right' }}>{user.points}</span>
+            </div>
           </div>
           <div className="hud-divider"></div>
           <div className="kv-row" style={{ padding: '4px 0' }}>
-            <span className="k text-neon-lilac">Роль</span>
-            <span className="badge-neon" style={{ justifySelf: 'end' }}>
-              <span className="fit-nowrap" style={{ fontSize: 'clamp(10px, 3vw, 13px)' }}>Участник</span>
-            </span>
+            <span className="k">Роль</span>
+            <div className="v fit-box" style={{ display: 'flex', justifyContent: 'flex-end' }}>
+              <span className="badge-neon">
+                <span className="fit-nowrap">Участник</span>
+              </span>
+            </div>
           </div>
         </div>
       </div>
@@ -102,7 +109,7 @@ export default function ParticipantScreen({ user, onLogout }: Props) {
         className="btn-neon btn-danger"
         style={{ marginTop: 'var(--gap-block)' }}
       >
-        <span className="fit-nowrap fit-btn3">Выйти из аккаунта</span>
+        <span className="fit-btn-m2">Выйти из аккаунта</span>
       </button>
     </div>
   );

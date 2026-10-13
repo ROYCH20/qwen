@@ -170,7 +170,7 @@ export default function CuratorScreen({ user, onLogout }: Props) {
         {!isScanning ? (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
             <button onClick={startScanner} className="btn-neon btn-cyan">
-              <span className="fit-nowrap fit-btn3">Открыть камеру</span>
+              <span className="fit-btn-m">Открыть камеру</span>
             </button>
             
             <p className="text-neon-lilac fit-flow fit-sub text-center" style={{ margin: '0' }}>
@@ -182,11 +182,11 @@ export default function CuratorScreen({ user, onLogout }: Props) {
                 type="text"
                 value={manualScan}
                 onChange={(e) => { setManualScan(e.target.value); setShowError(''); }}
-                placeholder="Например: P001 участника"
+                placeholder="Например: P001"
                 className="input-neon"
               />
               <button onClick={handleManualScan} className="btn-neon btn-lilac">
-                <span className="fit-nowrap fit-btn3">Найти участника</span>
+                <span className="fit-btn-m">Найти участника</span>
               </button>
               <p style={{ fontSize: '10px', color: '#B9B0E6', textAlign: 'center', lineHeight: 1.3 }}>
                 ID участника, которому начисляются или списываются баллы
@@ -195,11 +195,11 @@ export default function CuratorScreen({ user, onLogout }: Props) {
           </div>
         ) : (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
-            <div className="qr-frame" style={{ display: 'block', width: '100%' }}>
+            <div className="qr-frame">
               <div id={scannerContainerId} className="overflow-hidden"></div>
             </div>
             <button onClick={stopScanner} className="btn-neon btn-danger">
-              <span className="fit-nowrap fit-btn3">Остановить сканирование</span>
+              <span className="fit-btn-m">Остановить сканирование</span>
             </button>
           </div>
         )}
@@ -323,7 +323,7 @@ export default function CuratorScreen({ user, onLogout }: Props) {
         className="btn-neon btn-danger"
         style={{ marginTop: 'var(--gap-block)' }}
       >
-        <span className="fit-nowrap fit-btn3">Выйти из аккаунта</span>
+        <span className="fit-btn-m2">Выйти из аккаунта</span>
       </button>
     </div>
   );

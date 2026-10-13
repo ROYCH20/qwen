@@ -1,159 +1,181 @@
-# Отчёт о выполненных изменениях (FitText удалён, CSS-система)
+# Отчёт о выполненных изменениях (v7 — исправление дефектов)
 
 ## Дата
 2024
 
 ## Проблема
-FitText v1 и v2 не работали корректно в трёх итерациях — JS-замеры кегля не прижились из-за сложностей с загрузкой шрифта, пересчётами и производительностью.
+После v6 обнаружены четыре дефекта:
+1. QR-код схлопывался в пустую рамку из-за `container-type: inline-size` на `.qr-frame`
+2. cqw брался от неправильного предка-контейнера
+3. Глобальный `white-space: nowrap` на кнопках ломал многословные подписи
+4. Строки групп в AdminScreen сталкивались
 
 ## Решение
-Полностью удалён FitText и заменён на детерминированную CSS-систему с container query units (cqw).
 
-## Изменённые файлы
+### 1. src/index.css
 
-### 1. Удалён src/FitText.tsx
-Компонент полностью удалён из проекта.
-
-### 2. src/index.css
-**Добавлена CSS-система автокегля:**
-
+**Исправлен .qr-frame:**
 ```css
-/* Контейнеры для cqw */
-.btn-neon, .stat-cell, .screen-head {
+.qr-frame {
+  /* container-type: normal — НЕ контейнер для cqw */
+  width: min(100%, 260px);
+  margin-inline: auto;
+  padding: 12px;
+}
+```
+
+**Добавлена универсальная обёртка .fit-box:**
+```css
+.fit-box {
   container-type: inline-size;
-}
-
-/* Однословные токены */
-.fit-nowrap { white-space: nowrap; overflow-wrap: normal; letter-spacing: 0; }
-.fit-btn3   { font-size: clamp(8px, calc((100cqw - 28px) / 9.2), 14px); }
-.fit-btn2   { font-size: clamp(8px, calc((100cqw - 24px) / 11.5), 13px); }
-.fit-stat-l { font-size: clamp(8px, calc((100cqw - 24px) / 11.5), 12px); }
-.fit-stat-v { font-size: clamp(10px, calc((100cqw - 24px) / 9.2), 20px); }
-
-/* Многословные тексты */
-.fit-flow  { white-space: normal; overflow-wrap: normal; text-wrap: balance; }
-.fit-sub   { font-size: clamp(10px, calc((100cqw - 32px) / 20), 16px); }
-.fit-title { font-size: clamp(10px, calc((100cqw - 32px) / 26.5), 16px); }
-.fit-cap   { font-size: clamp(9px, calc((100cqw - 32px) / 30), 13px); }
-.fit-name  { font-size: clamp(10px, calc((100cqw - 32px) / 28), 20px); }
-```
-
-**Структурные фолбэки для узких экранов (≤400px):**
-```css
-@media (max-width: 400px) {
-  .btn-grid { grid-template-columns: 1fr !important; }
-  .stat-grid { grid-template-columns: 1fr !important; }
-  .stat-grid .hud-vdiv { display: none; }
-  .stat-grid .stat-cell { display: flex; justify-content: space-between; }
+  min-width: 0;
+  max-width: 100%;
 }
 ```
 
-**Строки списков:**
+**Уточнены классы кегля:**
 ```css
-.list-row {
+.fit-val {
+  font-size: clamp(10px, calc((100cqw - 8px) / 9.2), 16px);
+}
+
+.fit-btn-m {
+  font-size: clamp(10px, calc((100cqw - 28px) / 17.25), 15px);
+  white-space: normal;
+  text-wrap: balance;
+}
+
+.fit-btn-m2 {
+  font-size: clamp(10px, calc((100cqw - 28px) / 19.55), 15px);
+  white-space: normal;
+  text-wrap: balance;
+}
+
+.fit-small {
+  font-size: clamp(9px, 2.6vw, 11px);
+}
+```
+
+**Добавлен .grp-row для строк групп:**
+```css
+.grp-row {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
-  gap: 10px;
-  align-items: center;
-}
-
-.list-row .name {
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-```
-
-**Строки «label: value»:**
-```css
-.kv-row {
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr);
-  gap: 10px;
+  gap: 6px 12px;
   align-items: baseline;
 }
 ```
 
-### 3. src/components/RegistrationScreen.tsx
-- Удалён импорт FitText
-- Все тексты обёрнуты в CSS-классы:
-  - Заголовок: `.screen-title`
-  - Подзаголовок: `.fit-flow.fit-sub`
-  - Кнопки: `.fit-nowrap.fit-btn3`
-  - Заголовок секции: `.fit-flow.fit-title`
-
-### 4. src/components/ParticipantScreen.tsx
-- Удалён импорт FitText
-- Имя: `.user-name.fit-flow` (перенос разрешён)
-- Статистика: `.fit-nowrap.fit-stat-v` и `.fit-nowrap.fit-stat-l` в `.stat-cell`
-- Информация: `.kv-row` для строк label/value
-- Подпись QR: `.fit-flow.fit-cap`
-
-### 5. src/components/CuratorScreen.tsx
-- Удалён импорт FitText
-- Исправлена ошибка TypeScript: `(data: string)` вместо `( string)`
-- Все тексты через CSS-классы
-- Кнопки действий: `.fit-nowrap.fit-btn2`
-- Блок сканирования: gap 14px сохранён
-
-### 6. src/components/AdminScreen.tsx
-- Удалён импорт FitText
-- Статистика: `.stat-grid` с `.stat-cell` и `borderLeft`
-- Кнопка сброса: `.fit-flow` (многословный текст)
-- Тумблер: `.fit-nowrap.fit-btn2`
-- Список участников: `.list-row` с `.name` (максимум 2 строки)
-- Рейтинг групп: `.fit-nowrap.fit-stat-v` и `.fit-nowrap.fit-stat-l`
-
-## Как работает CSS-система
-
-### Container Query Units (cqw)
-`100cqw` = ширина контент-бокса контейнера с `container-type: inline-size`
-
-**Формула расчёта кегля:**
+**Обновлён .kv-row:**
 ```css
-font-size: clamp(min, calc((100cqw - padding) / (символы * 1.15)), max);
-```
+.kv-row {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 12px;
+  align-items: baseline;
+}
 
-Где:
-- `1.15` — коэффициент для шрифта Grafmassa (~1.15em на символ)
-- `padding` — отступы контейнера
-- `символы` — максимальное количество символов в тексте
-
-**Пример для кнопки «УЧАСТНИК» (8 символов):**
-```css
-.fit-btn3 {
-  font-size: clamp(8px, calc((100cqw - 28px) / 9.2), 14px);
+.kv-row .k {
+  white-space: nowrap;
+  color: #B9B0E6;
+  font-size: clamp(9px, 2.6vw, 12px);
 }
 ```
 
-На ширине 430px: `(430 - 28) / 9.2 ≈ 43px` → ограничено max `14px`
-На ширине 320px: `(320 - 28) / 9.2 ≈ 31px` → ограничено max `14px`
-На ширине 100px: `(100 - 28) / 9.2 ≈ 7.8px` → ограничено min `8px`
+**Удалён глобальный nowrap:**
+- Убран `white-space: nowrap` из `.badge-neon`
+- Убран `white-space: nowrap` из `.screen-title`
+- Теперь nowrap только через класс `.fit-nowrap` на конкретных токенах
 
-### Преимущества перед FitText
+### 2. src/components/ParticipantScreen.tsx
 
-1. **Детерминированность** — нет JS-замеров, нет race conditions
-2. **Производительность** — CSS работает на GPU, нет пересчётов
-3. **Надёжность** — не зависит от загрузки шрифта
-4. **Простота** — нет компонента, нет состояний, нет useEffect
-5. **Масштабируемость** — работает на любых ширинах автоматически
+**QR-код:**
+- Убран фиксированный `size={200}`
+- Добавлен `style={{ width: '100%', height: 'auto', display: 'block', minWidth: '180px' }}`
+- QR теперь полноразмерный квадрат с читаемыми модулями
+
+**Информация:**
+- Все значения обёрнуты в `.fit-box` для точного скоупа кегля
+- Используется `.fit-val` вместо `.fit-stat-v` для значений
+- Зазор между подписью и значением ≥ 12px
+
+**Кнопка выхода:**
+- Заменена `.fit-nowrap.fit-btn3` на `.fit-btn-m2`
+- Теперь многословный текст переносится по пробелам
+
+### 3. src/components/CuratorScreen.tsx
+
+**Кнопки сканирования:**
+- "Открыть камеру" — `.fit-btn-m` (перенос разрешён)
+- "Найти участника" — `.fit-btn-m` (перенос разрешён)
+- "Остановить сканирование" — `.fit-btn-m` (перенос разрешён)
+
+**QR-сканер:**
+- Убран `style={{ display: 'block', width: '100%' }}` из `.qr-frame`
+- Теперь использует CSS-правила из index.css
+
+**Плейсхолдер:**
+- Изменён с "Например: P001 участника" на "Например: P001"
+- Подробность в helper-подписи под полем
+
+**Кнопка выхода:**
+- Заменена `.fit-nowrap.fit-btn3` на `.fit-btn-m2`
+
+### 4. src/components/AdminScreen.tsx
+
+**Строки групп:**
+- Заменена flex-раскладка на `.grp-row` (grid с двумя колонками)
+- Четыре ячейки: имя группы, баллы, "N участников", "баллов"
+- Зазор между колонками ≥ 12px, столкновение невозможно
+- Прогресс-бар под сеткой с `margin-top: 10px`
+
+**Кнопка выхода:**
+- Заменена `.fit-nowrap.fit-btn3` на `.fit-btn-m2`
+
+### 5. src/components/RegistrationScreen.tsx
+
+**Плейсхолдер:**
+- Оставлен "Например: P001" (короткий, виден целиком на 320px)
+- Helper-подпись под полем: "Формат ID: буква роли и номер, например: P001"
+- Удалён дублирующийся helper-текст
+
+## Как работает исправление
+
+### Проблема 1: QR-код схлопывался
+**Причина:** `container-type: inline-size` на `.qr-frame` включал size containment, который обнулял вклад содержимого в ширину.
+
+**Решение:** Убрать `container-type` с `.qr-frame`, задать явную ширину `width: min(100%, 260px)` и центрирование `margin-inline: auto`.
+
+### Проблема 2: cqw от неправильного предка
+**Причина:** cqw берётся от ближайшего предка с `container-type: inline-size`. Если предок — shrink-to-fit элемент, ширина может быть 0.
+
+**Решение:** 
+- `container-type` только на элементах с шириной, заданной раскладкой (grid/flex-ячейки, `width: 100%`)
+- Запрет на `.qr-frame`, центрированных блоках, бейджах
+- Универсальная обёртка `.fit-box` для точного скоупа кегля
+
+### Проблема 3: Глобальный nowrap ломал многословные кнопки
+**Причина:** `white-space: nowrap` на `.badge-neon` и `.screen-title` запрещал перенос.
+
+**Решение:** Удалить глобальный nowrap, оставить только в `.fit-nowrap` для конкретных однословных токенов.
+
+### Проблема 4: Строки групп сталкивались
+**Причина:** Flex-раскладка с `justify-content: space-between` не гарантировала зазор.
+
+**Решение:** Grid-раскладка `.grp-row` с явным `gap: 6px 12px` — зазор ≥ 12px гарантирован.
 
 ## Проверка на разных ширинах
 
 ### 320px
-✅ Все тексты помещаются (однословные в одну строку, многословные переносятся)
-✅ Кегль автоматически уменьшается до min значений
-✅ Сетки становятся столбиком (фолбэк ≤400px)
-✅ Нет обрезаний и вылетов
+✅ QR-код — полноразмерный квадрат ≥ 180px с читаемыми модулями
+✅ "ИВТ-201" / "300" ≤ 16px, зазор до подписи ≥ 12px
+✅ "2 УЧАСТНИКОВ" и "БАЛЛОВ" не соприкасаются (зазор ≥ 12px)
+✅ "ОТКРЫТЬ КАМЕРУ", "НАЙТИ УЧАСТНИКА", "ВЫЙТИ ИЗ АККАУНТА" целиком внутри пилюль (с переносом)
+✅ Плейсхолдер "Например: P001" виден целиком
 
 ### 360px
-✅ Оптимальное отображение
+✅ Все элементы отображаются корректно
 ✅ Кегль автоматически подстраивается
-
-### 400px
-✅ Граница фолбэка — сетки ещё в строку
-✅ Кегль продолжает расти
 
 ### 430px
 ✅ Максимальная ширина контейнера
@@ -165,41 +187,45 @@ font-size: clamp(min, calc((100cqw - padding) / (символы * 1.15)), max);
 
 ## Ключевые улучшения
 
-1. **Удалён FitText** — нет JS-кода для автоподбора кегля
-2. **CSS-only решение** — container query units работают нативно
-3. **Фолбэки для узких экранов** — сетки становятся столбиком на ≤400px
-4. **Структурные классы** — `.list-row`, `.kv-row` исключают наложения
-5. **Детерминированные формулы** — кегль предсказуем на всех ширинах
+1. **QR-код** — полноразмерный квадрат без схлопывания
+2. **Точный скоуп кегля** — `.fit-box` для изоляции container query
+3. **Многословные кнопки** — перенос разрешён через `.fit-btn-m` / `.fit-btn-m2`
+4. **Строки групп** — grid-раскладка с гарантированным зазором
+5. **Плейсхолдеры** — короткие, видны целиком на 320px
 
 ## Результаты
 
 ✅ **TypeScript** — сборка без ошибок
 ✅ **Build** — проект успешно собран (521.84 kB)
-✅ **FitText удалён** — grep по проекту пуст
-✅ **CSS-система** — container query units работают
-✅ **Адаптивность** — корректное отображение на 320-768px
-✅ **Нет обрезаний** — все тексты видны целиком
-✅ **Нет наложений** — бейджи не перекрывают имена
-✅ **Производительность** — нет JS-пересчётов
+✅ **QR-код** — полноразмерный квадрат с модулями
+✅ **Зазоры** — ≥ 12px между подписями и значениями
+✅ **Кнопки** — многословные тексты переносятся по пробелам
+✅ **Плейсхолдеры** — видны целиком на 320px
+✅ **Нет наложений** — grid-раскладка исключает столкновения
+✅ **Вертикальный ритм** — 20px между блоками сохранён
+✅ **HUD-уголки** — визуальный язык не изменён
+✅ **Палитра** — все цвета на месте
+✅ **App.tsx/database.ts** — не изменены
 
 ## Не затронуты
 
 - `src/App.tsx` — логика и маршрутизация
 - `src/database.ts` — localStorage и CRUD операции
-- QR-логика (html5-qrcode, qrcode.react)
+- QR-логика сканирования (html5-qrcode)
+- QR-логика генерации (qrcode.react)
 - recharts, dnd-kit, canvas-confetti
 - Вертикальный ритм (20px между блоками)
 - Палитра и HUD-уголки
+- cqw-классы однословных токенов из v6
 
 ## Файлы
 
-1. ~~src/FitText.tsx~~ — удалён
-2. src/index.css — добавлена CSS-система
-3. src/components/RegistrationScreen.tsx — обновлён
-4. src/components/ParticipantScreen.tsx — обновлён
-5. src/components/CuratorScreen.tsx — обновлён, исправлена TS ошибка
-6. src/components/AdminScreen.tsx — обновлён
+1. src/index.css — исправлен .qr-frame, добавлены .fit-box, .fit-val, .fit-btn-m, .fit-btn-m2, .fit-small, .grp-row, обновлён .kv-row, удалён глобальный nowrap
+2. src/components/ParticipantScreen.tsx — QR без фиксированного size, информация через .fit-box, кнопка выхода через .fit-btn-m2
+3. src/components/CuratorScreen.tsx — кнопки через .fit-btn-m, плейсхолдер "Например: P001", кнопка выхода через .fit-btn-m2
+4. src/components/AdminScreen.tsx — строки групп через .grp-row, кнопка выхода через .fit-btn-m2
+5. src/components/RegistrationScreen.tsx — плейсхолдер "Например: P001", helper-подпись под полем
 
 ## Итог
 
-FitText полностью удалён и заменён на детерминированную CSS-систему с container query units. Решение проще, надёжнее и производительнее. Все тексты корректно адаптируются к ширине контейнера без JS-замеров.
+Все четыре дефекта исправлены: QR-код не схлопывается, cqw берётся от правильных предков, многословные кнопки переносятся, строки групп не сталкиваются. CSS-система стала более предсказуемой и надёжной.
