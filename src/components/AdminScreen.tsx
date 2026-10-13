@@ -31,7 +31,7 @@ export default function AdminScreen({ user, onLogout }: Props) {
   return (
     <div style={{ paddingTop: '24px' }}>
       {/* Заголовок */}
-      <div className="center-col screen-head" style={{ marginBottom: 'var(--gap-title)' }}>
+      <div className="center-col screen-head" style={{ marginBottom: '8px' }}>
         <h1 className="screen-title text-chrome">
           <SignalType>АДМИН</SignalType>
         </h1>
@@ -40,15 +40,24 @@ export default function AdminScreen({ user, onLogout }: Props) {
         </p>
       </div>
 
-      {/* Шапка с Glimmer Wrap */}
-      <GlimmerWrap className="center-col" style={{ marginBottom: 'var(--gap-block)' }}>
-        <h2 className="text-chrome-soft text-center user-name fit-flow">
+      {/* ASCII-маркиза */}
+      <div className="ascii-marquee">
+        <div className="ascii-marquee-inner">
+          ░▒▓█▓▒░・アィウエオ・01 ░▒▓█▓▒░・アィウエオ・01 ░▒▓█▓▒░・アィウエオ・01 ░▒▓█▓▒░・アィウエо・01
+        </div>
+      </div>
+
+      {/* Шапка с моно-чипами */}
+      <div className="center-col" style={{ marginBottom: 'var(--gap-block)' }}>
+        <h2 className="text-chrome-soft text-center user-name fit-flow" style={{ paddingInline: '16px' }}>
           {user.fullName}
         </h2>
-        <span className="badge-neon" style={{ marginTop: '10px' }}>
-          <CipherText text={`ID: ${user.id}`} duration={600} />
-        </span>
-      </GlimmerWrap>
+        <div className="mono-chips" style={{ marginTop: '12px' }}>
+          <span className="mono-chip">[ID: {user.id}]</span>
+          <span className="mono-chip">[ROLE: ADMIN]</span>
+          <span className="mono-chip">[DB: LOCAL]</span>
+        </div>
+      </div>
 
       {/* Статистика */}
       <NeonReveal>

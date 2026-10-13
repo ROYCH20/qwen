@@ -43,11 +43,19 @@ function App() {
 
   return (
     <div className="min-h-screen bg-night-sky crt-scanlines flex justify-center relative">
+      {/* Боке-слой */}
+      <div className="boke-spot boke-spot-1" />
+      <div className="boke-spot boke-spot-2" />
+      <div className="boke-spot boke-spot-3" />
+      <div className="boke-spot boke-spot-4" />
+      <div className="boke-spot boke-spot-5" />
+
       {/* Глобальные слои */}
       <PerspectiveGrid />
       <BlinkingSquares />
+      <div className="bg-lens" />
+      <div className="vignette-strong" />
       <FilmGrain />
-      <Vignette />
 
       {/* Preloader */}
       {showPreloader && <Preloader onComplete={handlePreloaderComplete} />}
