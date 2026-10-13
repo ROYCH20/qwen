@@ -150,16 +150,7 @@ export default function RegistrationScreen({ onLogin }: Props) {
         </div>
       </div>
 
-      {/* Info */}
-      <div className="card-violet p-4">
-        <h3 className="text-sm text-violet-primary font-semibold tracking-wider mb-3 text-center">Как это работает</h3>
-        <ul className="text-xs text-violet-dark space-y-2 tracking-wide text-center">
-          <li className="font-medium">Участники показывают QR-код кураторам</li>
-          <li className="font-medium">Кураторы сканируют QR и начисляют/списывают баллы</li>
-          <li className="font-medium">Администратор отслеживает рейтинг групп</li>
-          <li className="font-medium">Каждый пользователь имеет уникальный ID</li>
-        </ul>
-      </div>
+
     </div>
   );
 }
