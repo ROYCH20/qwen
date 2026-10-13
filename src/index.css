@@ -1102,46 +1102,7 @@
 }
 
 /* ═══════════════════════════════════════════
-   ASCII-ШАРМ
-   ═══════════════════════════════════════════ */
-
-/* ASCII-маркиза */
-.ascii-marquee {
-  height: 14px;
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-  font-size: 10px;
-  letter-spacing: 4px;
-  color: rgba(223, 183, 239, 0.28);
-  white-space: nowrap;
-  overflow: hidden;
-  pointer-events: none;
-  margin: 8px 0;
-}
-
-.ascii-marquee-inner {
-  display: inline-block;
-  animation: ascii-scroll 24s linear infinite;
-}
-
-@keyframes ascii-scroll {
-  from { transform: translateX(0); }
-  to { transform: translateX(-50%); }
-}
-
-/* ASCII-теги в углах hud-box */
-.hud-tag {
-  position: absolute;
-  top: 8px;
-  right: 12px;
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-  font-size: 9px;
-  letter-spacing: 0.08em;
-  color: rgba(111, 227, 236, 0.45);
-  pointer-events: none;
-}
-
-/* ═══════════════════════════════════════════
-   ДОРОГОЙ СЛОЙ: HOLO + 3D-ХРОМ + МОНО-ЧИПЫ
+   ДОРОГОЙ СЛОЙ: HOLO + 3D-ХРОМ
    ═══════════════════════════════════════════ */
 
 /* Токен голоградиента */
@@ -1238,25 +1199,6 @@
   to { transform: rotate(360deg); }
 }
 
-/* Моно-чипы */
-.mono-chips {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-top: 12px;
-}
-
-.mono-chip {
-  background: rgba(18, 15, 56, 0.85);
-  border-radius: 8px;
-  padding: 6px 10px;
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-  font-size: 10px;
-  letter-spacing: 0.08em;
-  color: #DFB7EF;
-  white-space: nowrap;
-}
-
 /* ═══════════════════════════════════════════
    МОДАЛКА v9 (исправления)
    ═══════════════════════════════════════════ */
@@ -1290,5 +1232,4 @@
   .holo-card { animation: none; }
   .holo-emblem { animation: none; }
   .holo-circle-text { animation: none; }
-  .ascii-marquee-inner { animation: none; }
 }

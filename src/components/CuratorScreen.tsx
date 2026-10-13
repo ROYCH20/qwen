@@ -148,20 +148,13 @@ export default function CuratorScreen({ user, onLogout }: Props) {
   return (
     <div style={{ paddingTop: '24px' }}>
       {/* Заголовок */}
-      <div className="center-col screen-head" style={{ marginBottom: '8px' }}>
+      <div className="center-col screen-head" style={{ marginBottom: 'var(--gap-title)' }}>
         <h1 className="screen-title text-chrome">
           <SignalType>КУРАТОР</SignalType>
         </h1>
         <p className="text-neon-cyan fit-flow fit-sub" style={{ marginTop: '4px' }}>
           <SignalType>Панель управления</SignalType>
         </p>
-      </div>
-
-      {/* ASCII-маркиза */}
-      <div className="ascii-marquee">
-        <div className="ascii-marquee-inner">
-          ░▒▓█▓▒░・アィウエオ・01 ░▒▓█▓▒░・アィウエオ・01 ░▒▓█▓▒░・アィウエオ・01 ░▒▓█▓▒░・アィウエオ・01
-        </div>
       </div>
 
       {/* Holo-card */}
@@ -191,11 +184,17 @@ export default function CuratorScreen({ user, onLogout }: Props) {
             {user.fullName}
           </h2>
 
-          {/* Моно-чипы */}
-          <div className="mono-chips">
-            <span className="mono-chip">[ID: {user.id}]</span>
-            <span className="mono-chip">[ROLE: CURATOR]</span>
-          </div>
+          {/* Строка-подпись */}
+          <p style={{
+            fontSize: 'clamp(10px, 3vw, 12px)',
+            color: '#221D5E',
+            letterSpacing: '0.06em',
+            textAlign: 'center',
+            marginTop: '8px',
+            lineHeight: 1.3
+          }}>
+            ID: {user.id} · КУРАТОР
+          </p>
         </div>
       </div>
 
