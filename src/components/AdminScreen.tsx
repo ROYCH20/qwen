@@ -31,59 +31,63 @@ export default function AdminScreen({ user, onLogout }: Props) {
   return (
     <div style={{ paddingTop: '24px' }}>
       {/* Заголовок */}
-      <div className="center-col screen-head" style={{ marginBottom: '8px' }}>
-        <h1 className="screen-title text-chrome">
+      <div className="center-col screen-head" style={{ marginBottom: 'var(--gap-title)' }}>
+        <h1 className="screen-title chrome-serif">
           <SignalType>АДМИН</SignalType>
         </h1>
-        <p className="text-neon-cyan fit-flow fit-sub" style={{ marginTop: '4px' }}>
+        <p className="fit-flow fit-sub" style={{ marginTop: '4px', color: 'var(--muted)' }}>
           <SignalType>Панель управления</SignalType>
         </p>
       </div>
 
       {/* Шапка */}
       <div className="center-col" style={{ marginBottom: 'var(--gap-block)' }}>
-        <h2 className="text-chrome-soft text-center user-name fit-flow" style={{ paddingInline: '16px' }}>
+        <h2 className="text-chrome-soft text-center user-name chrome-serif fit-flow" style={{ paddingInline: '16px' }}>
           {user.fullName}
         </h2>
       </div>
 
-      {/* Статистика */}
+      {/* Статистика — таро-рамка */}
       <NeonReveal>
         <div className="hud-box">
+          <span className="star-tl">✦</span>
+          <span className="star-tr">✦</span>
+          <span className="star-bl">✦</span>
+          <span className="star-br">✦</span>
           <div key={refreshKey} className="stat-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0, 1fr))', columnGap: '10px' }}>
             <div className="stat-cell">
-              <p className="fit-nowrap fit-stat-v text-white">
+              <p className="fit-nowrap fit-stat-v" style={{ color: 'var(--text)' }}>
                 <SpeedingText value={totalParticipants} />
               </p>
-              <p className="fit-nowrap fit-stat-l text-neon-lilac" style={{ marginTop: '4px' }}>Участников</p>
+              <p className="fit-nowrap fit-stat-l" style={{ marginTop: '4px', color: 'var(--muted)' }}>Участников</p>
             </div>
-            <div className="stat-cell" style={{ borderLeft: '1px solid rgba(223,183,239,.25)' }}>
-              <p className="fit-nowrap fit-stat-v text-white">
+            <div className="stat-cell" style={{ borderLeft: '1px solid var(--hairline)' }}>
+              <p className="fit-nowrap fit-stat-v" style={{ color: 'var(--text)' }}>
                 <SpeedingText value={groupSummary.length} />
               </p>
-              <p className="fit-nowrap fit-stat-l text-neon-lilac" style={{ marginTop: '4px' }}>Групп</p>
+              <p className="fit-nowrap fit-stat-l" style={{ marginTop: '4px', color: 'var(--muted)' }}>Групп</p>
             </div>
-            <div className="stat-cell" style={{ borderLeft: '1px solid rgba(223,183,239,.25)' }}>
-              <p className="fit-nowrap fit-stat-v text-neon-pink">
+            <div className="stat-cell" style={{ borderLeft: '1px solid var(--hairline)' }}>
+              <p className="fit-nowrap fit-stat-v" style={{ color: 'var(--ir-magenta)' }}>
                 <SpeedingText value={totalPoints} />
               </p>
-              <p className="fit-nowrap fit-stat-l text-neon-pink" style={{ marginTop: '4px' }}>Баллов</p>
+              <p className="fit-nowrap fit-stat-l" style={{ marginTop: '4px', color: 'var(--ir-magenta)' }}>Баллов</p>
             </div>
           </div>
         </div>
       </NeonReveal>
 
-      {/* Кнопка сброса */}
+      {/* Кнопка сброса — CTA */}
       <button
         onClick={() => setShowResetConfirm(true)}
-        className="btn-neon btn-danger focus-glow fit-flow"
+        className="btn-neon btn-cyan fit-flow"
         style={{ marginTop: 'var(--gap-block)' }}
       >
         <RotateCcw size={18} strokeWidth={1.5} style={{ marginRight: '8px' }} />
         Сбросить баллы всех участников
       </button>
 
-      {/* Тумблер */}
+      {/* Тумблеры — глянец-сквирклы */}
       <div className="btn-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: 'var(--gap-btn)', marginTop: 'var(--gap-btn)' }}>
         <button
           onClick={() => setActiveTab('groups')}
@@ -102,25 +106,33 @@ export default function AdminScreen({ user, onLogout }: Props) {
       {/* Рейтинг групп */}
       {activeTab === 'groups' && (
         <div style={{ marginTop: 'var(--gap-block)' }}>
-          <p className="fit-flow fit-stat-l text-neon-pink text-center" style={{ marginBottom: '14px' }}>
+          <p className="fit-flow fit-stat-l text-center" style={{ marginBottom: '14px', color: 'var(--ir-magenta)' }}>
             Рейтинг академических групп
           </p>
           
           {groupSummary.length === 0 ? (
             <div className="hud-box center-col">
-              <p className="text-neon-lilac" style={{ fontSize: 'clamp(13px, 3.6vw, 15px)' }}>Нет данных</p>
+              <span className="star-tl">✦</span>
+              <span className="star-tr">✦</span>
+              <span className="star-bl">✦</span>
+              <span className="star-br">✦</span>
+              <p style={{ fontSize: 'clamp(13px, 3.6vw, 15px)', color: 'var(--muted)' }}>Нет данных</p>
             </div>
           ) : (
             <AnimatedList style={{ display: 'flex', flexDirection: 'column', gap: 'var(--gap-block)' }}>
               {groupSummary.map((item, index) => {
                 const maxPoints = groupSummary[0]?.totalPoints || 1;
                 const percentage = (item.totalPoints / maxPoints) * 100;
-                const colors = ['#F79BE3', '#DFB7EF', '#6FE3EC', '#8E86E4'];
-                const color = colors[index] || '#B78FF2';
+                const colors = ['#FF5CD0', '#A06BFF', '#6FE3EC', '#FFD86B'];
+                const color = colors[index] || '#A06BFF';
                 
                 return (
                   <AnimatedListItem key={item.group}>
                     <div className="hud-box" style={{ marginBottom: 0 }}>
+                      <span className="star-tl">✦</span>
+                      <span className="star-tr">✦</span>
+                      <span className="star-bl">✦</span>
+                      <span className="star-br">✦</span>
                       <div className="grp-row" style={{ marginBottom: '10px' }}>
                         <div className="fit-box">
                           <span className="fit-nowrap fit-val" style={{ color, display: 'block' }}>{item.group}</span>
@@ -130,8 +142,8 @@ export default function AdminScreen({ user, onLogout }: Props) {
                             <SpeedingText value={item.totalPoints} />
                           </span>
                         </div>
-                        <span className="fit-flow fit-small text-neon-lilac">{item.participants} участников</span>
-                        <span className="fit-nowrap fit-small text-neon-lilac">баллов</span>
+                        <span className="fit-flow fit-small" style={{ color: 'var(--muted)' }}>{item.participants} участников</span>
+                        <span className="fit-nowrap fit-small" style={{ color: 'var(--muted)' }}>баллов</span>
                       </div>
                       <div className="progress-bar">
                         <div
@@ -151,7 +163,7 @@ export default function AdminScreen({ user, onLogout }: Props) {
       {/* Список участников */}
       {activeTab === 'participants' && (
         <div style={{ marginTop: 'var(--gap-block)' }}>
-          <p className="fit-flow fit-stat-l text-neon-pink text-center" style={{ marginBottom: '14px' }}>
+          <p className="fit-flow fit-stat-l text-center" style={{ marginBottom: '14px', color: 'var(--ir-magenta)' }}>
             Все участники
           </p>
           
@@ -159,17 +171,21 @@ export default function AdminScreen({ user, onLogout }: Props) {
             {participants.map((p) => (
               <AnimatedListItem key={p.id}>
                 <div className="hud-box list-row" style={{ marginBottom: 0 }}>
+                  <span className="star-tl">✦</span>
+                  <span className="star-tr">✦</span>
+                  <span className="star-bl">✦</span>
+                  <span className="star-br">✦</span>
                   <div className="name">
-                    <p className="text-white" style={{ fontWeight: 600 }}>{p.fullName}</p>
-                    <p className="fit-nowrap fit-stat-l text-neon-lilac" style={{ marginTop: '2px' }}>
-                      {p.group} • {p.id}
+                    <p style={{ fontWeight: 600, color: 'var(--text)' }}>{p.fullName}</p>
+                    <p className="fit-nowrap fit-stat-l" style={{ marginTop: '2px', color: 'var(--muted)' }}>
+                      {p.group} · {p.id}
                     </p>
                   </div>
                   <div className="text-right">
-                    <p className="fit-nowrap fit-stat-v text-neon-pink">
+                    <p className="fit-nowrap fit-stat-v" style={{ color: 'var(--ir-magenta)' }}>
                       <SpeedingText value={p.points} />
                     </p>
-                    <p className="fit-nowrap fit-stat-l text-neon-lilac" style={{ marginTop: '2px' }}>
+                    <p className="fit-nowrap fit-stat-l" style={{ marginTop: '2px', color: 'var(--muted)' }}>
                       баллов
                     </p>
                   </div>
@@ -183,11 +199,12 @@ export default function AdminScreen({ user, onLogout }: Props) {
       {/* Модальное окно успеха */}
       {showResetSuccess && (
         <div className="modal-overlay">
-          <div className="modal-card modal-card-v9 center-col">
-            <p className="text-white font-medium text-center fit-flow" style={{ marginBottom: '24px', fontSize: 'clamp(13px, 3.6vw, 15px)' }}>Баллы всех участников сброшены до 300!</p>
+          <div className="modal-card center-col">
+            <p className="font-medium text-center fit-flow" style={{ marginBottom: '24px', fontSize: 'clamp(13px, 3.6vw, 15px)', color: 'var(--text)' }}>Баллы всех участников сброшены до 300!</p>
             <button
               onClick={() => setShowResetSuccess(false)}
-              className="btn-neon btn-cyan modal-btn"
+              className="btn-neon btn-cyan"
+              style={{ width: 'auto', paddingInline: '32px' }}
             >
               <span className="fit-nowrap fit-btn3">ОТЛИЧНО</span>
             </button>
@@ -198,11 +215,11 @@ export default function AdminScreen({ user, onLogout }: Props) {
       {/* Модальное окно подтверждения */}
       {showResetConfirm && (
         <div className="modal-overlay">
-          <div className="modal-card modal-card-v9 center-col">
-            <h3 className="text-white font-bold text-center fit-flow fit-sub" style={{ marginBottom: '12px' }}>
+          <div className="modal-card center-col">
+            <h3 className="text-center fit-flow fit-sub chrome-serif" style={{ marginBottom: '12px' }}>
               Подтверждение
             </h3>
-            <p className="text-white/80 font-medium text-center fit-flow" style={{ marginBottom: '24px', fontSize: 'clamp(13px, 3.6vw, 15px)' }}>
+            <p className="font-medium text-center fit-flow" style={{ marginBottom: '24px', fontSize: 'clamp(13px, 3.6vw, 15px)', color: 'var(--text)', opacity: 0.8 }}>
               Сбросить баллы всех участников до 300? Это действие нельзя отменить.
             </p>
             <div className="btn-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: 'var(--gap-btn)', width: '100%' }}>
@@ -217,11 +234,17 @@ export default function AdminScreen({ user, onLogout }: Props) {
         </div>
       )}
 
-      {/* Кнопка выхода */}
+      {/* Кнопка выхода — outline-пилюля */}
       <button
         onClick={onLogout}
-        className="btn-neon btn-danger"
-        style={{ marginTop: 'var(--gap-block)' }}
+        className="btn-neon"
+        style={{ 
+          marginTop: 'var(--gap-block)',
+          background: 'transparent',
+          border: '1px solid var(--ir-magenta)',
+          color: 'var(--ir-magenta)',
+          boxShadow: '0 0 18px rgba(255,92,208,.25)'
+        }}
       >
         <LogOut size={18} strokeWidth={1.5} style={{ marginRight: '8px' }} />
         <span className="fit-btn-m2">Выйти из аккаунта</span>
