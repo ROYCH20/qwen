@@ -1,7 +1,7 @@
-import { QRCodeSVG } from 'qrcode.react';
 import { User } from '../database';
 import { LogOut } from 'lucide-react';
-import { CipherText, SpeedingText, NeonReveal, SignalType, GlimmerWrap } from './animations';
+import { SpeedingText, NeonReveal, SignalType } from './animations';
+import QrCard from './QrCard';
 
 interface Props {
   user: User;
@@ -9,12 +9,6 @@ interface Props {
 }
 
 export default function ParticipantScreen({ user, onLogout }: Props) {
-  const qrValue = JSON.stringify({
-    userId: user.id,
-    role: user.role,
-    type: 'participant_qr'
-  });
-
   return (
     <div style={{ paddingTop: '24px' }}>
       {/* Заголовок */}
@@ -76,24 +70,7 @@ export default function ParticipantScreen({ user, onLogout }: Props) {
 
       {/* QR-код */}
       <NeonReveal>
-        <div className="hud-box">
-          <span className="hud-label fit-flow fit-title">QR-КОД УЧАСТНИКА</span>
-          <div className="center-col">
-            <div className="qr-frame focus-glow">
-              <QRCodeSVG
-                value={qrValue}
-                level="H"
-                includeMargin={false}
-                fgColor="#221D5E"
-                bgColor="#F5F2FF"
-                style={{ width: '100%', height: 'auto', display: 'block', minWidth: '180px' }}
-              />
-            </div>
-            <p className="text-neon-cyan fit-flow fit-cap" style={{ marginTop: '12px' }}>
-              Покажите этот код куратору
-            </p>
-          </div>
-        </div>
+        <QrCard id={user.id} caption="Покажите этот код куратору" />
       </NeonReveal>
 
       {/* Кнопка выхода */}

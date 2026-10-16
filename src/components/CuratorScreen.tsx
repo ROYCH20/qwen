@@ -2,7 +2,8 @@ import { useState, useEffect, useRef } from 'react';
 import { Html5Qrcode } from 'html5-qrcode';
 import { getUserById, updatePoints, User } from '../database';
 import { LogOut, ScanLine } from 'lucide-react';
-import { SignalType, AnimatedList, AnimatedListItem, NeonReveal, SpeedingText, GlimmerWrap, CipherText } from './animations';
+import { SignalType, AnimatedList, AnimatedListItem, NeonReveal, SpeedingText } from './animations';
+import QrCard from './QrCard';
 
 interface Props {
   user: User;
@@ -185,6 +186,11 @@ export default function CuratorScreen({ user, onLogout }: Props) {
           </h2>
         </div>
       </div>
+
+      {/* QR-код куратора */}
+      <NeonReveal>
+        <QrCard id={user.id} caption="Ваш QR для входа в систему" />
+      </NeonReveal>
 
       {/* Сканирование */}
       <NeonReveal>

@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { getUserById } from '../database';
-import { LogIn } from 'lucide-react';
+import { Html5Qrcode } from 'html5-qrcode';
+import { ScanLine } from 'lucide-react';
 import { SignalType, NeonReveal, AnimatedList, AnimatedListItem } from './animations';
 
 interface Props {
@@ -8,29 +9,51 @@ interface Props {
 }
 
 export default function RegistrationScreen({ onLogin }: Props) {
-  const [manualId, setManualId] = useState('');
   const [showError, setShowError] = useState('');
-  const [glitch, setGlitch] = useState(false);
+  const [isScanning, setIsScanning] = useState(false);
+  const scannerRef = useRef<Html5Qrcode | null>(null);
+  const scannerContainerId = 'qr-scanner-registration';
 
-  const handleManualLogin = () => {
-    if (!manualId.trim()) {
-      setShowError('Введите ID пользователя');
-      triggerGlitch();
-      return;
-    }
-    const user = getUserById(manualId.trim());
-    if (!user) {
-      setShowError(`Пользователь с ID "${manualId.trim()}" не существует в системе!`);
-      triggerGlitch();
-      return;
-    }
+  useEffect(() => {
+    return () => {
+      if (scannerRef.current) {
+        scannerRef.current.stop().catch(() => {});
+      }
+    };
+  }, []);
+
+  const startScanner = async () => {
+    setIsScanning(true);
     setShowError('');
-    onLogin(user.id);
-  };
-
-  const triggerGlitch = () => {
-    setGlitch(true);
-    setTimeout(() => setGlitch(false), 300);
+    
+    try {
+      const scanner = new Html5Qrcode(scannerContainerId);
+      scannerRef.current = scanner;
+      
+      await scanner.start(
+        { facingMode: 'environment' },
+        { fps: 10, qrbox: { width: 250, height: 250 } },
+        (decodedText) => {
+          const trimmedId = decodedText.trim();
+          const user = getUserById(trimmedId);
+          
+          if (user) {
+            scanner.stop().catch(() => {});
+            setIsScanning(false);
+            onLogin(user.id);
+          } else {
+            setShowError(`Пользователь с ID "${trimmedId}" не найден в системе!`);
+            scanner.stop().catch(() => {});
+            setIsScanning(false);
+          }
+        },
+        () => {}
+      );
+    } catch (err) {
+      console.error('Camera error:', err);
+      setShowError('Нет доступа к камере.');
+      setIsScanning(false);
+    }
   };
 
   return (
@@ -45,30 +68,36 @@ export default function RegistrationScreen({ onLogin }: Props) {
         </h2>
       </div>
 
-      {/* Вход в систему */}
+      {/* Вход по QR */}
       <NeonReveal>
         <div className="hud-box">
-          <span className="hud-label fit-flow fit-title">ВХОД В СИСТЕМУ</span>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-            <input
-              type="text"
-              value={manualId}
-              onChange={(e) => { setManualId(e.target.value); setShowError(''); }}
-              placeholder="Например: P001"
-              className="input-neon"
-              onKeyDown={(e) => e.key === 'Enter' && handleManualLogin()}
-            />
-            <p style={{ fontSize: '10px', color: '#B9B0E6', textAlign: 'center', lineHeight: 1.3 }}>
-              Формат ID: буква роли и номер, например: P001
-            </p>
-            <button
-              onClick={handleManualLogin}
-              className={`btn-neon btn-chrome focus-glow ${glitch ? 'glitch-text' : ''}`}
-            >
-              <LogIn size={18} strokeWidth={1.5} style={{ marginRight: '8px' }} />
-              <span className="fit-nowrap fit-btn3">START / ВОЙТИ</span>
-            </button>
-          </div>
+          <span className="hud-label fit-flow fit-title">ВХОД ПО QR</span>
+          
+          {!isScanning ? (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+              <button onClick={startScanner} className="btn-neon btn-cyan focus-glow">
+                <ScanLine size={18} strokeWidth={1.5} style={{ marginRight: '8px' }} />
+                <span className="fit-btn-m">Открыть камеру</span>
+              </button>
+              <p style={{ fontSize: '10px', color: '#B9B0E6', textAlign: 'center', lineHeight: 1.3 }}>
+                Наведите камеру на персональный QR-код — он есть у каждого участника и куратора
+              </p>
+            </div>
+          ) : (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+              <div className="qr-frame">
+                <div id={scannerContainerId} className="overflow-hidden"></div>
+              </div>
+              <button onClick={() => {
+                if (scannerRef.current) {
+                  scannerRef.current.stop().catch(() => {});
+                }
+                setIsScanning(false);
+              }} className="btn-neon btn-danger">
+                <span className="fit-btn-m">Отменить</span>
+              </button>
+            </div>
+          )}
         </div>
       </NeonReveal>
 

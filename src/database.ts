@@ -98,6 +98,81 @@ export function resetAllPoints(): void {
   localStorage.setItem(DB_KEY, JSON.stringify(updatedUsers));
 }
 
+// Добавить нового пользователя
+export function addUser(data: { id: string; role: 'participant' | 'curator'; fullName: string; group?: string }): boolean {
+  const trimmedId = data.id.trim();
+  if (!trimmedId) return false;
+  
+  // Проверка уникальности ID
+  const existingUser = getUserById(trimmedId);
+  if (existingUser) return false;
+  
+  const users = getAllUsers();
+  
+  if (data.role === 'participant') {
+    // Для участника группа обязательна
+    if (!data.group || !data.group.trim()) return false;
+    
+    const newUser: User = {
+      id: trimmedId,
+      role: 'participant',
+      fullName: data.fullName.trim(),
+      group: data.group.trim(),
+      points: 300
+    };
+    users.push(newUser);
+  } else if (data.role === 'curator') {
+    // Для куратора группа игнорируется
+    const newUser: User = {
+      id: trimmedId,
+      role: 'curator',
+      fullName: data.fullName.trim(),
+      points: 0
+    };
+    users.push(newUser);
+  } else {
+    return false;
+  }
+  
+  localStorage.setItem(DB_KEY, JSON.stringify(users));
+  return true;
+}
+
+// Обновить пользователя
+export function updateUser(oldId: string, data: { id: string; fullName: string; group?: string }): boolean {
+  const trimmedNewId = data.id.trim();
+  if (!trimmedNewId || !data.fullName.trim()) return false;
+  
+  const users = getAllUsers();
+  const userIndex = users.findIndex(u => u.id === oldId);
+  if (userIndex === -1) return false;
+  
+  const user = users[userIndex];
+  
+  // Проверка уникальности нового ID (если он изменился)
+  if (trimmedNewId !== oldId) {
+    const existingUser = getUserById(trimmedNewId);
+    if (existingUser) return false;
+  }
+  
+  // Обновляем данные
+  user.id = trimmedNewId;
+  user.fullName = data.fullName.trim();
+  
+  // Для участника обновляем группу
+  if (user.role === 'participant') {
+    if (!data.group || !data.group.trim()) return false;
+    user.group = data.group.trim();
+  }
+  // Для куратора группа игнорируется
+  
+  // points и role НЕ меняются
+  
+  users[userIndex] = user;
+  localStorage.setItem(DB_KEY, JSON.stringify(users));
+  return true;
+}
+
 // Сбросить базу данных
 export function resetDB(): void {
   localStorage.removeItem(DB_KEY);
