@@ -60,12 +60,12 @@ export default function RegistrationScreen({ onLogin }: Props) {
     <div style={{ paddingTop: '24px' }}>
       {/* Заголовок */}
       <div className="center-col screen-head" style={{ marginBottom: 'var(--gap-title)' }}>
-        <h1 className="screen-title text-chrome">
-          <SignalType>СИСТЕМА</SignalType>
+        <h1 className="text-chrome" style={{ fontSize: 'clamp(13px, calc((100cqw - 32px) / 18.4), 26px)', whiteSpace: 'nowrap', lineHeight: 1.2, fontWeight: 700 }}>
+          <SignalType>ПОСВЯЩЕНИЕ 2026</SignalType>
         </h1>
-        <h2 className="text-chrome-soft fit-flow fit-sub" style={{ marginTop: '4px', letterSpacing: '0.08em', fontWeight: 700 }}>
-          <SignalType>БАЛЛОВ</SignalType>
-        </h2>
+        <p className="text-neon-lilac fit-flow fit-sub" style={{ marginTop: '4px' }}>
+          <SignalType>Вход в аккаунт</SignalType>
+        </p>
       </div>
 
       {/* Вход по QR */}

@@ -85,14 +85,16 @@ export function AddUserModal({ onClose, onSuccess }: AddUserModalProps) {
             <button
               onClick={() => setRole('participant')}
               className={`btn-neon ${role === 'participant' ? 'btn-cyan' : 'btn-ghost'}`}
+              style={{ paddingInline: '12px' }}
             >
-              Участник
+              <span className="fit-nowrap fit-btn3" style={{ letterSpacing: 0 }}>Участник</span>
             </button>
             <button
               onClick={() => setRole('curator')}
               className={`btn-neon ${role === 'curator' ? 'btn-cyan' : 'btn-ghost'}`}
+              style={{ paddingInline: '12px' }}
             >
-              Куратор
+              <span className="fit-nowrap fit-btn3" style={{ letterSpacing: 0 }}>Куратор</span>
             </button>
           </div>
 

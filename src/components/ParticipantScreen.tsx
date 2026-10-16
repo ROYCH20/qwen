@@ -31,7 +31,7 @@ export default function ParticipantScreen({ user, onLogout }: Props) {
                 <path id="circle-path" d="M 60, 60 m -45, 0 a 45,45 0 1,1 90,0 a 45,45 0 1,1 -90,0" />
               </defs>
               <text>
-                <textPath href="#circle-path">СИСТЕМА БАЛЛОВ • POSVYAT • 2026 •</textPath>
+                <textPath href="#circle-path">ПОСВЯЩЕНИЕ 2026 • ПОСВЯТ •</textPath>
               </text>
             </svg>
             <div className="holo-emblem">✦</div>
