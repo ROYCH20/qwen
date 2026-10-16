@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { getGroupSummary, getUsersByRole, resetAllPoints, User } from '../database';
-import { LogOut, RotateCcw, UserPlus, Pencil } from 'lucide-react';
+import { getGroupSummary, getUsersByRole, resetAllPoints, deleteUser, User } from '../database';
+import { LogOut, RotateCcw, UserPlus, Pencil, Trash2 } from 'lucide-react';
 import { SignalType, SpeedingText, AnimatedList, AnimatedListItem, NeonReveal } from './animations';
 import { AddUserModal, EditUserModal } from './UserModals';
 import confetti from 'canvas-confetti';
@@ -16,6 +16,7 @@ export default function AdminScreen({ user, onLogout }: Props) {
   const [showResetSuccess, setShowResetSuccess] = useState(false);
   const [showAddModal, setShowAddModal] = useState(false);
   const [editingUser, setEditingUser] = useState<User | null>(null);
+  const [deletingUser, setDeletingUser] = useState<User | null>(null);
   const [refreshKey, setRefreshKey] = useState(0);
   
   const groupSummary = getGroupSummary();
@@ -45,6 +46,14 @@ export default function AdminScreen({ user, onLogout }: Props) {
       origin: { y: 0.6 },
       colors: ['#6C63C9', '#8E86E4', '#B78FF2', '#F79BE3', '#6FE3EC']
     });
+  };
+
+  const handleDeleteUser = () => {
+    if (deletingUser) {
+      deleteUser(deletingUser.id);
+      setDeletingUser(null);
+      setRefreshKey(k => k + 1);
+    }
   };
 
   return (
@@ -206,22 +215,40 @@ export default function AdminScreen({ user, onLogout }: Props) {
                           {p.group} • {p.id} • <span className="text-neon-pink">{p.points} баллов</span>
                         </p>
                       </div>
-                      <button
-                        onClick={() => setEditingUser(p)}
-                        style={{
-                          width: '44px',
-                          height: '44px',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          background: 'transparent',
-                          border: 'none',
-                          cursor: 'pointer',
-                          flexShrink: 0
-                        }}
-                      >
-                        <Pencil size={18} strokeWidth={1.5} style={{ color: '#6FE3EC' }} />
-                      </button>
+                      <div style={{ display: 'flex', gap: '8px', flexShrink: 0 }}>
+                        <button
+                          onClick={() => setEditingUser(p)}
+                          style={{
+                            width: '44px',
+                            height: '44px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            background: 'transparent',
+                            border: 'none',
+                            cursor: 'pointer',
+                            flexShrink: 0
+                          }}
+                        >
+                          <Pencil size={18} strokeWidth={1.5} style={{ color: '#6FE3EC' }} />
+                        </button>
+                        <button
+                          onClick={() => setDeletingUser(p)}
+                          style={{
+                            width: '44px',
+                            height: '44px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            background: 'transparent',
+                            border: 'none',
+                            cursor: 'pointer',
+                            flexShrink: 0
+                          }}
+                        >
+                          <Trash2 size={18} strokeWidth={1.5} style={{ color: '#FF5C8A' }} />
+                        </button>
+                      </div>
                     </div>
                   </div>
                 </AnimatedListItem>
@@ -253,27 +280,70 @@ export default function AdminScreen({ user, onLogout }: Props) {
                           {c.id}
                         </p>
                       </div>
-                      <button
-                        onClick={() => setEditingUser(c)}
-                        style={{
-                          width: '44px',
-                          height: '44px',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          background: 'transparent',
-                          border: 'none',
-                          cursor: 'pointer',
-                          flexShrink: 0
-                        }}
-                      >
-                        <Pencil size={18} strokeWidth={1.5} style={{ color: '#F79BE3' }} />
-                      </button>
+                      <div style={{ display: 'flex', gap: '8px', flexShrink: 0 }}>
+                        <button
+                          onClick={() => setEditingUser(c)}
+                          style={{
+                            width: '44px',
+                            height: '44px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            background: 'transparent',
+                            border: 'none',
+                            cursor: 'pointer',
+                            flexShrink: 0
+                          }}
+                        >
+                          <Pencil size={18} strokeWidth={1.5} style={{ color: '#F79BE3' }} />
+                        </button>
+                        <button
+                          onClick={() => setDeletingUser(c)}
+                          style={{
+                            width: '44px',
+                            height: '44px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            background: 'transparent',
+                            border: 'none',
+                            cursor: 'pointer',
+                            flexShrink: 0
+                          }}
+                        >
+                          <Trash2 size={18} strokeWidth={1.5} style={{ color: '#FF5C8A' }} />
+                        </button>
+                      </div>
                     </div>
                   </div>
                 </AnimatedListItem>
               ))}
             </AnimatedList>
+          </div>
+        </div>
+      )}
+
+      {/* Модальное окно подтверждения удаления */}
+      {deletingUser && (
+        <div className="modal-overlay">
+          <div className="modal-card">
+            <p className="text-white font-medium fit-flow" style={{ fontSize: 'clamp(12px, 3.6vw, 15px)', lineHeight: 1.35 }}>
+              Удалить пользователя {deletingUser.fullName} ({deletingUser.id})? Действие необратимо.
+            </p>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', width: '100%' }}>
+              <button
+                onClick={handleDeleteUser}
+                className="btn-neon btn-danger modal-btn"
+              >
+                Удалить
+              </button>
+              <button
+                onClick={() => setDeletingUser(null)}
+                className="btn-neon btn-ghost modal-btn"
+              >
+                Отмена
+              </button>
+            </div>
           </div>
         </div>
       )}

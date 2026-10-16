@@ -80,7 +80,7 @@ export default function RegistrationScreen({ onLogin }: Props) {
                 <span className="fit-btn-m">Открыть камеру</span>
               </button>
               <p style={{ fontSize: '10px', color: '#B9B0E6', textAlign: 'center', lineHeight: 1.3 }}>
-                Наведите камеру на персональный QR-код — он есть у каждого участника и куратора
+                Наведите камеру на ваш персональный QR-код
               </p>
             </div>
           ) : (

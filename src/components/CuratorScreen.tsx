@@ -17,7 +17,6 @@ export default function CuratorScreen({ user, onLogout }: Props) {
   const [showError, setShowError] = useState('');
   const [showSuccess, setShowSuccess] = useState('');
   const [isScanning, setIsScanning] = useState(false);
-  const [manualScan, setManualScan] = useState('');
   const scannerRef = useRef<Html5Qrcode | null>(null);
   const scannerContainerId = 'qr-scanner-container';
 
@@ -102,14 +101,6 @@ export default function CuratorScreen({ user, onLogout }: Props) {
     }
   };
 
-  const handleManualScan = () => {
-    if (!manualScan.trim()) {
-      setShowError('Введите ID участника');
-      return;
-    }
-    handleScanResult(manualScan.trim());
-  };
-
   const handleSubmit = () => {
     if (!scannedUser || points === null) {
       setShowError('Выберите количество баллов');
@@ -143,7 +134,6 @@ export default function CuratorScreen({ user, onLogout }: Props) {
     setPoints(null);
     setShowError('');
     setShowSuccess('');
-    setManualScan('');
   };
 
   return (
@@ -203,26 +193,9 @@ export default function CuratorScreen({ user, onLogout }: Props) {
                 <ScanLine size={18} strokeWidth={1.5} style={{ marginRight: '8px' }} />
                 <span className="fit-btn-m">Открыть камеру</span>
               </button>
-              
-              <p className="text-neon-lilac fit-flow fit-sub text-center" style={{ margin: '0' }}>
-                или введите ID
+              <p style={{ fontSize: '10px', color: '#B9B0E6', textAlign: 'center', lineHeight: 1.3 }}>
+                Отсканируйте QR-код участника — баллы начисляются или списываются отсканированному участнику
               </p>
-
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                <input
-                  type="text"
-                  value={manualScan}
-                  onChange={(e) => { setManualScan(e.target.value); setShowError(''); }}
-                  placeholder="Например: P001"
-                  className="input-neon"
-                />
-                <button onClick={handleManualScan} className="btn-neon btn-lilac">
-                  <span className="fit-btn-m">Найти участника</span>
-                </button>
-                <p style={{ fontSize: '10px', color: '#B9B0E6', textAlign: 'center', lineHeight: 1.3 }}>
-                  ID участника, которому начисляются или списываются баллы
-                </p>
-              </div>
             </div>
           ) : (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>

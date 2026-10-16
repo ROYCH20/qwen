@@ -173,6 +173,17 @@ export function updateUser(oldId: string, data: { id: string; fullName: string; 
   return true;
 }
 
+// Удалить пользователя
+export function deleteUser(id: string): boolean {
+  const users = getAllUsers();
+  const userIndex = users.findIndex(u => u.id === id);
+  if (userIndex === -1) return false;
+  
+  users.splice(userIndex, 1);
+  localStorage.setItem(DB_KEY, JSON.stringify(users));
+  return true;
+}
+
 // Сбросить базу данных
 export function resetDB(): void {
   localStorage.removeItem(DB_KEY);
