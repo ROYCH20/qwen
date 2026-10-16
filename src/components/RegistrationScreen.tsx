@@ -99,13 +99,13 @@ export default function RegistrationScreen({ onLogin }: Props) {
       {/* Модальное окно ошибки */}
       {showError && (
         <div className="modal-overlay">
-          <div className="modal-card modal-card-v9 center-col">
-            <p className="text-white font-medium text-center fit-flow" style={{ marginBottom: '24px', fontSize: 'clamp(13px, 3.6vw, 15px)' }}>{showError}</p>
+          <div className="modal-card">
+            <p className="text-white font-medium fit-flow" style={{ fontSize: 'clamp(12px, 3.6vw, 15px)', lineHeight: 1.35 }}>{showError}</p>
             <button
               onClick={() => setShowError('')}
               className="btn-neon btn-pink modal-btn"
             >
-              <span className="fit-nowrap fit-btn3">ПОНЯТНО</span>
+              ПОНЯТНО
             </button>
           </div>
         </div>

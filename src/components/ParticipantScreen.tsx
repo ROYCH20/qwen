@@ -53,18 +53,6 @@ export default function ParticipantScreen({ user, onLogout }: Props) {
           }}>
             {user.fullName}
           </h2>
-
-          {/* Строка-подпись */}
-          <p style={{
-            fontSize: 'clamp(10px, 3vw, 12px)',
-            color: '#221D5E',
-            letterSpacing: '0.06em',
-            textAlign: 'center',
-            marginTop: '8px',
-            lineHeight: 1.3
-          }}>
-            ID: {user.id} · {user.group} · {user.points} БАЛЛОВ
-          </p>
         </div>
       </div>
 

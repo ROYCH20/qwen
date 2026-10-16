@@ -183,14 +183,13 @@ export default function AdminScreen({ user, onLogout }: Props) {
       {/* Модальное окно успеха */}
       {showResetSuccess && (
         <div className="modal-overlay">
-          <div className="modal-card center-col">
-            <p className="text-white font-medium text-center fit-flow" style={{ marginBottom: '24px', fontSize: 'clamp(13px, 3.6vw, 15px)' }}>Баллы всех участников сброшены до 300!</p>
+          <div className="modal-card">
+            <p className="text-white font-medium fit-flow" style={{ fontSize: 'clamp(12px, 3.6vw, 15px)', lineHeight: 1.35 }}>Баллы всех участников сброшены до 300!</p>
             <button
               onClick={() => setShowResetSuccess(false)}
-              className="btn-neon btn-cyan"
-              style={{ width: 'auto', paddingInline: '32px' }}
+              className="btn-neon btn-cyan modal-btn"
             >
-              <span className="fit-nowrap fit-btn3">ОТЛИЧНО</span>
+              ОТЛИЧНО
             </button>
           </div>
         </div>
@@ -199,19 +198,19 @@ export default function AdminScreen({ user, onLogout }: Props) {
       {/* Модальное окно подтверждения */}
       {showResetConfirm && (
         <div className="modal-overlay">
-          <div className="modal-card center-col">
-            <h3 className="text-white font-bold text-center fit-flow fit-sub" style={{ marginBottom: '12px' }}>
+          <div className="modal-card">
+            <h3 className="text-white font-bold fit-flow fit-sub">
               Подтверждение
             </h3>
-            <p className="text-white/80 font-medium text-center fit-flow" style={{ marginBottom: '24px', fontSize: 'clamp(13px, 3.6vw, 15px)' }}>
+            <p className="text-white/80 font-medium fit-flow" style={{ fontSize: 'clamp(12px, 3.6vw, 15px)', lineHeight: 1.35 }}>
               Сбросить баллы всех участников до 300? Это действие нельзя отменить.
             </p>
             <div className="btn-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: 'var(--gap-btn)', width: '100%' }}>
-              <button onClick={() => setShowResetConfirm(false)} className="btn-neon btn-ghost">
-                <span className="fit-nowrap fit-btn2">Отмена</span>
+              <button onClick={() => setShowResetConfirm(false)} className="btn-neon btn-ghost modal-btn">
+                Отмена
               </button>
-              <button onClick={handleResetPoints} className="btn-neon btn-danger">
-                <span className="fit-nowrap fit-btn2">Сбросить</span>
+              <button onClick={handleResetPoints} className="btn-neon btn-danger modal-btn">
+                Сбросить
               </button>
             </div>
           </div>

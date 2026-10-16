@@ -183,18 +183,6 @@ export default function CuratorScreen({ user, onLogout }: Props) {
           }}>
             {user.fullName}
           </h2>
-
-          {/* Строка-подпись */}
-          <p style={{
-            fontSize: 'clamp(10px, 3vw, 12px)',
-            color: '#221D5E',
-            letterSpacing: '0.06em',
-            textAlign: 'center',
-            marginTop: '8px',
-            lineHeight: 1.3
-          }}>
-            ID: {user.id} · КУРАТОР
-          </p>
         </div>
       </div>
 
@@ -329,14 +317,13 @@ export default function CuratorScreen({ user, onLogout }: Props) {
       {/* Модальное окно ошибки */}
       {showError && (
         <div className="modal-overlay">
-          <div className="modal-card center-col">
-            <p className="text-white font-medium text-center fit-flow" style={{ marginBottom: '24px', fontSize: 'clamp(13px, 3.6vw, 15px)' }}>{showError}</p>
+          <div className="modal-card">
+            <p className="text-white font-medium fit-flow" style={{ fontSize: 'clamp(12px, 3.6vw, 15px)', lineHeight: 1.35 }}>{showError}</p>
             <button
               onClick={() => setShowError('')}
-              className="btn-neon btn-pink"
-              style={{ width: 'auto', paddingInline: '32px' }}
+              className="btn-neon btn-pink modal-btn"
             >
-              <span className="fit-nowrap fit-btn3">ПОНЯТНО</span>
+              ПОНЯТНО
             </button>
           </div>
         </div>
@@ -345,14 +332,13 @@ export default function CuratorScreen({ user, onLogout }: Props) {
       {/* Модальное окно успеха */}
       {showSuccess && (
         <div className="modal-overlay">
-          <div className="modal-card center-col">
-            <p className="text-white font-medium text-center fit-flow" style={{ marginBottom: '24px', fontSize: 'clamp(13px, 3.6vw, 15px)' }}>{showSuccess}</p>
+          <div className="modal-card">
+            <p className="text-white font-medium fit-flow" style={{ fontSize: 'clamp(12px, 3.6vw, 15px)', lineHeight: 1.35 }}>{showSuccess}</p>
             <button
               onClick={() => setShowSuccess('')}
-              className="btn-neon btn-cyan"
-              style={{ width: 'auto', paddingInline: '32px' }}
+              className="btn-neon btn-cyan modal-btn"
             >
-              <span className="fit-nowrap fit-btn3">ОТЛИЧНО</span>
+              ОТЛИЧНО
             </button>
           </div>
         </div>
