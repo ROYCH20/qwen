@@ -1,7 +1,7 @@
-import { QRCodeSVG } from 'qrcode.react';
 import { User } from '../database';
 import { LogOut } from 'lucide-react';
-import { CipherText, SpeedingText, NeonReveal, SignalType, GlimmerWrap } from './animations';
+import { SpeedingText, NeonReveal, SignalType } from './animations';
+import QrCard from './QrCard';
 
 interface Props {
   user: User;
@@ -9,12 +9,6 @@ interface Props {
 }
 
 export default function ParticipantScreen({ user, onLogout }: Props) {
-  const qrValue = JSON.stringify({
-    userId: user.id,
-    role: user.role,
-    type: 'participant_qr'
-  });
-
   return (
     <div style={{ paddingTop: '24px' }}>
       {/* Заголовок */}
@@ -37,7 +31,7 @@ export default function ParticipantScreen({ user, onLogout }: Props) {
                 <path id="circle-path" d="M 60, 60 m -45, 0 a 45,45 0 1,1 90,0 a 45,45 0 1,1 -90,0" />
               </defs>
               <text>
-                <textPath href="#circle-path">СИСТЕМА БАЛЛОВ • POSVYAT • 2026 •</textPath>
+                <textPath href="#circle-path">ПОСВЯЩЕНИЕ 2026 • ПОСВЯТ •</textPath>
               </text>
             </svg>
             <div className="holo-emblem">✦</div>
@@ -53,18 +47,6 @@ export default function ParticipantScreen({ user, onLogout }: Props) {
           }}>
             {user.fullName}
           </h2>
-
-          {/* Строка-подпись */}
-          <p style={{
-            fontSize: 'clamp(10px, 3vw, 12px)',
-            color: '#221D5E',
-            letterSpacing: '0.06em',
-            textAlign: 'center',
-            marginTop: '8px',
-            lineHeight: 1.3
-          }}>
-            ID: {user.id} · {user.group} · {user.points} БАЛЛОВ
-          </p>
         </div>
       </div>
 
@@ -88,24 +70,7 @@ export default function ParticipantScreen({ user, onLogout }: Props) {
 
       {/* QR-код */}
       <NeonReveal>
-        <div className="hud-box">
-          <span className="hud-label fit-flow fit-title">QR-КОД УЧАСТНИКА</span>
-          <div className="center-col">
-            <div className="qr-frame focus-glow">
-              <QRCodeSVG
-                value={qrValue}
-                level="H"
-                includeMargin={false}
-                fgColor="#221D5E"
-                bgColor="#F5F2FF"
-                style={{ width: '100%', height: 'auto', display: 'block', minWidth: '180px' }}
-              />
-            </div>
-            <p className="text-neon-cyan fit-flow fit-cap" style={{ marginTop: '12px' }}>
-              Покажите этот код куратору
-            </p>
-          </div>
-        </div>
+        <QrCard id={user.id} caption="Покажите этот код куратору" />
       </NeonReveal>
 
       {/* Кнопка выхода */}

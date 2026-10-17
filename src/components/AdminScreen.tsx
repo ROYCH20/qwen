@@ -1,7 +1,9 @@
 import { useState } from 'react';
-import { getGroupSummary, getUsersByRole, resetAllPoints, User } from '../database';
-import { LogOut, RotateCcw } from 'lucide-react';
-import { SignalType, SpeedingText, AnimatedList, AnimatedListItem, NeonReveal, GlimmerWrap, CipherText } from './animations';
+import { getGroupSummary, getUsersByRole, resetAllPoints, deleteUser, User } from '../database';
+import { LogOut, RotateCcw, UserPlus, Pencil, Trash2 } from 'lucide-react';
+import { SignalType, SpeedingText, AnimatedList, AnimatedListItem, NeonReveal } from './animations';
+import { AddUserModal, EditUserModal } from './UserModals';
+import confetti from 'canvas-confetti';
 
 interface Props {
   user: User;
@@ -12,10 +14,14 @@ export default function AdminScreen({ user, onLogout }: Props) {
   const [activeTab, setActiveTab] = useState<'groups' | 'participants'>('groups');
   const [showResetConfirm, setShowResetConfirm] = useState(false);
   const [showResetSuccess, setShowResetSuccess] = useState(false);
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [editingUser, setEditingUser] = useState<User | null>(null);
+  const [deletingUser, setDeletingUser] = useState<User | null>(null);
   const [refreshKey, setRefreshKey] = useState(0);
   
   const groupSummary = getGroupSummary();
   const participants = getUsersByRole('participant');
+  const curators = getUsersByRole('curator');
 
   const totalPoints = participants.reduce((sum, p) => sum + p.points, 0);
   const totalParticipants = participants.length;
@@ -26,6 +32,28 @@ export default function AdminScreen({ user, onLogout }: Props) {
     setShowResetSuccess(true);
     setRefreshKey(k => k + 1);
     setTimeout(() => setShowResetSuccess(false), 3000);
+  };
+
+  const handleAddUser = () => {
+    setShowAddModal(true);
+  };
+
+  const handleUserAdded = () => {
+    setRefreshKey(k => k + 1);
+    confetti({
+      particleCount: 100,
+      spread: 70,
+      origin: { y: 0.6 },
+      colors: ['#6C63C9', '#8E86E4', '#B78FF2', '#F79BE3', '#6FE3EC']
+    });
+  };
+
+  const handleDeleteUser = () => {
+    if (deletingUser) {
+      deleteUser(deletingUser.id);
+      setDeletingUser(null);
+      setRefreshKey(k => k + 1);
+    }
   };
 
   return (
@@ -70,6 +98,21 @@ export default function AdminScreen({ user, onLogout }: Props) {
               <p className="fit-nowrap fit-stat-l text-neon-pink" style={{ marginTop: '4px' }}>Баллов</p>
             </div>
           </div>
+        </div>
+      </NeonReveal>
+
+      {/* Новый пользователь */}
+      <NeonReveal>
+        <div className="hud-box">
+          <span className="hud-label fit-flow fit-title">НОВЫЙ ПОЛЬЗОВАТЕЛЬ</span>
+          <button
+            onClick={handleAddUser}
+            className="btn-neon btn-cyan"
+            style={{ width: '100%' }}
+          >
+            <UserPlus size={18} strokeWidth={1.5} style={{ marginRight: '8px' }} />
+            <span className="fit-btn-m">Добавить пользователя</span>
+          </button>
         </div>
       </NeonReveal>
 
@@ -148,49 +191,173 @@ export default function AdminScreen({ user, onLogout }: Props) {
         </div>
       )}
 
-      {/* Список участников */}
+      {/* Список участников и кураторов */}
       {activeTab === 'participants' && (
         <div style={{ marginTop: 'var(--gap-block)' }}>
-          <p className="fit-flow fit-stat-l text-neon-pink text-center" style={{ marginBottom: '14px' }}>
-            Все участники
-          </p>
-          
-          <AnimatedList style={{ display: 'flex', flexDirection: 'column', gap: 'var(--gap-btn)' }}>
-            {participants.map((p) => (
-              <AnimatedListItem key={p.id}>
-                <div className="hud-box list-row" style={{ marginBottom: 0 }}>
-                  <div className="name">
-                    <p className="text-white" style={{ fontWeight: 600 }}>{p.fullName}</p>
-                    <p className="fit-nowrap fit-stat-l text-neon-lilac" style={{ marginTop: '2px' }}>
-                      {p.group} • {p.id}
-                    </p>
+          {/* Участники */}
+          <div style={{ marginBottom: 'var(--gap-block)' }}>
+            <div className="flex items-center justify-center" style={{ gap: '8px', marginBottom: '14px' }}>
+              <span style={{ color: '#6FE3EC', fontSize: '16px' }}>✦</span>
+              <p className="fit-flow fit-stat-l text-neon-cyan">УЧАСТНИКИ</p>
+              <span className="badge-neon" style={{ fontSize: '10px', padding: '2px 8px' }}>
+                {participants.length}
+              </span>
+            </div>
+            
+            <AnimatedList style={{ display: 'flex', flexDirection: 'column', gap: 'var(--gap-btn)' }}>
+              {participants.map((p) => (
+                <AnimatedListItem key={p.id}>
+                  <div className="hud-box" style={{ marginBottom: 0 }}>
+                    <div className="flex items-center justify-between" style={{ gap: '12px' }}>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-white" style={{ fontWeight: 600, fontSize: 'clamp(13px, 3.6vw, 15px)' }}>{p.fullName}</p>
+                        <p className="fit-nowrap fit-stat-l text-neon-lilac" style={{ marginTop: '2px' }}>
+                          {p.group} • {p.id} • <span className="text-neon-pink">{p.points} баллов</span>
+                        </p>
+                      </div>
+                      <div style={{ display: 'flex', gap: '8px', flexShrink: 0 }}>
+                        <button
+                          onClick={() => setEditingUser(p)}
+                          style={{
+                            width: '44px',
+                            height: '44px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            background: 'transparent',
+                            border: 'none',
+                            cursor: 'pointer',
+                            flexShrink: 0
+                          }}
+                        >
+                          <Pencil size={18} strokeWidth={1.5} style={{ color: '#6FE3EC' }} />
+                        </button>
+                        <button
+                          onClick={() => setDeletingUser(p)}
+                          style={{
+                            width: '44px',
+                            height: '44px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            background: 'transparent',
+                            border: 'none',
+                            cursor: 'pointer',
+                            flexShrink: 0
+                          }}
+                        >
+                          <Trash2 size={18} strokeWidth={1.5} style={{ color: '#FF5C8A' }} />
+                        </button>
+                      </div>
+                    </div>
                   </div>
-                  <div className="text-right">
-                    <p className="fit-nowrap fit-stat-v text-neon-pink">
-                      <SpeedingText value={p.points} />
-                    </p>
-                    <p className="fit-nowrap fit-stat-l text-neon-lilac" style={{ marginTop: '2px' }}>
-                      баллов
-                    </p>
+                </AnimatedListItem>
+              ))}
+            </AnimatedList>
+          </div>
+
+          {/* Разделитель */}
+          <div className="soft-divider" style={{ margin: '20px 0' }}></div>
+
+          {/* Кураторы */}
+          <div>
+            <div className="flex items-center justify-center" style={{ gap: '8px', marginBottom: '14px' }}>
+              <span style={{ color: '#F79BE3', fontSize: '16px' }}>✦</span>
+              <p className="fit-flow fit-stat-l text-neon-pink">КУРАТОРЫ</p>
+              <span className="badge-neon" style={{ fontSize: '10px', padding: '2px 8px' }}>
+                {curators.length}
+              </span>
+            </div>
+            
+            <AnimatedList style={{ display: 'flex', flexDirection: 'column', gap: 'var(--gap-btn)' }}>
+              {curators.map((c) => (
+                <AnimatedListItem key={c.id}>
+                  <div className="hud-box" style={{ marginBottom: 0 }}>
+                    <div className="flex items-center justify-between" style={{ gap: '12px' }}>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-white" style={{ fontWeight: 600, fontSize: 'clamp(13px, 3.6vw, 15px)' }}>{c.fullName}</p>
+                        <p className="fit-nowrap fit-stat-l text-neon-lilac" style={{ marginTop: '2px' }}>
+                          {c.id}
+                        </p>
+                      </div>
+                      <div style={{ display: 'flex', gap: '8px', flexShrink: 0 }}>
+                        <button
+                          onClick={() => setEditingUser(c)}
+                          style={{
+                            width: '44px',
+                            height: '44px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            background: 'transparent',
+                            border: 'none',
+                            cursor: 'pointer',
+                            flexShrink: 0
+                          }}
+                        >
+                          <Pencil size={18} strokeWidth={1.5} style={{ color: '#F79BE3' }} />
+                        </button>
+                        <button
+                          onClick={() => setDeletingUser(c)}
+                          style={{
+                            width: '44px',
+                            height: '44px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            background: 'transparent',
+                            border: 'none',
+                            cursor: 'pointer',
+                            flexShrink: 0
+                          }}
+                        >
+                          <Trash2 size={18} strokeWidth={1.5} style={{ color: '#FF5C8A' }} />
+                        </button>
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </AnimatedListItem>
-            ))}
-          </AnimatedList>
+                </AnimatedListItem>
+              ))}
+            </AnimatedList>
+          </div>
+        </div>
+      )}
+
+      {/* Модальное окно подтверждения удаления */}
+      {deletingUser && (
+        <div className="modal-overlay">
+          <div className="modal-card">
+            <p className="text-white font-medium fit-flow" style={{ fontSize: 'clamp(12px, 3.6vw, 15px)', lineHeight: 1.35 }}>
+              Удалить пользователя {deletingUser.fullName} ({deletingUser.id})? Действие необратимо.
+            </p>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', width: '100%' }}>
+              <button
+                onClick={handleDeleteUser}
+                className="btn-neon btn-danger modal-btn"
+              >
+                Удалить
+              </button>
+              <button
+                onClick={() => setDeletingUser(null)}
+                className="btn-neon btn-ghost modal-btn"
+              >
+                Отмена
+              </button>
+            </div>
+          </div>
         </div>
       )}
 
       {/* Модальное окно успеха */}
       {showResetSuccess && (
         <div className="modal-overlay">
-          <div className="modal-card center-col">
-            <p className="text-white font-medium text-center fit-flow" style={{ marginBottom: '24px', fontSize: 'clamp(13px, 3.6vw, 15px)' }}>Баллы всех участников сброшены до 300!</p>
+          <div className="modal-card">
+            <p className="text-white font-medium fit-flow" style={{ fontSize: 'clamp(12px, 3.6vw, 15px)', lineHeight: 1.35 }}>Баллы всех участников сброшены до 300!</p>
             <button
               onClick={() => setShowResetSuccess(false)}
-              className="btn-neon btn-cyan"
-              style={{ width: 'auto', paddingInline: '32px' }}
+              className="btn-neon btn-cyan modal-btn"
             >
-              <span className="fit-nowrap fit-btn3">ОТЛИЧНО</span>
+              ОТЛИЧНО
             </button>
           </div>
         </div>
@@ -199,23 +366,43 @@ export default function AdminScreen({ user, onLogout }: Props) {
       {/* Модальное окно подтверждения */}
       {showResetConfirm && (
         <div className="modal-overlay">
-          <div className="modal-card center-col">
-            <h3 className="text-white font-bold text-center fit-flow fit-sub" style={{ marginBottom: '12px' }}>
+          <div className="modal-card">
+            <h3 className="text-white font-bold fit-flow fit-sub">
               Подтверждение
             </h3>
-            <p className="text-white/80 font-medium text-center fit-flow" style={{ marginBottom: '24px', fontSize: 'clamp(13px, 3.6vw, 15px)' }}>
+            <p className="text-white/80 font-medium fit-flow" style={{ fontSize: 'clamp(12px, 3.6vw, 15px)', lineHeight: 1.35 }}>
               Сбросить баллы всех участников до 300? Это действие нельзя отменить.
             </p>
             <div className="btn-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: 'var(--gap-btn)', width: '100%' }}>
-              <button onClick={() => setShowResetConfirm(false)} className="btn-neon btn-ghost">
-                <span className="fit-nowrap fit-btn2">Отмена</span>
+              <button onClick={() => setShowResetConfirm(false)} className="btn-neon btn-ghost modal-btn">
+                Отмена
               </button>
-              <button onClick={handleResetPoints} className="btn-neon btn-danger">
-                <span className="fit-nowrap fit-btn2">Сбросить</span>
+              <button onClick={handleResetPoints} className="btn-neon btn-danger modal-btn">
+                Сбросить
               </button>
             </div>
           </div>
         </div>
+      )}
+
+      {/* Модальное окно добавления пользователя */}
+      {showAddModal && (
+        <AddUserModal
+          onClose={() => setShowAddModal(false)}
+          onSuccess={handleUserAdded}
+        />
+      )}
+
+      {/* Модальное окно редактирования пользователя */}
+      {editingUser && (
+        <EditUserModal
+          user={editingUser}
+          onClose={() => setEditingUser(null)}
+          onSuccess={() => {
+            setEditingUser(null);
+            setRefreshKey(k => k + 1);
+          }}
+        />
       )}
 
       {/* Кнопка выхода */}

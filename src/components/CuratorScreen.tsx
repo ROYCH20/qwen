@@ -2,7 +2,8 @@ import { useState, useEffect, useRef } from 'react';
 import { Html5Qrcode } from 'html5-qrcode';
 import { getUserById, updatePoints, User } from '../database';
 import { LogOut, ScanLine } from 'lucide-react';
-import { SignalType, AnimatedList, AnimatedListItem, NeonReveal, SpeedingText, GlimmerWrap, CipherText } from './animations';
+import { SignalType, AnimatedList, AnimatedListItem, NeonReveal, SpeedingText } from './animations';
+import QrCard from './QrCard';
 
 interface Props {
   user: User;
@@ -16,7 +17,6 @@ export default function CuratorScreen({ user, onLogout }: Props) {
   const [showError, setShowError] = useState('');
   const [showSuccess, setShowSuccess] = useState('');
   const [isScanning, setIsScanning] = useState(false);
-  const [manualScan, setManualScan] = useState('');
   const scannerRef = useRef<Html5Qrcode | null>(null);
   const scannerContainerId = 'qr-scanner-container';
 
@@ -101,14 +101,6 @@ export default function CuratorScreen({ user, onLogout }: Props) {
     }
   };
 
-  const handleManualScan = () => {
-    if (!manualScan.trim()) {
-      setShowError('Введите ID участника');
-      return;
-    }
-    handleScanResult(manualScan.trim());
-  };
-
   const handleSubmit = () => {
     if (!scannedUser || points === null) {
       setShowError('Выберите количество баллов');
@@ -142,7 +134,6 @@ export default function CuratorScreen({ user, onLogout }: Props) {
     setPoints(null);
     setShowError('');
     setShowSuccess('');
-    setManualScan('');
   };
 
   return (
@@ -167,7 +158,7 @@ export default function CuratorScreen({ user, onLogout }: Props) {
                 <path id="circle-path" d="M 60, 60 m -45, 0 a 45,45 0 1,1 90,0 a 45,45 0 1,1 -90,0" />
               </defs>
               <text>
-                <textPath href="#circle-path">СИСТЕМА БАЛЛОВ • POSVYAT • 2026 •</textPath>
+                <textPath href="#circle-path">ПОСВЯЩЕНИЕ 2026 • ПОСВЯТ •</textPath>
               </text>
             </svg>
             <div className="holo-emblem">✦</div>
@@ -183,20 +174,13 @@ export default function CuratorScreen({ user, onLogout }: Props) {
           }}>
             {user.fullName}
           </h2>
-
-          {/* Строка-подпись */}
-          <p style={{
-            fontSize: 'clamp(10px, 3vw, 12px)',
-            color: '#221D5E',
-            letterSpacing: '0.06em',
-            textAlign: 'center',
-            marginTop: '8px',
-            lineHeight: 1.3
-          }}>
-            ID: {user.id} · КУРАТОР
-          </p>
         </div>
       </div>
+
+      {/* QR-код куратора */}
+      <NeonReveal>
+        <QrCard id={user.id} caption="Ваш QR для входа в систему" />
+      </NeonReveal>
 
       {/* Сканирование */}
       <NeonReveal>
@@ -209,26 +193,9 @@ export default function CuratorScreen({ user, onLogout }: Props) {
                 <ScanLine size={18} strokeWidth={1.5} style={{ marginRight: '8px' }} />
                 <span className="fit-btn-m">Открыть камеру</span>
               </button>
-              
-              <p className="text-neon-lilac fit-flow fit-sub text-center" style={{ margin: '0' }}>
-                или введите ID
+              <p style={{ fontSize: '10px', color: '#B9B0E6', textAlign: 'center', lineHeight: 1.3 }}>
+                Отсканируйте QR-код участника — баллы начисляются или списываются отсканированному участнику
               </p>
-
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                <input
-                  type="text"
-                  value={manualScan}
-                  onChange={(e) => { setManualScan(e.target.value); setShowError(''); }}
-                  placeholder="Например: P001"
-                  className="input-neon"
-                />
-                <button onClick={handleManualScan} className="btn-neon btn-lilac">
-                  <span className="fit-btn-m">Найти участника</span>
-                </button>
-                <p style={{ fontSize: '10px', color: '#B9B0E6', textAlign: 'center', lineHeight: 1.3 }}>
-                  ID участника, которому начисляются или списываются баллы
-                </p>
-              </div>
             </div>
           ) : (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
@@ -329,14 +296,13 @@ export default function CuratorScreen({ user, onLogout }: Props) {
       {/* Модальное окно ошибки */}
       {showError && (
         <div className="modal-overlay">
-          <div className="modal-card center-col">
-            <p className="text-white font-medium text-center fit-flow" style={{ marginBottom: '24px', fontSize: 'clamp(13px, 3.6vw, 15px)' }}>{showError}</p>
+          <div className="modal-card">
+            <p className="text-white font-medium fit-flow" style={{ fontSize: 'clamp(12px, 3.6vw, 15px)', lineHeight: 1.35 }}>{showError}</p>
             <button
               onClick={() => setShowError('')}
-              className="btn-neon btn-pink"
-              style={{ width: 'auto', paddingInline: '32px' }}
+              className="btn-neon btn-pink modal-btn"
             >
-              <span className="fit-nowrap fit-btn3">ПОНЯТНО</span>
+              ПОНЯТНО
             </button>
           </div>
         </div>
@@ -345,14 +311,13 @@ export default function CuratorScreen({ user, onLogout }: Props) {
       {/* Модальное окно успеха */}
       {showSuccess && (
         <div className="modal-overlay">
-          <div className="modal-card center-col">
-            <p className="text-white font-medium text-center fit-flow" style={{ marginBottom: '24px', fontSize: 'clamp(13px, 3.6vw, 15px)' }}>{showSuccess}</p>
+          <div className="modal-card">
+            <p className="text-white font-medium fit-flow" style={{ fontSize: 'clamp(12px, 3.6vw, 15px)', lineHeight: 1.35 }}>{showSuccess}</p>
             <button
               onClick={() => setShowSuccess('')}
-              className="btn-neon btn-cyan"
-              style={{ width: 'auto', paddingInline: '32px' }}
+              className="btn-neon btn-cyan modal-btn"
             >
-              <span className="fit-nowrap fit-btn3">ОТЛИЧНО</span>
+              ОТЛИЧНО
             </button>
           </div>
         </div>
