@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import confetti from 'canvas-confetti';
 import { useUsers, User } from '../UsersProvider';
 import { parseQrPayload } from '../qrPayload';
 import { LogOut, ScanLine } from 'lucide-react';
@@ -69,9 +70,26 @@ export default function CuratorScreen({ user, onLogout }: Props) {
       setShowError('');
       setScannedUser({ ...scannedUser, points: newPoints });
       setPoints(null);
+      // Confetti на успех — цвета палитры (как в AdminScreen)
+      confetti({
+        particleCount: 100,
+        spread: 70,
+        origin: { y: 0.6 },
+        colors: ['#6C63C9', '#8E86E4', '#B78FF2', '#F79BE3', '#6FE3EC']
+      });
     } else {
       setShowError('Ошибка при обновлении баллов');
     }
+  };
+
+  // Основная кнопка действия в карточке «УЧАСТНИК НАЙДЕН» (v17.5):
+  // применяет выбранный режим (Зачисление/Списание) и количество из пилюль.
+  const handleApplyAction = () => {
+    if (!scannedUser || points === null) {
+      setShowError('Выберите количество баллов');
+      return;
+    }
+    handleSubmit();
   };
 
   const handleReset = () => {
@@ -135,10 +153,9 @@ export default function CuratorScreen({ user, onLogout }: Props) {
           <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
             <button
               onClick={() => { setScannerOpen(true); setShowError(''); }}
-              className="btn-violet-primary"
-              style={{ width: '100%' }}
+              className="btn-scan"
             >
-              <ScanLine size={18} strokeWidth={1.5} style={{ marginRight: '8px' }} />
+              <ScanLine size={18} strokeWidth={1.5} />
               <span className="fit-btn-m">Сканировать участника</span>
             </button>
             <p style={{ fontSize: '10px', color: '#B9B0E6', textAlign: 'center', lineHeight: 1.3 }}>
@@ -234,6 +251,20 @@ export default function CuratorScreen({ user, onLogout }: Props) {
             </div>
 
             <div className="hud-divider"></div>
+
+            {/* Основная кнопка действия (v17.5): фирменная пилюля, класс
+                переключается по режиму: Зачисление -> btn-scan (бирюзово-розовая),
+                Списание -> btn-scan + btn-scan-danger (danger-градиент). */}
+            <button
+              onClick={handleApplyAction}
+              disabled={points === null}
+              className={`btn-scan ${action === 'debit' ? 'btn-scan-danger' : ''}`}
+              style={{ marginBottom: '14px' }}
+            >
+              <span className="fit-btn-m">
+                {action === 'credit' ? `Начислить +${points || 0}` : `Списать -${points || 0}`}
+              </span>
+            </button>
 
             {/* Подтверждение */}
             <div className="btn-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: 'var(--gap-btn)', marginTop: '10px' }}>

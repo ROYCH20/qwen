@@ -445,6 +445,62 @@
   animation: shimmer 3s infinite;
 }
 
+/* ═══════════════════════════════════════════
+   v17.5: Фирменная градиентная пилюля (эталон):
+   бирюза слева -> розовый справа, темный текст,
+   без glow-ореола вокруг текста.
+   ═══════════════════════════════════════════ */
+.btn-scan {
+  container-type: inline-size; /* cqw-кегли для .fit-btn-m внутри пилюли */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  min-height: 48px;
+  padding: 0 20px;
+  border-radius: 999px;
+  border: none;
+  cursor: pointer;
+  background: linear-gradient(135deg, #6FE3EC 0%, #B78FF2 55%, #F79BE3 100%);
+  color: #1A1642;
+  font-weight: 700;
+  letter-spacing: 0;
+  box-shadow: 0 0 22px rgba(111, 227, 236, .28), inset 0 1px 0 rgba(255, 255, 255, .4);
+}
+
+.btn-scan svg { color: #1A1642; }        /* иконка ScanLine темная, не белая */
+.btn-scan .fit-btn-m { color: #1A1642; } /* текст надписи темный */
+
+.btn-scan:hover,
+.btn-scan:focus,
+.btn-scan:active {
+  /* сохраняем градиент, не перекрашиваем в белый */
+  background: linear-gradient(135deg, #6FE3EC 0%, #B78FF2 55%, #F79BE3 100%);
+  color: #1A1642;
+}
+
+.btn-scan:active { transform: scale(0.97); }
+
+.btn-scan:disabled { opacity: 0.4; cursor: not-allowed; }
+
+/* Danger-вариант той же фирменной пилюли (режим «Списание») */
+.btn-scan-danger {
+  background: linear-gradient(135deg, #F79BE3, #FF5C8A);
+  color: #1A1642;
+  box-shadow: 0 0 22px rgba(247, 155, 227, .28), inset 0 1px 0 rgba(255, 255, 255, .4);
+}
+
+.btn-scan-danger:hover,
+.btn-scan-danger:focus,
+.btn-scan-danger:active {
+  background: linear-gradient(135deg, #F79BE3, #FF5C8A);
+  color: #1A1642;
+}
+
+.btn-scan-danger svg,
+.btn-scan-danger .fit-btn-m { color: #1A1642; }
+
 @keyframes shimmer {
   0% { transform: translateX(-100%) translateY(-100%); }
   100% { transform: translateX(100%) translateY(100%); }
