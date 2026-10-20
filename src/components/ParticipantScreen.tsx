@@ -76,7 +76,7 @@ export default function ParticipantScreen({ user, onLogout }: Props) {
       {/* Кнопка выхода */}
       <button
         onClick={onLogout}
-        className="btn-neon btn-danger"
+        className="btn-neon btn-danger bottom-pill"
         style={{ marginTop: 'var(--gap-block)' }}
       >
         <LogOut size={18} strokeWidth={1.5} style={{ marginRight: '8px' }} />
