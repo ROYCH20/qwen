@@ -249,6 +249,24 @@
 }
 
 /* ═══════════════════════════════════════════
+   SCANNER OVERLAY (v17.1)
+   ═══════════════════════════════════════════ */
+.scanner-overlay .qr-frame {
+  background: #0B0920;
+  overflow: hidden;
+  border-radius: 14px;
+}
+
+.scanner-overlay .qr-frame video,
+.scanner-overlay .qr-frame canvas {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover;
+  display: block;
+  border-radius: 14px;
+}
+
+/* ═══════════════════════════════════════════
    CSS-СИСТЕМА АВТОКЕГЛЯ (cqw)
    ═══════════════════════════════════════════ */
 .fit-box {

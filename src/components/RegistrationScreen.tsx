@@ -14,6 +14,7 @@ export default function RegistrationScreen({ onLogin }: Props) {
   const [showScanner, setShowScanner] = useState(false);
   const [showCameraError, setShowCameraError] = useState(false);
   const [showQrError, setShowQrError] = useState(false);
+  const [showTimeout, setShowTimeout] = useState(false);
   const { getUserById } = useUsers();
 
   // Обработка успешного сканирования
@@ -39,6 +40,12 @@ export default function RegistrationScreen({ onLogin }: Props) {
   const handleCameraError = () => {
     setShowScanner(false);
     setShowCameraError(true);
+  };
+
+  // Обработка таймаута сканирования
+  const handleTimeout = () => {
+    setShowScanner(false);
+    setShowTimeout(true);
   };
 
   // Гостевой экран (DEMO_ACCESS === false)
@@ -87,6 +94,7 @@ export default function RegistrationScreen({ onLogin }: Props) {
           <ScannerOverlay
             onDecoded={handleDecoded}
             onCameraError={handleCameraError}
+            onTimeout={handleTimeout}
             onClose={() => setShowScanner(false)}
           />
         )}
@@ -141,6 +149,34 @@ export default function RegistrationScreen({ onLogin }: Props) {
                 </button>
                 <button
                   onClick={() => setShowQrError(false)}
+                  className="btn-neon btn-ghost modal-btn"
+                >
+                  Понятно
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Модалка таймаута сканирования */}
+        {showTimeout && (
+          <div className="modal-overlay" style={{ zIndex: 210 }}>
+            <div className="modal-card">
+              <p className="fit-flow text-center" style={{ fontSize: 'clamp(12px, 3.6vw, 15px)', lineHeight: 1.35 }}>
+                Не удалось отсканировать QR-код. Попробуйте еще раз.
+              </p>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', width: '100%' }}>
+                <button
+                  onClick={() => {
+                    setShowTimeout(false);
+                    setShowScanner(true);
+                  }}
+                  className="btn-neon btn-cyan modal-btn"
+                >
+                  Попробовать еще раз
+                </button>
+                <button
+                  onClick={() => setShowTimeout(false)}
                   className="btn-neon btn-ghost modal-btn"
                 >
                   Понятно
@@ -219,6 +255,7 @@ export default function RegistrationScreen({ onLogin }: Props) {
         <ScannerOverlay
           onDecoded={handleDecoded}
           onCameraError={handleCameraError}
+          onTimeout={handleTimeout}
           onClose={() => setShowScanner(false)}
         />
       )}
@@ -273,6 +310,34 @@ export default function RegistrationScreen({ onLogin }: Props) {
               </button>
               <button
                 onClick={() => setShowQrError(false)}
+                className="btn-neon btn-ghost modal-btn"
+              >
+                Понятно
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Модалка таймаута сканирования */}
+      {showTimeout && (
+        <div className="modal-overlay" style={{ zIndex: 210 }}>
+          <div className="modal-card">
+            <p className="fit-flow text-center" style={{ fontSize: 'clamp(12px, 3.6vw, 15px)', lineHeight: 1.35 }}>
+              Не удалось отсканировать QR-код. Попробуйте еще раз.
+            </p>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', width: '100%' }}>
+              <button
+                onClick={() => {
+                  setShowTimeout(false);
+                  setShowScanner(true);
+                }}
+                className="btn-neon btn-cyan modal-btn"
+              >
+                Попробовать еще раз
+              </button>
+              <button
+                onClick={() => setShowTimeout(false)}
                 className="btn-neon btn-ghost modal-btn"
               >
                 Понятно
