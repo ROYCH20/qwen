@@ -5,6 +5,7 @@ import { ScanLine } from 'lucide-react';
 import { SignalType, NeonReveal, AnimatedList, AnimatedListItem } from './animations';
 import ScannerOverlay from '../ScannerOverlay';
 import ErrorModal from '../ErrorModal';
+import { parseQrPayload } from '../qrPayload';
 
 interface Props {
   onLogin: (userId: string) => void;
@@ -14,6 +15,13 @@ export default function RegistrationScreen({ onLogin }: Props) {
   const [scannerOpen, setScannerOpen] = useState(false);
   const [errorKind, setErrorKind] = useState<'denied' | 'unavailable' | 'invalid' | 'timeout' | null>(null);
   const { getUserById } = useUsers();
+
+  // Валидатор входа: сырой decode → валидный id или null.
+  // parseQrPayload понимает и диплинк …?qr=P001, и голый id — обратная совместимость.
+  const validateLogin = (raw: string) => {
+    const id = parseQrPayload(raw);
+    return id && getUserById(id) ? id : null;
+  };
 
   // Гостевой экран (DEMO_ACCESS === false)
   if (!DEMO_ACCESS) {
@@ -59,6 +67,7 @@ export default function RegistrationScreen({ onLogin }: Props) {
         {/* Оверлей сканера */}
         {scannerOpen && (
           <ScannerOverlay
+            validate={validateLogin}
             onResult={(id) => {
               setScannerOpen(false);
               onLogin(id);
@@ -68,7 +77,6 @@ export default function RegistrationScreen({ onLogin }: Props) {
               setErrorKind(kind);
             }}
             onCancel={() => setScannerOpen(false)}
-            getUserById={getUserById}
           />
         )}
 
@@ -149,6 +157,7 @@ export default function RegistrationScreen({ onLogin }: Props) {
       {/* Оверлей сканера */}
       {scannerOpen && (
         <ScannerOverlay
+          validate={validateLogin}
           onResult={(id) => {
             setScannerOpen(false);
             onLogin(id);
@@ -158,7 +167,6 @@ export default function RegistrationScreen({ onLogin }: Props) {
             setErrorKind(kind);
           }}
           onCancel={() => setScannerOpen(false)}
-          getUserById={getUserById}
         />
       )}
 
