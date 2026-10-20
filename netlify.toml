@@ -1,0 +1,4 @@
+[[headers]]
+  for = "/*"
+  [headers.values]
+    Content-Security-Policy = "frame-ancestors 'self' https://vk.com https://m.vk.com https://*.vk.com https://*.vk.ru"
