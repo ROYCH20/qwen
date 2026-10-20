@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { addUser, updateUser, User } from '../database';
+import { useUsers, User } from '../UsersProvider';
 
 interface AddUserModalProps {
   onClose: () => void;
@@ -12,8 +12,9 @@ export function AddUserModal({ onClose, onSuccess }: AddUserModalProps) {
   const [role, setRole] = useState<'participant' | 'curator'>('participant');
   const [group, setGroup] = useState('');
   const [errors, setErrors] = useState<{ fullName?: string; id?: string; group?: string }>({});
+  const { addUser } = useUsers();
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     const newErrors: typeof errors = {};
 
     if (!fullName.trim()) {
@@ -33,7 +34,7 @@ export function AddUserModal({ onClose, onSuccess }: AddUserModalProps) {
       return;
     }
 
-    const success = addUser({
+    const success = await addUser({
       id: id.trim(),
       role,
       fullName: fullName.trim(),
@@ -133,12 +134,13 @@ interface EditUserModalProps {
 }
 
 export function EditUserModal({ user, onClose, onSuccess }: EditUserModalProps) {
-  const [fullName, setFullName] = useState(user.fullName);
+  const [fullName, setFullName] = useState(user.full_name);
   const [id, setId] = useState(user.id);
-  const [group, setGroup] = useState(user.group || '');
+  const [group, setGroup] = useState(user.grp || '');
   const [errors, setErrors] = useState<{ fullName?: string; id?: string; group?: string }>({});
+  const { updateUser } = useUsers();
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     const newErrors: typeof errors = {};
 
     if (!fullName.trim()) {
@@ -158,7 +160,7 @@ export function EditUserModal({ user, onClose, onSuccess }: EditUserModalProps) 
       return;
     }
 
-    const success = updateUser(user.id, {
+    const success = await updateUser(user.id, {
       id: id.trim(),
       fullName: fullName.trim(),
       group: user.role === 'participant' ? group.trim() : undefined

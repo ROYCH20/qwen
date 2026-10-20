@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
-import { getUserById } from '../database';
+import { useUsers } from '../UsersProvider';
+import { parseQrPayload } from '../qrPayload';
 import { Html5Qrcode } from 'html5-qrcode';
 import { ScanLine } from 'lucide-react';
 import { SignalType, NeonReveal, AnimatedList, AnimatedListItem } from './animations';
@@ -13,6 +14,7 @@ export default function RegistrationScreen({ onLogin }: Props) {
   const [isScanning, setIsScanning] = useState(false);
   const scannerRef = useRef<Html5Qrcode | null>(null);
   const scannerContainerId = 'qr-scanner-registration';
+  const { getUserById } = useUsers();
 
   useEffect(() => {
     return () => {
@@ -34,15 +36,22 @@ export default function RegistrationScreen({ onLogin }: Props) {
         { facingMode: 'environment' },
         { fps: 10, qrbox: { width: 250, height: 250 } },
         (decodedText) => {
-          const trimmedId = decodedText.trim();
-          const user = getUserById(trimmedId);
+          const userId = parseQrPayload(decodedText);
           
-          if (user) {
-            scanner.stop().catch(() => {});
-            setIsScanning(false);
-            onLogin(user.id);
+          if (userId) {
+            const user = getUserById(userId);
+            
+            if (user) {
+              scanner.stop().catch(() => {});
+              setIsScanning(false);
+              onLogin(user.id);
+            } else {
+              setShowError('QR-код не распознан');
+              scanner.stop().catch(() => {});
+              setIsScanning(false);
+            }
           } else {
-            setShowError(`Пользователь с ID "${trimmedId}" не найден в системе!`);
+            setShowError('QR-код не распознан');
             scanner.stop().catch(() => {});
             setIsScanning(false);
           }

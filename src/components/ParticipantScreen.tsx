@@ -1,4 +1,4 @@
-import { User } from '../database';
+import { User } from '../UsersProvider';
 import { LogOut } from 'lucide-react';
 import { SpeedingText, NeonReveal, SignalType } from './animations';
 import QrCard from './QrCard';
@@ -45,7 +45,7 @@ export default function ParticipantScreen({ user, onLogout }: Props) {
             lineHeight: 1.25,
             maxWidth: '100%'
           }}>
-            {user.fullName}
+            {user.full_name}
           </h2>
         </div>
       </div>
@@ -56,7 +56,7 @@ export default function ParticipantScreen({ user, onLogout }: Props) {
           <div className="stat-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', columnGap: '10px' }}>
             <div className="stat-cell">
               <p className="fit-nowrap fit-stat-l text-neon-lilac" style={{ marginBottom: '6px' }}>Группа</p>
-              <p className="fit-nowrap fit-stat-v text-white">{user.group}</p>
+              <p className="fit-nowrap fit-stat-v text-white">{user.grp}</p>
             </div>
             <div className="stat-cell" style={{ borderLeft: '1px solid rgba(223,183,239,.25)' }}>
               <p className="fit-nowrap fit-stat-l text-neon-pink" style={{ marginBottom: '6px' }}>Баллы</p>

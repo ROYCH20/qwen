@@ -1,4 +1,5 @@
 import { QRCodeSVG } from 'qrcode.react';
+import { buildUserQr } from '../config';
 
 interface QrCardProps {
   id: string;
@@ -12,7 +13,7 @@ export default function QrCard({ id, caption }: QrCardProps) {
       <div className="center-col">
         <div className="qr-frame focus-glow">
           <QRCodeSVG
-            value={id}
+            value={buildUserQr(id)}
             level="H"
             includeMargin={false}
             fgColor="#221D5E"
