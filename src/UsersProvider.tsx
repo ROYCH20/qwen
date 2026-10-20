@@ -26,6 +26,7 @@ interface UsersContextType {
   deleteUser: (id: string) => Promise<boolean>;
   updatePoints: (userId: string, newPoints: number) => Promise<boolean>;
   resetAllPoints: () => Promise<void>;
+  resetUserPoints: (id: string) => Promise<boolean>; // v17.6: точечный сброс одного участника к базовым 300
   bindVkId: (userId: string, vkId: number) => Promise<void>;
   retry: () => void;
 }
@@ -263,6 +264,21 @@ export function UsersProvider({ children }: { children: React.ReactNode }) {
     await Promise.all(updates);
   }, [users]);
 
+  // v17.6 (аддитивно): сброс баланса КОНКРЕТНОГО участника к базовым 300.
+  // Существующий resetAllPoints (админский сброс всех) НЕ тронут.
+  const resetUserPoints = useCallback(
+    async (id: string): Promise<boolean> => {
+      if (!supabase) return false;
+
+      const u = users.find((x) => x.id === id);
+      if (!u || u.role !== 'participant') return false;
+
+      const { error } = await supabase.from('users').update({ points: 300 }).eq('id', id);
+      return !error;
+    },
+    [users]
+  );
+
   const bindVkId = useCallback(
     async (userId: string, vkId: number): Promise<void> => {
       if (!supabase) return;
@@ -295,6 +311,7 @@ export function UsersProvider({ children }: { children: React.ReactNode }) {
     deleteUser,
     updatePoints,
     resetAllPoints,
+    resetUserPoints,
     bindVkId,
     retry,
   };
