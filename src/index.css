@@ -557,6 +557,12 @@
   padding: 1rem;
 }
 
+.modal-overlay .modal-card {
+  background: linear-gradient(160deg, #1A1642 0%, #120F38 100%);
+  border: 1px solid rgba(223, 183, 239, 0.22);
+  box-shadow: 0 0 28px rgba(111, 227, 236, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.14);
+}
+
 .modal-card {
   background: linear-gradient(160deg, rgba(26, 22, 66, 0.96), rgba(18, 15, 56, 0.94));
   border: 1.5px solid rgba(247, 155, 227, 0.4);

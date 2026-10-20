@@ -1,54 +1,19 @@
 import { useState } from 'react';
 import { useUsers } from '../UsersProvider';
-import { parseQrPayload } from '../qrPayload';
 import { DEMO_ACCESS } from '../config';
 import { ScanLine } from 'lucide-react';
 import { SignalType, NeonReveal, AnimatedList, AnimatedListItem } from './animations';
 import ScannerOverlay from '../ScannerOverlay';
+import ErrorModal from '../ErrorModal';
 
 interface Props {
   onLogin: (userId: string) => void;
 }
 
 export default function RegistrationScreen({ onLogin }: Props) {
-  const [showScanner, setShowScanner] = useState(false);
-  const [showCameraError, setShowCameraError] = useState(false);
-  const [isPermissionDenied, setIsPermissionDenied] = useState(false);
-  const [showQrError, setShowQrError] = useState(false);
-  const [showTimeout, setShowTimeout] = useState(false);
+  const [scannerOpen, setScannerOpen] = useState(false);
+  const [errorKind, setErrorKind] = useState<'denied' | 'unavailable' | 'invalid' | 'timeout' | null>(null);
   const { getUserById } = useUsers();
-
-  // Обработка успешного сканирования
-  const handleDecoded = (rawText: string) => {
-    setShowScanner(false);
-
-    const userId = parseQrPayload(rawText);
-    if (!userId) {
-      setShowQrError(true);
-      return;
-    }
-
-    const user = getUserById(userId);
-    if (!user) {
-      setShowQrError(true);
-      return;
-    }
-
-    onLogin(user.id);
-  };
-
-  // Обработка ошибки камеры
-  const handleCameraError = (_err: Error, permissionDenied: boolean) => {
-    setShowScanner(false);
-    setIsPermissionDenied(permissionDenied);
-    setShowCameraError(true);
-  };
-
-  // Обработка таймаута сканирования
-  const handleTimeout = () => {
-    setShowScanner(false);
-    setShowTimeout(true);
-  };
 
   // Гостевой экран (DEMO_ACCESS === false)
   if (!DEMO_ACCESS) {
@@ -76,7 +41,7 @@ export default function RegistrationScreen({ onLogin }: Props) {
 
         {/* Кнопка входа по QR */}
         <button
-          onClick={() => setShowScanner(true)}
+          onClick={() => setScannerOpen(true)}
           className="btn-neon btn-cyan bottom-pill"
           style={{ width: '100%' }}
         >
@@ -92,105 +57,30 @@ export default function RegistrationScreen({ onLogin }: Props) {
         </div>
 
         {/* Оверлей сканера */}
-        {showScanner && (
+        {scannerOpen && (
           <ScannerOverlay
-            onDecoded={handleDecoded}
-            onCameraError={handleCameraError}
-            onTimeout={handleTimeout}
-            onClose={() => setShowScanner(false)}
+            onResult={(id) => {
+              setScannerOpen(false);
+              onLogin(id);
+            }}
+            onError={(kind) => {
+              setScannerOpen(false);
+              setErrorKind(kind);
+            }}
+            onCancel={() => setScannerOpen(false)}
+            getUserById={getUserById}
           />
         )}
 
-        {/* Модалка ошибки камеры */}
-        {showCameraError && (
-          <div className="modal-overlay" style={{ zIndex: 210 }}>
-            <div className="modal-card">
-              <p className="fit-flow text-center" style={{ fontSize: 'clamp(12px, 3.6vw, 15px)', lineHeight: 1.35 }}>
-                {isPermissionDenied
-                  ? 'Вы запретили доступ к камере. Попробуйте еще раз.'
-                  : 'Не удалось получить доступ к камере. Попробуйте еще раз.'}
-              </p>
-              <p className="fit-flow text-center" style={{ fontSize: 'clamp(10px, 2.8vw, 11px)', color: '#B9B0E6', lineHeight: 1.3 }}>
-                {isPermissionDenied
-                  ? 'Разрешите доступ к камере в настройках браузера или откройте приложение в мобильном приложении VK.'
-                  : 'В веб-версии доступ к камере может быть ограничен. Откройте приложение в мобильном приложении VK.'}
-              </p>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', width: '100%' }}>
-                <button
-                  onClick={() => {
-                    setShowCameraError(false);
-                    setShowScanner(true);
-                  }}
-                  className="btn-neon btn-cyan modal-btn"
-                >
-                  Попробовать еще раз
-                </button>
-                <button
-                  onClick={() => setShowCameraError(false)}
-                  className="btn-neon btn-ghost modal-btn"
-                >
-                  Понятно
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Модалка неверного QR */}
-        {showQrError && (
-          <div className="modal-overlay" style={{ zIndex: 210 }}>
-            <div className="modal-card">
-              <p className="fit-flow text-center" style={{ fontSize: 'clamp(12px, 3.6vw, 15px)', lineHeight: 1.35 }}>
-                Отсканирован неверный QR-код. Проверьте код и попробуйте еще раз.
-              </p>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', width: '100%' }}>
-                <button
-                  onClick={() => {
-                    setShowQrError(false);
-                    setShowScanner(true);
-                  }}
-                  className="btn-neon btn-cyan modal-btn"
-                >
-                  Попробовать еще раз
-                </button>
-                <button
-                  onClick={() => setShowQrError(false)}
-                  className="btn-neon btn-ghost modal-btn"
-                >
-                  Понятно
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Модалка таймаута сканирования */}
-        {showTimeout && (
-          <div className="modal-overlay" style={{ zIndex: 210 }}>
-            <div className="modal-card">
-              <p className="fit-flow text-center" style={{ fontSize: 'clamp(12px, 3.6vw, 15px)', lineHeight: 1.35 }}>
-                Не удалось отсканировать QR-код. Попробуйте еще раз.
-              </p>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', width: '100%' }}>
-                <button
-                  onClick={() => {
-                    setShowTimeout(false);
-                    setShowScanner(true);
-                  }}
-                  className="btn-neon btn-cyan modal-btn"
-                >
-                  Попробовать еще раз
-                </button>
-                <button
-                  onClick={() => setShowTimeout(false)}
-                  className="btn-neon btn-ghost modal-btn"
-                >
-                  Понятно
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
+        {/* Единая модалка ошибок */}
+        <ErrorModal
+          kind={errorKind}
+          onRetry={() => {
+            setErrorKind(null);
+            setScannerOpen(true);
+          }}
+          onClose={() => setErrorKind(null)}
+        />
       </div>
     );
   }
@@ -214,7 +104,7 @@ export default function RegistrationScreen({ onLogin }: Props) {
           <span className="hud-label fit-flow fit-title">ВХОД ПО QR</span>
           
           <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
-            <button onClick={() => setShowScanner(true)} className="btn-neon btn-cyan focus-glow">
+            <button onClick={() => setScannerOpen(true)} className="btn-neon btn-cyan focus-glow">
               <ScanLine size={18} strokeWidth={1.5} style={{ marginRight: '8px' }} />
               <span className="fit-btn-m">Открыть камеру</span>
             </button>
@@ -257,105 +147,30 @@ export default function RegistrationScreen({ onLogin }: Props) {
       </div>
 
       {/* Оверлей сканера */}
-      {showScanner && (
+      {scannerOpen && (
         <ScannerOverlay
-          onDecoded={handleDecoded}
-          onCameraError={handleCameraError}
-          onTimeout={handleTimeout}
-          onClose={() => setShowScanner(false)}
+          onResult={(id) => {
+            setScannerOpen(false);
+            onLogin(id);
+          }}
+          onError={(kind) => {
+            setScannerOpen(false);
+            setErrorKind(kind);
+          }}
+          onCancel={() => setScannerOpen(false)}
+          getUserById={getUserById}
         />
       )}
 
-      {/* Модалка ошибки камеры */}
-      {showCameraError && (
-        <div className="modal-overlay" style={{ zIndex: 210 }}>
-          <div className="modal-card">
-            <p className="fit-flow text-center" style={{ fontSize: 'clamp(12px, 3.6vw, 15px)', lineHeight: 1.35 }}>
-              {isPermissionDenied
-                ? 'Вы запретили доступ к камере. Попробуйте еще раз.'
-                : 'Не удалось получить доступ к камере. Попробуйте еще раз.'}
-            </p>
-            <p className="fit-flow text-center" style={{ fontSize: 'clamp(10px, 2.8vw, 11px)', color: '#B9B0E6', lineHeight: 1.3 }}>
-              {isPermissionDenied
-                ? 'Разрешите доступ к камере в настройках браузера или откройте приложение в мобильном приложении VK.'
-                : 'В веб-версии доступ к камере может быть ограничен. Откройте приложение в мобильном приложении VK.'}
-            </p>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', width: '100%' }}>
-              <button
-                onClick={() => {
-                  setShowCameraError(false);
-                  setShowScanner(true);
-                }}
-                className="btn-neon btn-cyan modal-btn"
-              >
-                Попробовать еще раз
-              </button>
-              <button
-                onClick={() => setShowCameraError(false)}
-                className="btn-neon btn-ghost modal-btn"
-              >
-                Понятно
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Модалка неверного QR */}
-      {showQrError && (
-        <div className="modal-overlay" style={{ zIndex: 210 }}>
-          <div className="modal-card">
-            <p className="fit-flow text-center" style={{ fontSize: 'clamp(12px, 3.6vw, 15px)', lineHeight: 1.35 }}>
-              Отсканирован неверный QR-код. Проверьте код и попробуйте еще раз.
-            </p>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', width: '100%' }}>
-              <button
-                onClick={() => {
-                  setShowQrError(false);
-                  setShowScanner(true);
-                }}
-                className="btn-neon btn-cyan modal-btn"
-              >
-                Попробовать еще раз
-              </button>
-              <button
-                onClick={() => setShowQrError(false)}
-                className="btn-neon btn-ghost modal-btn"
-              >
-                Понятно
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Модалка таймаута сканирования */}
-      {showTimeout && (
-        <div className="modal-overlay" style={{ zIndex: 210 }}>
-          <div className="modal-card">
-            <p className="fit-flow text-center" style={{ fontSize: 'clamp(12px, 3.6vw, 15px)', lineHeight: 1.35 }}>
-              Не удалось отсканировать QR-код. Попробуйте еще раз.
-            </p>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', width: '100%' }}>
-              <button
-                onClick={() => {
-                  setShowTimeout(false);
-                  setShowScanner(true);
-                }}
-                className="btn-neon btn-cyan modal-btn"
-              >
-                Попробовать еще раз
-              </button>
-              <button
-                onClick={() => setShowTimeout(false)}
-                className="btn-neon btn-ghost modal-btn"
-              >
-                Понятно
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Единая модалка ошибок */}
+      <ErrorModal
+        kind={errorKind}
+        onRetry={() => {
+          setErrorKind(null);
+          setScannerOpen(true);
+        }}
+        onClose={() => setErrorKind(null)}
+      />
     </div>
   );
 }

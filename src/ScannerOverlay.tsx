@@ -1,47 +1,35 @@
 import { useEffect, useRef } from 'react';
 import { Html5Qrcode } from 'html5-qrcode';
+import { parseQrPayload } from './qrPayload';
+import { User } from './UsersProvider';
 
 interface ScannerOverlayProps {
-  onDecoded: (rawText: string) => void;
-  onCameraError: (err: Error, isPermissionDenied: boolean) => void;
-  onTimeout: () => void;
-  onClose: () => void;
+  onResult: (id: string) => void;
+  onError: (kind: 'denied' | 'unavailable' | 'invalid' | 'timeout') => void;
+  onCancel: () => void;
+  getUserById: (id: string) => User | null;
 }
 
-export default function ScannerOverlay({ onDecoded, onCameraError, onTimeout, onClose }: ScannerOverlayProps) {
-  const scannerRef = useRef<Html5Qrcode | null>(null);
+export default function ScannerOverlay({ onResult, onError, onCancel, getUserById }: ScannerOverlayProps) {
+  const hqRef = useRef<Html5Qrcode | null>(null);
   const timeoutRef = useRef<number | null>(null);
-  const isStoppingRef = useRef(false);
+  const cancelledRef = useRef(false);
 
-  // Остановка сканера и таймера
-  const stopScanner = async () => {
-    if (isStoppingRef.current) return;
-    isStoppingRef.current = true;
-
-    // Очищаем таймаут
-    if (timeoutRef.current !== null) {
-      clearTimeout(timeoutRef.current);
-      timeoutRef.current = null;
-    }
-
-    if (scannerRef.current) {
-      try {
-        await scannerRef.current.stop();
-        scannerRef.current.clear();
-      } catch (err) {
-        // Игнорируем ошибки при остановке
+  const stopSafe = () => {
+    try {
+      if (hqRef.current) {
+        hqRef.current.stop().then(() => hqRef.current?.clear()).catch(() => {});
+        hqRef.current = null;
       }
-      scannerRef.current = null;
-    }
+    } catch {}
   };
 
-  // Запуск камеры после появления узла в DOM
   useEffect(() => {
-    let cancelled = false;
+    cancelledRef.current = false;
     let hq: Html5Qrcode | null = null;
 
     const begin = () => {
-      if (cancelled) return;
+      if (cancelledRef.current) return;
       
       const element = document.getElementById('scanner-video');
       if (!element) {
@@ -50,57 +38,72 @@ export default function ScannerOverlay({ onDecoded, onCameraError, onTimeout, on
       }
 
       hq = new Html5Qrcode('scanner-video');
-      scannerRef.current = hq;
+      hqRef.current = hq;
+
+      const handleStartError = (err: any) => {
+        if (cancelledRef.current) return;
+        stopSafe();
+        if (err && (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError')) {
+          onError('denied');
+        } else {
+          onError('unavailable');
+        }
+      };
+
+      const onDecoded = (raw: string) => {
+        if (cancelledRef.current) return;
+        if (timeoutRef.current !== null) {
+          clearTimeout(timeoutRef.current);
+          timeoutRef.current = null;
+        }
+        
+        const id = parseQrPayload(raw);
+        if (!id) {
+          stopSafe();
+          onError('invalid');
+          return;
+        }
+
+        const user = getUserById(id);
+        if (user) {
+          stopSafe();
+          onResult(id);
+        } else {
+          stopSafe();
+          onError('invalid');
+        }
+      };
 
       hq.start(
         { facingMode: 'environment' },
-        { 
-          fps: 10,
-          qrbox: { width: 220, height: 220 }
-        },
-        (decodedText) => {
-          if (!cancelled) {
-            onDecoded(decodedText);
-          }
-        },
-        () => {} // Пустой no-op для отдельных кадров без кода
+        { fps: 10, qrbox: { width: 220, height: 220 } },
+        onDecoded,
+        () => {}
       ).then(() => {
-        // Запускаем таймаут 10 секунд ПОСЛЕ успешного start()
-        if (!cancelled) {
-          timeoutRef.current = window.setTimeout(() => {
-            if (!cancelled) {
-              stopScanner();
-              onTimeout();
-            }
-          }, 10000);
-        }
-      }).catch((err) => {
-        // Любое падение старта → onCameraError
-        if (!cancelled && err instanceof Error) {
-          const isPermissionDenied = err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError';
-          onCameraError(err, isPermissionDenied);
-        }
-      });
+        if (cancelledRef.current) return;
+        timeoutRef.current = window.setTimeout(() => {
+          if (cancelledRef.current) return;
+          stopSafe();
+          onError('timeout');
+        }, 10000);
+      }).catch(handleStartError);
     };
 
     begin();
 
     return () => {
-      cancelled = true;
-      if (hq) {
-        const scanner = hq;
-        scanner.stop().then(() => scanner.clear()).catch(() => {});
-      }
+      cancelledRef.current = true;
       if (timeoutRef.current !== null) {
         clearTimeout(timeoutRef.current);
+        timeoutRef.current = null;
       }
+      stopSafe();
     };
   }, []);
 
-  // Обработка закрытия
-  const handleClose = async () => {
-    await stopScanner();
-    onClose();
+  const handleCancel = () => {
+    stopSafe();
+    onCancel();
   };
 
   return (
@@ -119,7 +122,7 @@ export default function ScannerOverlay({ onDecoded, onCameraError, onTimeout, on
         </p>
 
         <button
-          onClick={handleClose}
+          onClick={handleCancel}
           className="btn-neon btn-ghost"
           style={{ width: '100%', height: '44px' }}
         >
