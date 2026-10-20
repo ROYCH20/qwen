@@ -987,6 +987,12 @@
   max-width: 100%;
 }
 
+/* Гарантия ширины для контейнерных элементов (исправление схлопывания) */
+.hud-box, .fit-box, .stat-cell, .screen-head {
+  width: 100%;
+  max-width: 100%;
+}
+
 .flex > *, .grid > * {
   min-width: 0;
 }

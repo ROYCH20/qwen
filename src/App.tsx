@@ -81,17 +81,18 @@ function AppContent() {
         <FilmGrain />
         <div className="w-full max-w-[430px] min-h-screen relative z-10 flex items-center justify-center">
           <div className="crt-frame min-h-screen flex items-center justify-center p-4">
-            <div className="hud-box" style={{ width: '100%', maxWidth: '300px' }}>
-              <div className="center-col" style={{ padding: '40px 0' }}>
+            <div className="hud-box" style={{ width: '100%' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'stretch', width: '100%', padding: '40px 0' }}>
                 <div style={{ 
                   width: '40px', 
                   height: '40px', 
                   border: '3px solid rgba(111, 227, 236, 0.3)',
                   borderTopColor: '#6FE3EC',
                   borderRadius: '50%',
-                  animation: 'spin 1s linear infinite'
+                  animation: 'spin 1s linear infinite',
+                  margin: '0 auto'
                 }}></div>
-                <p className="text-neon-cyan fit-flow fit-sub" style={{ marginTop: '16px' }}>
+                <p className="text-neon-cyan fit-flow fit-sub" style={{ marginTop: '16px', textAlign: 'center' }}>
                   Загрузка...
                 </p>
               </div>
@@ -113,14 +114,15 @@ function AppContent() {
         <FilmGrain />
         <div className="w-full max-w-[430px] min-h-screen relative z-10 flex items-center justify-center">
           <div className="crt-frame min-h-screen flex items-center justify-center p-4">
-            <div className="hud-box" style={{ width: '100%', maxWidth: '340px' }}>
-              <div className="center-col" style={{ padding: '20px', gap: '16px' }}>
-                <p className="text-white font-medium text-center fit-flow" style={{ fontSize: 'clamp(12px, 3.6vw, 15px)', lineHeight: 1.35 }}>
+            <div className="hud-box" style={{ width: '100%' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'stretch', width: '100%', padding: '20px', gap: '16px' }}>
+                <p className="text-white font-medium fit-flow" style={{ fontSize: 'clamp(12px, 3.6vw, 15px)', lineHeight: 1.35, textAlign: 'center' }}>
                   {error}
                 </p>
                 <button
                   onClick={retry}
                   className="btn-neon btn-cyan modal-btn"
+                  style={{ width: '100%' }}
                 >
                   Повторить
                 </button>
