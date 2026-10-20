@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useEffect, useState, useCallback } from 'react';
 import supabase from './supabaseClient';
+import { normalizeYo } from './text';
 
 export type Role = 'participant' | 'curator' | 'admin';
 
@@ -56,7 +57,14 @@ export function UsersProvider({ children }: { children: React.ReactNode }) {
         throw fetchError;
       }
 
-      setUsers(data || []);
+      // Нормализуем Yo → E при чтении
+      const normalizedData = (data || []).map((user: any) => ({
+        ...user,
+        full_name: normalizeYo(user.full_name),
+        grp: user.grp ? normalizeYo(user.grp) : user.grp
+      }));
+
+      setUsers(normalizedData);
     } catch (err) {
       console.error('[UsersProvider] Fetch error:', err);
       setError('Не удалось подключиться к базе данных. Проверьте соединение.');
@@ -80,10 +88,22 @@ export function UsersProvider({ children }: { children: React.ReactNode }) {
         { event: '*', schema: 'public', table: 'users' },
         (payload) => {
           if (payload.eventType === 'INSERT') {
-            setUsers((prev) => [...prev, payload.new as User]);
+            const newUser = payload.new as any;
+            const normalizedUser = {
+              ...newUser,
+              full_name: normalizeYo(newUser.full_name),
+              grp: newUser.grp ? normalizeYo(newUser.grp) : newUser.grp
+            };
+            setUsers((prev) => [...prev, normalizedUser]);
           } else if (payload.eventType === 'UPDATE') {
+            const updatedUser = payload.new as any;
+            const normalizedUser = {
+              ...updatedUser,
+              full_name: normalizeYo(updatedUser.full_name),
+              grp: updatedUser.grp ? normalizeYo(updatedUser.grp) : updatedUser.grp
+            };
             setUsers((prev) =>
-              prev.map((u) => (u.id === (payload.new as User).id ? (payload.new as User) : u))
+              prev.map((u) => (u.id === normalizedUser.id ? normalizedUser : u))
             );
           } else if (payload.eventType === 'DELETE') {
             setUsers((prev) => prev.filter((u) => u.id !== (payload.old as User).id));
@@ -158,15 +178,15 @@ export function UsersProvider({ children }: { children: React.ReactNode }) {
         newUser = {
           id: trimmedId,
           role: 'participant',
-          full_name: data.fullName.trim(),
-          grp: data.group.trim(),
+          full_name: normalizeYo(data.fullName.trim()),
+          grp: normalizeYo(data.group.trim()),
           points: 300,
         };
       } else if (data.role === 'curator') {
         newUser = {
           id: trimmedId,
           role: 'curator',
-          full_name: data.fullName.trim(),
+          full_name: normalizeYo(data.fullName.trim()),
           grp: null,
           points: 0,
         };
@@ -198,12 +218,12 @@ export function UsersProvider({ children }: { children: React.ReactNode }) {
 
       const updates: Partial<User> = {
         id: trimmedNewId,
-        full_name: data.fullName.trim(),
+        full_name: normalizeYo(data.fullName.trim()),
       };
 
       if (user.role === 'participant') {
         if (!data.group || !data.group.trim()) return false;
-        updates.grp = data.group.trim();
+        updates.grp = normalizeYo(data.group.trim());
       }
 
       const { error } = await supabase.from('users').update(updates).eq('id', oldId);
@@ -250,7 +270,7 @@ export function UsersProvider({ children }: { children: React.ReactNode }) {
       const user = getUserById(userId);
       if (!user) return;
 
-      // Привязываем только если vk_id ещё не привязан или совпадает
+      // Привязываем только если vk_id еще не привязан или совпадает
       if (user.vk_id && user.vk_id !== vkId) return;
 
       await supabase.from('users').update({ vk_id: vkId }).eq('id', userId);

@@ -173,8 +173,8 @@ function AppContent() {
           <div className="w-full max-w-[430px] mx-auto">
             <div className="crt-frame min-h-screen flex items-center justify-center p-4">
               <div className="hud-box" style={{ width: '100%' }}>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', textAlign: 'center' }}>
-                  <p className="fit-flow" style={{ fontSize: 'clamp(14px, 4vw, 16px)', lineHeight: 1.4 }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                  <p className="fit-flow text-center" style={{ fontSize: 'clamp(14px, 4vw, 16px)', lineHeight: 1.4 }}>
                     {error}
                   </p>
                   <button
@@ -234,22 +234,17 @@ function AppContent() {
 
       {/* Error modal */}
       {showError && (
-        <div className="overlay-shell">
-          <div className="w-full max-w-[430px] mx-auto">
-            <div className="hud-box">
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', textAlign: 'center' }}>
-                <p className="fit-flow" style={{ fontSize: 'clamp(14px, 4vw, 16px)', lineHeight: 1.4 }}>
-                  {showError}
-                </p>
-                <button
-                  onClick={() => setShowError(null)}
-                  className="btn-neon btn-pink"
-                  style={{ width: '100%' }}
-                >
-                  ПОНЯТНО
-                </button>
-              </div>
-            </div>
+        <div className="modal-overlay">
+          <div className="modal-card">
+            <p className="fit-flow" style={{ fontSize: 'clamp(12px, 3.6vw, 15px)', lineHeight: 1.35 }}>
+              {showError}
+            </p>
+            <button
+              onClick={() => setShowError(null)}
+              className="btn-neon btn-pink modal-btn"
+            >
+              ПОНЯТНО
+            </button>
           </div>
         </div>
       )}

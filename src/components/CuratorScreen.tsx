@@ -161,7 +161,7 @@ export default function CuratorScreen({ user, onLogout }: Props) {
             <div className="holo-emblem">✦</div>
           </div>
 
-          {/* Имя — тёмный текст на голограмме */}
+          {/* Имя — темный текст на голограмме */}
           <h2 className="text-center fit-flow" style={{ 
             fontSize: 'clamp(14px, 4.5vw, 18px)', 
             fontWeight: 700, 
@@ -186,7 +186,7 @@ export default function CuratorScreen({ user, onLogout }: Props) {
           
           {cameraError ? (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
-              <p className="fit-flow" style={{ fontSize: '10px', color: '#B9B0E6', textAlign: 'center', lineHeight: 1.3 }}>
+              <p className="fit-flow text-center" style={{ fontSize: '10px', color: '#B9B0E6', lineHeight: 1.3 }}>
                 {cameraError}
               </p>
               <button
