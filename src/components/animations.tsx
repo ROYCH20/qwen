@@ -191,7 +191,7 @@ export function GlimmerWrap({ children, className = '', style }: GlimmerWrapProp
 }
 
 // ═══════════════════════════════════════════
-// BlinkingSquares — живые звёзды
+// BlinkingSquares — живые звезды
 // ═══════════════════════════════════════════
 export function BlinkingSquares() {
   const stars = Array.from({ length: 12 }, (_, i) => ({
@@ -258,7 +258,7 @@ export function PerspectiveGrid() {
 }
 
 // ═══════════════════════════════════════════
-// FilmGrain + Vignette — плёночные эффекты
+// FilmGrain + Vignette — пленочные эффекты
 // ═══════════════════════════════════════════
 export function FilmGrain() {
   return <div className="film-grain" />;

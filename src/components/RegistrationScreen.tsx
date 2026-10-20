@@ -80,10 +80,10 @@ export default function RegistrationScreen({ onLogin }: Props) {
       <div style={{ paddingTop: '24px' }}>
         {/* Заголовок */}
         <div className="center-col screen-head" style={{ marginBottom: 'var(--gap-title)' }}>
-          <h1 className="text-chrome" style={{ fontSize: 'clamp(13px, calc((100cqw - 32px) / 18.4), 26px)', whiteSpace: 'nowrap', lineHeight: 1.2, fontWeight: 700 }}>
-            <SignalType>ПОСВЯЩЕНИЕ 2026</SignalType>
+          <h1 className="text-chrome text-center" style={{ fontSize: 'clamp(13px, calc((100cqw - 32px) / 18.4), 26px)', whiteSpace: 'nowrap', lineHeight: 1.2, fontWeight: 700 }}>
+            <SignalType>Посвящение 2026</SignalType>
           </h1>
-          <p className="text-neon-cyan fit-flow fit-sub" style={{ marginTop: '4px' }}>
+          <p className="text-neon-cyan fit-flow fit-sub text-center" style={{ marginTop: '4px' }}>
             <SignalType>Веб-сервис посвящения первокурсников</SignalType>
           </p>
         </div>
@@ -91,9 +91,9 @@ export default function RegistrationScreen({ onLogin }: Props) {
         {/* Как это работает */}
         <NeonReveal>
           <div className="hud-box">
-            <span className="hud-label fit-flow fit-title">КАК ЭТО РАБОТАЕТ</span>
-            <p className="fit-flow" style={{ fontSize: 'clamp(11px, 3vw, 12px)', lineHeight: 1.4, color: '#B9B0E6' }}>
-              У каждого участника — персональный QR-код и баланс баллов, которые начисляются за активность на мероприятии: конкурсы, задания и командные испытания. Кураторы групп сканируют коды и ведут счёт, организаторы видят общий рейтинг. Чтобы войти, отсканируй свой QR-код или обратись к куратору своей группы.
+            <span className="hud-label fit-flow fit-title text-center">КАК ЭТО РАБОТАЕТ</span>
+            <p className="fit-flow text-center" style={{ fontSize: 'clamp(11px, 3vw, 12px)', lineHeight: 1.4, color: '#B9B0E6', padding: '0 16px' }}>
+              У каждого участника — персональный QR-код и баланс баллов, которые начисляются за активность на мероприятии: конкурсы, задания и командные испытания. Кураторы групп сканируют коды и ведут счет, организаторы видят общий рейтинг. Чтобы войти, отсканируй свой QR-код или обратись к куратору своей группы.
             </p>
           </div>
         </NeonReveal>
@@ -109,7 +109,7 @@ export default function RegistrationScreen({ onLogin }: Props) {
         </button>
 
         {/* Ссылка на политику конфиденциальности */}
-        <div style={{ textAlign: 'center', marginTop: '16px' }}>
+        <div className="text-center" style={{ marginTop: '16px' }}>
           <a href="/privacy.html" style={{ fontSize: '10px', color: '#B9B0E6', textDecoration: 'underline' }}>
             Политика конфиденциальности
           </a>
@@ -172,22 +172,17 @@ export default function RegistrationScreen({ onLogin }: Props) {
 
         {/* Модальное окно ошибки */}
         {showError && (
-          <div className="overlay-shell">
-            <div className="w-full max-w-[430px] mx-auto">
-              <div className="hud-box">
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', textAlign: 'center' }}>
-                  <p className="fit-flow" style={{ fontSize: 'clamp(14px, 4vw, 16px)', lineHeight: 1.4 }}>
-                    {showError}
-                  </p>
-                  <button
-                    onClick={() => setShowError('')}
-                    className="btn-neon btn-pink"
-                    style={{ width: '100%' }}
-                  >
-                    ПОНЯТНО
-                  </button>
-                </div>
-              </div>
+          <div className="modal-overlay">
+            <div className="modal-card">
+              <p className="fit-flow" style={{ fontSize: 'clamp(12px, 3.6vw, 15px)', lineHeight: 1.35 }}>
+                {showError}
+              </p>
+              <button
+                onClick={() => setShowError('')}
+                className="btn-neon btn-pink modal-btn"
+              >
+                ПОНЯТНО
+              </button>
             </div>
           </div>
         )}
@@ -260,22 +255,17 @@ export default function RegistrationScreen({ onLogin }: Props) {
 
       {/* Модальное окно ошибки */}
       {showError && (
-        <div className="overlay-shell">
-          <div className="w-full max-w-[430px] mx-auto">
-            <div className="hud-box">
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', textAlign: 'center' }}>
-                <p className="fit-flow" style={{ fontSize: 'clamp(14px, 4vw, 16px)', lineHeight: 1.4 }}>
-                  {showError}
-                </p>
-                <button
-                  onClick={() => setShowError('')}
-                  className="btn-neon btn-pink"
-                  style={{ width: '100%' }}
-                >
-                  ПОНЯТНО
-                </button>
-              </div>
-            </div>
+        <div className="modal-overlay">
+          <div className="modal-card">
+            <p className="fit-flow" style={{ fontSize: 'clamp(12px, 3.6vw, 15px)', lineHeight: 1.35 }}>
+              {showError}
+            </p>
+            <button
+              onClick={() => setShowError('')}
+              className="btn-neon btn-pink modal-btn"
+            >
+              ПОНЯТНО
+            </button>
           </div>
         </div>
       )}

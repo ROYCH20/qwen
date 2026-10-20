@@ -37,7 +37,7 @@ export default function ParticipantScreen({ user, onLogout }: Props) {
             <div className="holo-emblem">✦</div>
           </div>
 
-          {/* Имя — тёмный текст на голограмме */}
+          {/* Имя — темный текст на голограмме */}
           <h2 className="text-center fit-flow" style={{ 
             fontSize: 'clamp(14px, 4.5vw, 18px)', 
             fontWeight: 700, 

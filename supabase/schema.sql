@@ -40,9 +40,13 @@ insert into public.users (id, role, full_name, grp, points) values
   ('P004', 'participant', 'Козлова Анна Павловна', 'ИВТ-202', 300),
   ('P005', 'participant', 'Морозов Дмитрий Алексеевич', 'ПИ-301', 300),
   ('P006', 'participant', 'Новикова Елена Владимировна', 'ПИ-301', 300),
-  ('P007', 'participant', 'Волков Артём Николаевич', 'ПИ-302', 300),
+  ('P007', 'participant', 'Волков Артем Николаевич', 'ПИ-302', 300),
   ('P008', 'participant', 'Соколова Дарья Игоревна', 'ПИ-302', 300)
 on conflict (id) do nothing;
+
+-- Нормализация Ё → Е для уже накатанной таблицы (выполнить один раз в SQL Editor)
+-- update public.users set full_name = replace(replace(full_name,'Ё','Е'),'ё','е') where full_name ~ '[ёЁ]';
+-- update public.users set grp = replace(replace(grp,'Ё','Е'),'ё','е') where grp ~ '[ёЁ]';
 
 -- Seed data: Curators (C001-C002)
 insert into public.users (id, role, full_name, grp, points) values
