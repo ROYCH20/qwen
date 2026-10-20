@@ -18,6 +18,7 @@ export default function CuratorScreen({ user, onLogout }: Props) {
   const [showError, setShowError] = useState('');
   const [showSuccess, setShowSuccess] = useState('');
   const [isScanning, setIsScanning] = useState(false);
+  const [cameraError, setCameraError] = useState<string | null>(null);
   const scannerRef = useRef<Html5Qrcode | null>(null);
   const scannerContainerId = 'qr-scanner-container';
   const { getUserById, updatePoints } = useUsers();
@@ -34,6 +35,7 @@ export default function CuratorScreen({ user, onLogout }: Props) {
     setIsScanning(true);
     setShowError('');
     setScannedUser(null);
+    setCameraError(null);
     
     try {
       const scanner = new Html5Qrcode(scannerContainerId);
@@ -51,7 +53,13 @@ export default function CuratorScreen({ user, onLogout }: Props) {
       );
     } catch (err) {
       console.error('Camera error:', err);
-      setShowError('Нет доступа к камере. Используйте ручной ввод ID.');
+      const errorMessage = err instanceof Error ? err.name : '';
+      
+      if (['NotAllowedError', 'SecurityError', 'NotFoundError', 'OverconstrainedError'].includes(errorMessage)) {
+        setCameraError('Камера недоступна в веб-версии. Откройте приложение в мобильном приложении VK, чтобы сканировать QR-код.');
+      } else {
+        setCameraError('Не удалось получить доступ к камере.');
+      }
       setIsScanning(false);
     }
   };
@@ -176,7 +184,19 @@ export default function CuratorScreen({ user, onLogout }: Props) {
         <div className="hud-box">
           <span className="hud-label fit-flow fit-title">СКАНИРОВАНИЕ QR-КОДА</span>
           
-          {!isScanning ? (
+          {cameraError ? (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+              <p className="fit-flow" style={{ fontSize: '10px', color: '#B9B0E6', textAlign: 'center', lineHeight: 1.3 }}>
+                {cameraError}
+              </p>
+              <button
+                onClick={() => setCameraError(null)}
+                className="btn-neon btn-ghost"
+              >
+                <span className="fit-btn-m">Понятно</span>
+              </button>
+            </div>
+          ) : !isScanning ? (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
               <button onClick={startScanner} className="btn-neon btn-cyan focus-glow">
                 <ScanLine size={18} strokeWidth={1.5} style={{ marginRight: '8px' }} />
@@ -315,7 +335,7 @@ export default function CuratorScreen({ user, onLogout }: Props) {
       {/* Кнопка выхода */}
       <button
         onClick={onLogout}
-        className="btn-neon btn-danger"
+        className="btn-neon btn-danger bottom-pill"
         style={{ marginTop: 'var(--gap-block)' }}
       >
         <LogOut size={18} strokeWidth={1.5} style={{ marginRight: '8px' }} />

@@ -987,10 +987,111 @@
   max-width: 100%;
 }
 
+/* Оверлейный фундамент */
+.overlay-shell {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: center;
+  padding: 24px;
+  z-index: 100;
+}
+
 /* Гарантия ширины для контейнерных элементов (исправление схлопывания) */
-.hud-box, .fit-box, .stat-cell, .screen-head {
+.hud-box, .fit-box, .stat-cell, .screen-head, .skeleton-box {
   width: 100%;
   max-width: 100%;
+}
+
+/* Скелетон-заготовка */
+.skeleton-box {
+  position: relative;
+  padding: 18px 16px;
+  border-radius: 6px;
+  background:
+    linear-gradient(#6FE3EC, #6FE3EC) left top / 16px 2px no-repeat,
+    linear-gradient(#6FE3EC, #6FE3EC) left top / 2px 16px no-repeat,
+    linear-gradient(#F79BE3, #F79BE3) right top / 16px 2px no-repeat,
+    linear-gradient(#F79BE3, #F79BE3) right top / 2px 16px no-repeat,
+    linear-gradient(#F79BE3, #F79BE3) left bottom / 16px 2px no-repeat,
+    linear-gradient(#F79BE3, #F79BE3) left bottom / 2px 16px no-repeat,
+    linear-gradient(#6FE3EC, #6FE3EC) right bottom / 16px 2px no-repeat,
+    linear-gradient(#6FE3EC, #6FE3EC) right bottom / 2px 16px no-repeat,
+    linear-gradient(180deg, rgba(255,255,255,.055), rgba(142,134,228,.028));
+  box-shadow: 0 0 26px rgba(111,227,236,.07), inset 0 0 18px rgba(111,227,236,.05);
+  overflow: hidden;
+}
+
+.skeleton-box::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(111, 227, 236, 0.15) 50%,
+    transparent 100%
+  );
+  animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+.skeleton-line {
+  height: 12px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 4px;
+  margin-bottom: 10px;
+}
+
+.skeleton-line:last-child {
+  margin-bottom: 0;
+}
+
+/* CRT-преLoader */
+.crt-preloader {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: #0B0920;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.crt-line {
+  height: 2px;
+  width: 80%;
+  background: #F5F2FF;
+  transform: scaleX(0);
+  transform-origin: center;
+  box-shadow: 0 0 12px rgba(111,227,236,.8);
+  animation: crt-expand 250ms ease-out forwards, crt-fade 150ms ease-out 250ms forwards;
+}
+
+@keyframes crt-expand {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+
+@keyframes crt-fade {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+/* Safe-area для нижних пилюль */
+.app-frame {
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.bottom-pill {
+  margin-bottom: max(20px, env(safe-area-inset-bottom));
 }
 
 .flex > *, .grid > * {

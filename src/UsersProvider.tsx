@@ -9,6 +9,7 @@ export interface User {
   full_name: string;
   grp?: string | null;
   points: number;
+  vk_id?: number | null;
 }
 
 interface UsersContextType {
@@ -16,6 +17,7 @@ interface UsersContextType {
   loading: boolean;
   error: string | null;
   getUserById: (id: string) => User | null;
+  getUserByVkId: (vkId: number) => User | null;
   getUsersByRole: (role: Role) => User[];
   getGroupSummary: () => { group: string; totalPoints: number; participants: number }[];
   addUser: (data: { id: string; role: 'participant' | 'curator'; fullName: string; group?: string }) => Promise<boolean>;
@@ -23,6 +25,7 @@ interface UsersContextType {
   deleteUser: (id: string) => Promise<boolean>;
   updatePoints: (userId: string, newPoints: number) => Promise<boolean>;
   resetAllPoints: () => Promise<void>;
+  bindVkId: (userId: string, vkId: number) => Promise<void>;
   retry: () => void;
 }
 
@@ -97,6 +100,13 @@ export function UsersProvider({ children }: { children: React.ReactNode }) {
   const getUserById = useCallback(
     (id: string): User | null => {
       return users.find((u) => u.id === id) || null;
+    },
+    [users]
+  );
+
+  const getUserByVkId = useCallback(
+    (vkId: number): User | null => {
+      return users.find((u) => u.vk_id === vkId) || null;
     },
     [users]
   );
@@ -233,6 +243,21 @@ export function UsersProvider({ children }: { children: React.ReactNode }) {
     await Promise.all(updates);
   }, [users]);
 
+  const bindVkId = useCallback(
+    async (userId: string, vkId: number): Promise<void> => {
+      if (!supabase) return;
+
+      const user = getUserById(userId);
+      if (!user) return;
+
+      // Привязываем только если vk_id ещё не привязан или совпадает
+      if (user.vk_id && user.vk_id !== vkId) return;
+
+      await supabase.from('users').update({ vk_id: vkId }).eq('id', userId);
+    },
+    [getUserById]
+  );
+
   const retry = useCallback(() => {
     fetchUsers();
   }, [fetchUsers]);
@@ -242,6 +267,7 @@ export function UsersProvider({ children }: { children: React.ReactNode }) {
     loading,
     error,
     getUserById,
+    getUserByVkId,
     getUsersByRole,
     getGroupSummary,
     addUser,
@@ -249,6 +275,7 @@ export function UsersProvider({ children }: { children: React.ReactNode }) {
     deleteUser,
     updatePoints,
     resetAllPoints,
+    bindVkId,
     retry,
   };
 
