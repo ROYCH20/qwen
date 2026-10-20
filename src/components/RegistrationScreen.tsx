@@ -13,6 +13,7 @@ interface Props {
 export default function RegistrationScreen({ onLogin }: Props) {
   const [showScanner, setShowScanner] = useState(false);
   const [showCameraError, setShowCameraError] = useState(false);
+  const [isPermissionDenied, setIsPermissionDenied] = useState(false);
   const [showQrError, setShowQrError] = useState(false);
   const [showTimeout, setShowTimeout] = useState(false);
   const { getUserById } = useUsers();
@@ -37,8 +38,9 @@ export default function RegistrationScreen({ onLogin }: Props) {
   };
 
   // Обработка ошибки камеры
-  const handleCameraError = () => {
+  const handleCameraError = (_err: Error, permissionDenied: boolean) => {
     setShowScanner(false);
+    setIsPermissionDenied(permissionDenied);
     setShowCameraError(true);
   };
 
@@ -104,10 +106,14 @@ export default function RegistrationScreen({ onLogin }: Props) {
           <div className="modal-overlay" style={{ zIndex: 210 }}>
             <div className="modal-card">
               <p className="fit-flow text-center" style={{ fontSize: 'clamp(12px, 3.6vw, 15px)', lineHeight: 1.35 }}>
-                Не удалось получить доступ к камере. Попробуйте еще раз.
+                {isPermissionDenied
+                  ? 'Вы запретили доступ к камере. Попробуйте еще раз.'
+                  : 'Не удалось получить доступ к камере. Попробуйте еще раз.'}
               </p>
               <p className="fit-flow text-center" style={{ fontSize: 'clamp(10px, 2.8vw, 11px)', color: '#B9B0E6', lineHeight: 1.3 }}>
-                В веб-версии доступ к камере может быть ограничен. Откройте приложение в мобильном приложении VK.
+                {isPermissionDenied
+                  ? 'Разрешите доступ к камере в настройках браузера или откройте приложение в мобильном приложении VK.'
+                  : 'В веб-версии доступ к камере может быть ограничен. Откройте приложение в мобильном приложении VK.'}
               </p>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', width: '100%' }}>
                 <button
@@ -265,10 +271,14 @@ export default function RegistrationScreen({ onLogin }: Props) {
         <div className="modal-overlay" style={{ zIndex: 210 }}>
           <div className="modal-card">
             <p className="fit-flow text-center" style={{ fontSize: 'clamp(12px, 3.6vw, 15px)', lineHeight: 1.35 }}>
-              Не удалось получить доступ к камере. Попробуйте еще раз.
+              {isPermissionDenied
+                ? 'Вы запретили доступ к камере. Попробуйте еще раз.'
+                : 'Не удалось получить доступ к камере. Попробуйте еще раз.'}
             </p>
             <p className="fit-flow text-center" style={{ fontSize: 'clamp(10px, 2.8vw, 11px)', color: '#B9B0E6', lineHeight: 1.3 }}>
-              В веб-версии доступ к камере может быть ограничен. Откройте приложение в мобильном приложении VK.
+              {isPermissionDenied
+                ? 'Разрешите доступ к камере в настройках браузера или откройте приложение в мобильном приложении VK.'
+                : 'В веб-версии доступ к камере может быть ограничен. Откройте приложение в мобильном приложении VK.'}
             </p>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', width: '100%' }}>
               <button

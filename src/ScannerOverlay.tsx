@@ -3,7 +3,7 @@ import { Html5Qrcode } from 'html5-qrcode';
 
 interface ScannerOverlayProps {
   onDecoded: (rawText: string) => void;
-  onCameraError: (err: Error) => void;
+  onCameraError: (err: Error, isPermissionDenied: boolean) => void;
   onTimeout: () => void;
   onClose: () => void;
 }
@@ -77,7 +77,8 @@ export default function ScannerOverlay({ onDecoded, onCameraError, onTimeout, on
       }).catch((err) => {
         // Любое падение старта → onCameraError
         if (!cancelled && err instanceof Error) {
-          onCameraError(err);
+          const isPermissionDenied = err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError';
+          onCameraError(err, isPermissionDenied);
         }
       });
     };
