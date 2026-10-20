@@ -1,16 +1,14 @@
 import { useEffect, useRef } from 'react';
 import { Html5Qrcode } from 'html5-qrcode';
-import { parseQrPayload } from './qrPayload';
-import { User } from './UsersProvider';
 
 interface ScannerOverlayProps {
-  onResult: (id: string) => void;
-  onError: (kind: 'denied' | 'unavailable' | 'invalid' | 'timeout') => void;
+  validate: (raw: string) => string | null;   // сырой decode → валидный id или null
+  onResult: (validId: string) => void;        // validate вернул id
+  onError:  (kind: 'denied'|'unavailable'|'invalid'|'timeout') => void;
   onCancel: () => void;
-  getUserById: (id: string) => User | null;
 }
 
-export default function ScannerOverlay({ onResult, onError, onCancel, getUserById }: ScannerOverlayProps) {
+export default function ScannerOverlay({ validate, onResult, onError, onCancel }: ScannerOverlayProps) {
   const hqRef = useRef<Html5Qrcode | null>(null);
   const timeoutRef = useRef<number | null>(null);
   const cancelledRef = useRef(false);
@@ -57,21 +55,15 @@ export default function ScannerOverlay({ onResult, onError, onCancel, getUserByI
           timeoutRef.current = null;
         }
         
-        const id = parseQrPayload(raw);
-        if (!id) {
+        const id = validate(raw);
+        if (id == null) {
           stopSafe();
           onError('invalid');
           return;
         }
 
-        const user = getUserById(id);
-        if (user) {
-          stopSafe();
-          onResult(id);
-        } else {
-          stopSafe();
-          onError('invalid');
-        }
+        stopSafe();
+        onResult(id);
       };
 
       hq.start(

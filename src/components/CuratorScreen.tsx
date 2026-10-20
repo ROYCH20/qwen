@@ -1,10 +1,11 @@
-import { useState, useEffect, useRef } from 'react';
-import { Html5Qrcode } from 'html5-qrcode';
+import { useState } from 'react';
 import { useUsers, User } from '../UsersProvider';
 import { parseQrPayload } from '../qrPayload';
 import { LogOut, ScanLine } from 'lucide-react';
 import { SignalType, AnimatedList, AnimatedListItem, NeonReveal, SpeedingText } from './animations';
 import QrCard from './QrCard';
+import ScannerOverlay from '../ScannerOverlay';
+import ErrorModal from '../ErrorModal';
 
 interface Props {
   user: User;
@@ -17,81 +18,28 @@ export default function CuratorScreen({ user, onLogout }: Props) {
   const [points, setPoints] = useState<number | null>(null);
   const [showError, setShowError] = useState('');
   const [showSuccess, setShowSuccess] = useState('');
-  const [isScanning, setIsScanning] = useState(false);
-  const [cameraError, setCameraError] = useState<string | null>(null);
-  const scannerRef = useRef<Html5Qrcode | null>(null);
-  const scannerContainerId = 'qr-scanner-container';
+  const [scannerOpen, setScannerOpen] = useState(false);
+  const [errorKind, setErrorKind] = useState<'denied' | 'unavailable' | 'invalid' | 'timeout' | null>(null);
   const { getUserById, updatePoints } = useUsers();
 
-  useEffect(() => {
-    return () => {
-      if (scannerRef.current) {
-        scannerRef.current.stop().catch(() => {});
-      }
-    };
-  }, []);
-
-  const startScanner = async () => {
-    setIsScanning(true);
-    setShowError('');
-    setScannedUser(null);
-    setCameraError(null);
-    
-    try {
-      const scanner = new Html5Qrcode(scannerContainerId);
-      scannerRef.current = scanner;
-      
-      await scanner.start(
-        { facingMode: 'environment' },
-        { fps: 10, qrbox: { width: 250, height: 250 } },
-        (decodedText) => {
-          handleScanResult(decodedText);
-          scanner.stop().catch(() => {});
-          setIsScanning(false);
-        },
-        () => {}
-      );
-    } catch (err) {
-      console.error('Camera error:', err);
-      const errorMessage = err instanceof Error ? err.name : '';
-      
-      if (['NotAllowedError', 'SecurityError', 'NotFoundError', 'OverconstrainedError'].includes(errorMessage)) {
-        setCameraError('Камера недоступна в веб-версии. Откройте приложение в мобильном приложении VK, чтобы сканировать QR-код.');
-      } else {
-        setCameraError('Не удалось получить доступ к камере.');
-      }
-      setIsScanning(false);
-    }
+  // Валидатор куратора — той же формы, что вход: сырой decode -> валидный id или null.
+  // Именно parseQrPayload чинит дефект чтения QR из личного кабинета: куратор
+  // распознает диплинк …?qr=P001, который генерирует QrCard участника
+  // (плюс голый id — обратная совместимость).
+  const validateCurator = (raw: string) => {
+    const id = parseQrPayload(raw);
+    return id && getUserById(id) ? id : null;
   };
 
-  const stopScanner = async () => {
-    if (scannerRef.current) {
-      await scannerRef.current.stop().catch(() => {});
-    }
-    setIsScanning(false);
-  };
-
-  const handleScanResult = (data: string) => {
+  // Поток открытия карточки/панели начисления-списания баллов для отсканированного id.
+  const openParticipantForPoints = (id: string) => {
     setShowError('');
     setShowSuccess('');
-    setScannedUser(null);
     setPoints(null);
 
-    const userId = parseQrPayload(data);
-    
-    if (!userId) {
-      setShowError('QR-код не распознан');
-      return;
-    }
-
-    const foundUser = getUserById(userId);
-    if (!foundUser) {
-      setShowError(`Пользователь с ID "${userId}" не найден в системе!`);
-      return;
-    }
-
-    if (foundUser.role !== 'participant') {
-      setShowError('Данный QR-код неверный! Данный QR-код не принадлежит участнику.');
+    const foundUser = getUserById(id);
+    if (!foundUser || foundUser.role !== 'participant') {
+      setErrorKind('invalid');
       return;
     }
 
@@ -183,41 +131,48 @@ export default function CuratorScreen({ user, onLogout }: Props) {
       <NeonReveal>
         <div className="hud-box">
           <span className="hud-label fit-flow fit-title">СКАНИРОВАНИЕ QR-КОДА</span>
-          
-          {cameraError ? (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
-              <p className="fit-flow text-center" style={{ fontSize: '10px', color: '#B9B0E6', lineHeight: 1.3 }}>
-                {cameraError}
-              </p>
-              <button
-                onClick={() => setCameraError(null)}
-                className="btn-neon btn-ghost"
-              >
-                <span className="fit-btn-m">Понятно</span>
-              </button>
-            </div>
-          ) : !isScanning ? (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
-              <button onClick={startScanner} className="btn-neon btn-cyan focus-glow">
-                <ScanLine size={18} strokeWidth={1.5} style={{ marginRight: '8px' }} />
-                <span className="fit-btn-m">Открыть камеру</span>
-              </button>
-              <p style={{ fontSize: '10px', color: '#B9B0E6', textAlign: 'center', lineHeight: 1.3 }}>
-                Отсканируйте QR-код участника — баллы начисляются или списываются отсканированному участнику
-              </p>
-            </div>
-          ) : (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
-              <div className="qr-frame">
-                <div id={scannerContainerId} className="overflow-hidden"></div>
-              </div>
-              <button onClick={stopScanner} className="btn-neon btn-danger">
-                <span className="fit-btn-m">Остановить сканирование</span>
-              </button>
-            </div>
-          )}
+
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+            <button
+              onClick={() => { setScannerOpen(true); setShowError(''); }}
+              className="btn-violet-primary"
+              style={{ width: '100%' }}
+            >
+              <ScanLine size={18} strokeWidth={1.5} style={{ marginRight: '8px' }} />
+              <span className="fit-btn-m">Сканировать участника</span>
+            </button>
+            <p style={{ fontSize: '10px', color: '#B9B0E6', textAlign: 'center', lineHeight: 1.3 }}>
+              Отсканируйте QR-код участника — баллы начисляются или списываются отсканированному участнику
+            </p>
+          </div>
         </div>
       </NeonReveal>
+
+      {/* Оверлей сканера (единый ScannerOverlay, как во входе) */}
+      {scannerOpen && (
+        <ScannerOverlay
+          validate={validateCurator}
+          onResult={(id) => {
+            setScannerOpen(false);
+            openParticipantForPoints(id);
+          }}
+          onError={(kind) => {
+            setScannerOpen(false);
+            setErrorKind(kind);
+          }}
+          onCancel={() => setScannerOpen(false)}
+        />
+      )}
+
+      {/* Единая модалка ошибок (те же kind-тексты v17.3) */}
+      <ErrorModal
+        kind={errorKind}
+        onRetry={() => {
+          setErrorKind(null);
+          setScannerOpen(true);
+        }}
+        onClose={() => setErrorKind(null)}
+      />
 
       {/* Информация о найденном участнике */}
       {scannedUser && (
