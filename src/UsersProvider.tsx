@@ -1,0 +1,264 @@
+import React, { createContext, useContext, useEffect, useState, useCallback } from 'react';
+import supabase from './supabaseClient';
+
+export type Role = 'participant' | 'curator' | 'admin';
+
+export interface User {
+  id: string;
+  role: Role;
+  full_name: string;
+  grp?: string | null;
+  points: number;
+}
+
+interface UsersContextType {
+  users: User[];
+  loading: boolean;
+  error: string | null;
+  getUserById: (id: string) => User | null;
+  getUsersByRole: (role: Role) => User[];
+  getGroupSummary: () => { group: string; totalPoints: number; participants: number }[];
+  addUser: (data: { id: string; role: 'participant' | 'curator'; fullName: string; group?: string }) => Promise<boolean>;
+  updateUser: (oldId: string, data: { id: string; fullName: string; group?: string }) => Promise<boolean>;
+  deleteUser: (id: string) => Promise<boolean>;
+  updatePoints: (userId: string, newPoints: number) => Promise<boolean>;
+  resetAllPoints: () => Promise<void>;
+  retry: () => void;
+}
+
+const UsersContext = createContext<UsersContextType | null>(null);
+
+export function UsersProvider({ children }: { children: React.ReactNode }) {
+  const [users, setUsers] = useState<User[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const fetchUsers = useCallback(async () => {
+    if (!supabase) {
+      setError('Не удалось подключиться к базе данных. Проверьте соединение.');
+      setLoading(false);
+      return;
+    }
+
+    try {
+      setLoading(true);
+      setError(null);
+      
+      const { data, error: fetchError } = await supabase
+        .from('users')
+        .select('*')
+        .order('id');
+
+      if (fetchError) {
+        throw fetchError;
+      }
+
+      setUsers(data || []);
+    } catch (err) {
+      console.error('[UsersProvider] Fetch error:', err);
+      setError('Не удалось подключиться к базе данных. Проверьте соединение.');
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchUsers();
+
+    if (!supabase) return;
+
+    const client = supabase;
+
+    // Subscribe to realtime changes
+    const channel = client
+      .channel('users-live')
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'users' },
+        (payload) => {
+          if (payload.eventType === 'INSERT') {
+            setUsers((prev) => [...prev, payload.new as User]);
+          } else if (payload.eventType === 'UPDATE') {
+            setUsers((prev) =>
+              prev.map((u) => (u.id === (payload.new as User).id ? (payload.new as User) : u))
+            );
+          } else if (payload.eventType === 'DELETE') {
+            setUsers((prev) => prev.filter((u) => u.id !== (payload.old as User).id));
+          }
+        }
+      )
+      .subscribe();
+
+    return () => {
+      client.removeChannel(channel);
+    };
+  }, [fetchUsers]);
+
+  const getUserById = useCallback(
+    (id: string): User | null => {
+      return users.find((u) => u.id === id) || null;
+    },
+    [users]
+  );
+
+  const getUsersByRole = useCallback(
+    (role: Role): User[] => {
+      return users.filter((u) => u.role === role);
+    },
+    [users]
+  );
+
+  const getGroupSummary = useCallback((): { group: string; totalPoints: number; participants: number }[] => {
+    const participants = users.filter((u) => u.role === 'participant');
+    const groupMap = new Map<string, { totalPoints: number; participants: number }>();
+
+    participants.forEach((p) => {
+      if (p.grp) {
+        const existing = groupMap.get(p.grp) || { totalPoints: 0, participants: 0 };
+        existing.totalPoints += p.points;
+        existing.participants += 1;
+        groupMap.set(p.grp, existing);
+      }
+    });
+
+    return Array.from(groupMap.entries())
+      .map(([group, data]) => ({
+        group,
+        totalPoints: data.totalPoints,
+        participants: data.participants,
+      }))
+      .sort((a, b) => b.totalPoints - a.totalPoints);
+  }, [users]);
+
+  const addUser = useCallback(
+    async (data: { id: string; role: 'participant' | 'curator'; fullName: string; group?: string }): Promise<boolean> => {
+      if (!supabase) return false;
+
+      const trimmedId = data.id.trim();
+      if (!trimmedId) return false;
+
+      // Check uniqueness
+      const existingUser = getUserById(trimmedId);
+      if (existingUser) return false;
+
+      let newUser: User;
+
+      if (data.role === 'participant') {
+        if (!data.group || !data.group.trim()) return false;
+        newUser = {
+          id: trimmedId,
+          role: 'participant',
+          full_name: data.fullName.trim(),
+          grp: data.group.trim(),
+          points: 300,
+        };
+      } else if (data.role === 'curator') {
+        newUser = {
+          id: trimmedId,
+          role: 'curator',
+          full_name: data.fullName.trim(),
+          grp: null,
+          points: 0,
+        };
+      } else {
+        return false;
+      }
+
+      const { error } = await supabase.from('users').insert(newUser);
+      return !error;
+    },
+    [getUserById]
+  );
+
+  const updateUser = useCallback(
+    async (oldId: string, data: { id: string; fullName: string; group?: string }): Promise<boolean> => {
+      if (!supabase) return false;
+
+      const trimmedNewId = data.id.trim();
+      if (!trimmedNewId || !data.fullName.trim()) return false;
+
+      const user = getUserById(oldId);
+      if (!user) return false;
+
+      // Check uniqueness if ID changed
+      if (trimmedNewId !== oldId) {
+        const existingUser = getUserById(trimmedNewId);
+        if (existingUser) return false;
+      }
+
+      const updates: Partial<User> = {
+        id: trimmedNewId,
+        full_name: data.fullName.trim(),
+      };
+
+      if (user.role === 'participant') {
+        if (!data.group || !data.group.trim()) return false;
+        updates.grp = data.group.trim();
+      }
+
+      const { error } = await supabase.from('users').update(updates).eq('id', oldId);
+      return !error;
+    },
+    [getUserById]
+  );
+
+  const deleteUser = useCallback(
+    async (id: string): Promise<boolean> => {
+      if (!supabase) return false;
+
+      const { error } = await supabase.from('users').delete().eq('id', id);
+      return !error;
+    },
+    []
+  );
+
+  const updatePoints = useCallback(
+    async (userId: string, newPoints: number): Promise<boolean> => {
+      if (!supabase) return false;
+
+      const { error } = await supabase.from('users').update({ points: newPoints }).eq('id', userId);
+      return !error;
+    },
+    []
+  );
+
+  const resetAllPoints = useCallback(async (): Promise<void> => {
+    if (!supabase) return;
+
+    const client = supabase;
+    const participants = users.filter((u) => u.role === 'participant');
+    const updates = participants.map((p) =>
+      client.from('users').update({ points: 300 }).eq('id', p.id)
+    );
+    await Promise.all(updates);
+  }, [users]);
+
+  const retry = useCallback(() => {
+    fetchUsers();
+  }, [fetchUsers]);
+
+  const value: UsersContextType = {
+    users,
+    loading,
+    error,
+    getUserById,
+    getUsersByRole,
+    getGroupSummary,
+    addUser,
+    updateUser,
+    deleteUser,
+    updatePoints,
+    resetAllPoints,
+    retry,
+  };
+
+  return <UsersContext.Provider value={value}>{children}</UsersContext.Provider>;
+}
+
+export function useUsers(): UsersContextType {
+  const context = useContext(UsersContext);
+  if (!context) {
+    throw new Error('useUsers must be used within a UsersProvider');
+  }
+  return context;
+}

@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { Html5Qrcode } from 'html5-qrcode';
-import { getUserById, updatePoints, User } from '../database';
+import { useUsers, User } from '../UsersProvider';
+import { parseQrPayload } from '../qrPayload';
 import { LogOut, ScanLine } from 'lucide-react';
 import { SignalType, AnimatedList, AnimatedListItem, NeonReveal, SpeedingText } from './animations';
 import QrCard from './QrCard';
@@ -19,6 +20,7 @@ export default function CuratorScreen({ user, onLogout }: Props) {
   const [isScanning, setIsScanning] = useState(false);
   const scannerRef = useRef<Html5Qrcode | null>(null);
   const scannerContainerId = 'qr-scanner-container';
+  const { getUserById, updatePoints } = useUsers();
 
   useEffect(() => {
     return () => {
@@ -67,41 +69,28 @@ export default function CuratorScreen({ user, onLogout }: Props) {
     setScannedUser(null);
     setPoints(null);
 
-    try {
-      const parsed = JSON.parse(data);
-      
-      if (parsed.type !== 'participant_qr') {
-        setShowError('Данный QR-код неверный! QR-код должен принадлежать участнику.');
-        return;
-      }
-
-      const foundUser = getUserById(parsed.userId);
-      if (!foundUser) {
-        setShowError(`Пользователь с ID "${parsed.userId}" не найден в системе!`);
-        return;
-      }
-
-      if (foundUser.role !== 'participant') {
-        setShowError('Данный QR-код неверный! Данный QR-код не принадлежит участнику.');
-        return;
-      }
-
-      setScannedUser(foundUser);
-    } catch {
-      const foundUser = getUserById(data.trim());
-      if (!foundUser) {
-        setShowError(`Пользователь с ID "${data.trim()}" не найден в системе!`);
-        return;
-      }
-      if (foundUser.role !== 'participant') {
-        setShowError('Данный QR-код неверный! Данный QR-код не принадлежит участнику.');
-        return;
-      }
-      setScannedUser(foundUser);
+    const userId = parseQrPayload(data);
+    
+    if (!userId) {
+      setShowError('QR-код не распознан');
+      return;
     }
+
+    const foundUser = getUserById(userId);
+    if (!foundUser) {
+      setShowError(`Пользователь с ID "${userId}" не найден в системе!`);
+      return;
+    }
+
+    if (foundUser.role !== 'participant') {
+      setShowError('Данный QR-код неверный! Данный QR-код не принадлежит участнику.');
+      return;
+    }
+
+    setScannedUser(foundUser);
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!scannedUser || points === null) {
       setShowError('Выберите количество баллов');
       return;
@@ -116,7 +105,7 @@ export default function CuratorScreen({ user, onLogout }: Props) {
       ? scannedUser.points + points 
       : scannedUser.points - points;
 
-    const success = updatePoints(scannedUser.id, newPoints);
+    const success = await updatePoints(scannedUser.id, newPoints);
     if (success) {
       setShowSuccess(
         `${action === 'credit' ? 'Зачислено' : 'Списано'} ${points} баллов. Новый баланс: ${newPoints}`
@@ -172,7 +161,7 @@ export default function CuratorScreen({ user, onLogout }: Props) {
             lineHeight: 1.25,
             maxWidth: '100%'
           }}>
-            {user.fullName}
+            {user.full_name}
           </h2>
         </div>
       </div>
@@ -217,9 +206,9 @@ export default function CuratorScreen({ user, onLogout }: Props) {
             <span className="hud-label fit-flow fit-title">УЧАСТНИК НАЙДЕН</span>
             
             <div className="center-col" style={{ padding: '10px 0', marginBottom: '10px' }}>
-              <p className="user-name text-white text-center fit-flow">{scannedUser.fullName}</p>
+              <p className="user-name text-white text-center fit-flow">{scannedUser.full_name}</p>
               <p className="fit-flow fit-sub text-neon-lilac" style={{ marginTop: '4px' }}>
-                Группа: {scannedUser.group} • ID: {scannedUser.id}
+                Группа: {scannedUser.grp} • ID: {scannedUser.id}
               </p>
               <p className="fit-nowrap fit-stat-v text-neon-cyan" style={{ marginTop: '8px' }}>
                 Баланс: <SpeedingText value={scannedUser.points} />

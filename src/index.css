@@ -987,6 +987,12 @@
   max-width: 100%;
 }
 
+/* Гарантия ширины для контейнерных элементов (исправление схлопывания) */
+.hud-box, .fit-box, .stat-cell, .screen-head {
+  width: 100%;
+  max-width: 100%;
+}
+
 .flex > *, .grid > * {
   min-width: 0;
 }
@@ -1225,6 +1231,14 @@
   padding: 0 28px;
   font-size: clamp(11px, 3.4vw, 14px);
   white-space: nowrap;
+}
+
+/* ═══════════════════════════════════════════
+   SPINNER ANIMATION
+   ═══════════════════════════════════════════ */
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
 }
 
 /* ═══════════════════════════════════════════

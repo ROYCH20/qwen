@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { getGroupSummary, getUsersByRole, resetAllPoints, deleteUser, User } from '../database';
+import { useUsers, User } from '../UsersProvider';
 import { LogOut, RotateCcw, UserPlus, Pencil, Trash2 } from 'lucide-react';
 import { SignalType, SpeedingText, AnimatedList, AnimatedListItem, NeonReveal } from './animations';
 import { AddUserModal, EditUserModal } from './UserModals';
@@ -19,6 +19,8 @@ export default function AdminScreen({ user, onLogout }: Props) {
   const [deletingUser, setDeletingUser] = useState<User | null>(null);
   const [refreshKey, setRefreshKey] = useState(0);
   
+  const { getGroupSummary, getUsersByRole, resetAllPoints, deleteUser } = useUsers();
+  
   const groupSummary = getGroupSummary();
   const participants = getUsersByRole('participant');
   const curators = getUsersByRole('curator');
@@ -26,8 +28,8 @@ export default function AdminScreen({ user, onLogout }: Props) {
   const totalPoints = participants.reduce((sum, p) => sum + p.points, 0);
   const totalParticipants = participants.length;
 
-  const handleResetPoints = () => {
-    resetAllPoints();
+  const handleResetPoints = async () => {
+    await resetAllPoints();
     setShowResetConfirm(false);
     setShowResetSuccess(true);
     setRefreshKey(k => k + 1);
@@ -71,7 +73,7 @@ export default function AdminScreen({ user, onLogout }: Props) {
       {/* Шапка */}
       <div className="center-col" style={{ marginBottom: 'var(--gap-block)' }}>
         <h2 className="text-chrome-soft text-center user-name fit-flow" style={{ paddingInline: '16px' }}>
-          {user.fullName}
+          {user.full_name}
         </h2>
       </div>
 
@@ -210,9 +212,9 @@ export default function AdminScreen({ user, onLogout }: Props) {
                   <div className="hud-box" style={{ marginBottom: 0 }}>
                     <div className="flex items-center justify-between" style={{ gap: '12px' }}>
                       <div className="flex-1 min-w-0">
-                        <p className="text-white" style={{ fontWeight: 600, fontSize: 'clamp(13px, 3.6vw, 15px)' }}>{p.fullName}</p>
+                        <p className="text-white" style={{ fontWeight: 600, fontSize: 'clamp(13px, 3.6vw, 15px)' }}>{p.full_name}</p>
                         <p className="fit-nowrap fit-stat-l text-neon-lilac" style={{ marginTop: '2px' }}>
-                          {p.group} • {p.id} • <span className="text-neon-pink">{p.points} баллов</span>
+                          {p.grp} • {p.id} • <span className="text-neon-pink">{p.points} баллов</span>
                         </p>
                       </div>
                       <div style={{ display: 'flex', gap: '8px', flexShrink: 0 }}>
@@ -275,7 +277,7 @@ export default function AdminScreen({ user, onLogout }: Props) {
                   <div className="hud-box" style={{ marginBottom: 0 }}>
                     <div className="flex items-center justify-between" style={{ gap: '12px' }}>
                       <div className="flex-1 min-w-0">
-                        <p className="text-white" style={{ fontWeight: 600, fontSize: 'clamp(13px, 3.6vw, 15px)' }}>{c.fullName}</p>
+                        <p className="text-white" style={{ fontWeight: 600, fontSize: 'clamp(13px, 3.6vw, 15px)' }}>{c.full_name}</p>
                         <p className="fit-nowrap fit-stat-l text-neon-lilac" style={{ marginTop: '2px' }}>
                           {c.id}
                         </p>
@@ -328,7 +330,7 @@ export default function AdminScreen({ user, onLogout }: Props) {
         <div className="modal-overlay">
           <div className="modal-card">
             <p className="text-white font-medium fit-flow" style={{ fontSize: 'clamp(12px, 3.6vw, 15px)', lineHeight: 1.35 }}>
-              Удалить пользователя {deletingUser.fullName} ({deletingUser.id})? Действие необратимо.
+              Удалить пользователя {deletingUser.full_name} ({deletingUser.id})? Действие необратимо.
             </p>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', width: '100%' }}>
               <button
