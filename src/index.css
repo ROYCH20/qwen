@@ -255,6 +255,7 @@
   background: #0B0920;
   overflow: hidden;
   border-radius: 14px;
+  container-type: size; /* v17.6: cqh-единицы для линии-видоискателя */
 }
 
 .scanner-overlay .qr-frame video,
@@ -500,6 +501,114 @@
 
 .btn-scan-danger svg,
 .btn-scan-danger .fit-btn-m { color: #1A1642; }
+
+/* ═══════════════════════════════════════════
+   v17.6: КРУПНАЯ КНОПКА ДЕЙСТВИЯ НА ВСЮ ШИРИНУ
+   (панель куратора: основная начисляющая + «Сброс»).
+   Градиент/цвета наследует от .btn-scan / .btn-scan-danger.
+   ═══════════════════════════════════════════ */
+.btn-action-full {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  min-height: 52px;
+  padding: 0 20px;
+  border-radius: 999px;
+  border: none;
+  cursor: pointer;
+  font-weight: 700;
+  letter-spacing: 0;
+  box-shadow: 0 0 22px rgba(111, 227, 236, .28), inset 0 1px 0 rgba(255, 255, 255, .4);
+}
+
+.btn-action-full .fit-btn-m { color: #1A1642; } /* тёмный текст внутри пилюли, без glow */
+.btn-action-full:disabled { opacity: 0.4; cursor: not-allowed; }
+
+/* Secondary-вариант («Сброс»): прозрачный фон, тонкая рамка, без свечения */
+.btn-action-secondary {
+  background: transparent;
+  border: 1px solid rgba(223, 183, 239, .35);
+  color: #DFB7EF;
+  box-shadow: none;
+}
+
+.btn-action-secondary:hover,
+.btn-action-secondary:focus,
+.btn-action-secondary:active {
+  background: transparent;
+  color: #DFB7EF;
+}
+
+.btn-action-secondary .fit-btn-m { color: #DFB7EF; }
+
+/* ═══════════════════════════════════════════
+   v17.6: СТАБИЛЬНЫЙ QR (принципы qrcoder.ru) —
+   CSS-изоляция контекста рендера. Фиксирует
+   геометрию 256x256, запрещает flex/grid-искажение
+   и растяжение SVG, сохраняет скругление/декор.
+   ═══════════════════════════════════════════ */
+.qr-stable-wrapper {
+  display: block;
+  width: 256px;
+  height: 256px;          /* точно совпадает с size в QrCard */
+  margin-inline: auto;    /* центрирование без растяжения */
+  background: #F5F2FF;    /* дублируем светлый фон здесь */
+  border-radius: 12px;    /* скругление сохраняем (фирменный стиль) */
+  overflow: hidden;       /* подрезаем subpixel-вылеты */
+  flex-shrink: 0;         /* grid/flex-родитель не сожмёт нас */
+  contain: layout paint style; /* изолируем рендер от внешних стилей */
+}
+
+.stable-qr-svg {
+  display: block;
+  width: 256px !important;
+  height: 256px !important; /* жёсткий override против растяжения */
+  color-scheme: only light; /* принудительно светлый режим для SVG */
+  mix-blend-mode: normal !important; /* отключаем любой blend от родителя */
+  isolation: isolate;       /* новый stacking context */
+  background: #F5F2FF !important; /* страховка против прозрачности */
+}
+
+/* Адаптив 320px: wrapper масштабируется ЦЕЛИКОМ (module-кегль сохраняется,
+   ratio 1:1, quiet zone внутри битмапа) — без искажения модулей */
+@media (max-width: 359px) {
+  .qr-stable-wrapper {
+    width: calc(100vw - 64px);
+    height: calc(100vw - 64px);
+  }
+  .stable-qr-svg {
+    width: 100% !important;
+    height: 100% !important;
+  }
+}
+
+/* v17.6: линия-видоискатель в ScannerOverlay (.qr-frame поверх видео).
+   Уголки .qr-frame нарисаны через background-градиенты самого фрейма,
+   поэтому z-index:1 достаточно, чтобы линия была над <video>, но под
+   декоративными углами; pointer-events:none — не мешает тапам. */
+.scan-viewline {
+  position: absolute;
+  left: 10%;
+  right: 10%;
+  top: 0;
+  height: 2px;
+  background: #6FE3EC;
+  box-shadow: 0 0 8px rgba(111, 227, 236, .8);
+  pointer-events: none;
+  z-index: 1;
+  animation: scan-viewline-move 2s linear infinite;
+}
+
+@keyframes scan-viewline-move {
+  0%   { transform: translateY(0); }
+  100% { transform: translateY(100cqh); } /* высота .qr-frame (aspect-ratio 1/1) */
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scan-viewline { animation: none; top: 50%; }
+}
 
 @keyframes shimmer {
   0% { transform: translateX(-100%) translateY(-100%); }

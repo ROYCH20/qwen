@@ -21,7 +21,7 @@ export default function CuratorScreen({ user, onLogout }: Props) {
   const [showSuccess, setShowSuccess] = useState('');
   const [scannerOpen, setScannerOpen] = useState(false);
   const [errorKind, setErrorKind] = useState<'denied' | 'unavailable' | 'invalid' | 'timeout' | null>(null);
-  const { getUserById, updatePoints } = useUsers();
+  const { getUserById, updatePoints, resetUserPoints } = useUsers();
 
   // Валидатор куратора — той же формы, что вход: сырой decode -> валидный id или null.
   // Именно parseQrPayload чинит дефект чтения QR из личного кабинета: куратор
@@ -82,8 +82,9 @@ export default function CuratorScreen({ user, onLogout }: Props) {
     }
   };
 
-  // Основная кнопка действия в карточке «УЧАСТНИК НАЙДЕН» (v17.5):
-  // применяет выбранный режим (Зачисление/Списание) и количество из пилюль.
+  // Основная кнопка действия в карточке «УЧАСТНИК НАЙДЕН» (v17.6):
+  // единственная крупная пилюля — применяет выбранный режим (Зачисление/
+  // Списание) и количество из пилюль (updatePoints выбранного участника).
   const handleApplyAction = () => {
     if (!scannedUser || points === null) {
       setShowError('Выберите количество баллов');
@@ -92,12 +93,22 @@ export default function CuratorScreen({ user, onLogout }: Props) {
     handleSubmit();
   };
 
-  const handleReset = () => {
-    setScannedUser(null);
-    setPoints(null);
-    setShowError('');
-    setShowSuccess('');
+  // v17.6: точечный сброс баланса КОНКРЕТНОГО найденного участника к базовым
+  // 300 (resetUserPoints), НЕ админский сброс всей базы (resetAllPoints не тронут).
+  const handleResetUser = async () => {
+    if (!scannedUser) return;
+
+    const success = await resetUserPoints(scannedUser.id);
+    if (success) {
+      setScannedUser({ ...scannedUser, points: 300 });
+      setShowSuccess(`Баланс участника ${scannedUser.full_name} сброшен к базовым 300`);
+      setShowError('');
+      setPoints(null);
+    } else {
+      setShowError('Ошибка при сбросе баллов участника');
+    }
   };
+
 
   return (
     <div style={{ paddingTop: '24px' }}>
@@ -250,40 +261,33 @@ export default function CuratorScreen({ user, onLogout }: Props) {
               </AnimatedList>
             </div>
 
-            <div className="hud-divider"></div>
+            <div style={{ height: 'var(--gap-block)' }}></div>
 
-            {/* Основная кнопка действия (v17.5): фирменная пилюля, класс
-                переключается по режиму: Зачисление -> btn-scan (бирюзово-розовая),
-                Списание -> btn-scan + btn-scan-danger (danger-градиент). */}
+            {/* v17.6: ЕДИНСТВЕННАЯ основная кнопка действия на всю ширину
+                (мелкая нижняя дублирующая пилюля «+{amount}» удалена).
+                Класс переключается по режиму: Зачисление -> btn-action-full +
+                btn-scan (бирюзово-розовый градиент), Списание -> + btn-scan-danger
+                (розово-красный danger-градиент). */}
             <button
               onClick={handleApplyAction}
               disabled={points === null}
-              className={`btn-scan ${action === 'debit' ? 'btn-scan-danger' : ''}`}
-              style={{ marginBottom: '14px' }}
+              className={`btn-action-full btn-scan ${action === 'debit' ? 'btn-scan-danger' : ''}`}
             >
               <span className="fit-btn-m">
                 {action === 'credit' ? `Начислить +${points || 0}` : `Списать -${points || 0}`}
               </span>
             </button>
 
-            {/* Подтверждение */}
-            <div className="btn-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: 'var(--gap-btn)', marginTop: '10px' }}>
-              <button
-                onClick={handleSubmit}
-                disabled={points === null}
-                className={`btn-neon ${
-                  points !== null
-                    ? action === 'credit' ? 'btn-cyan' : 'btn-danger'
-                    : 'btn-ghost'
-                }`}
-                style={points === null ? { opacity: 0.4, cursor: 'not-allowed' } : {}}
-              >
-                <span className="fit-nowrap fit-btn2">{action === 'credit' ? `+${points || 0}` : `-${points || 0}`}</span>
-              </button>
-              <button onClick={handleReset} className="btn-neon btn-ghost">
-                <span className="fit-nowrap fit-btn2">Сброс</span>
-              </button>
-            </div>
+            {/* v17.6: «Сброс» поднят до размера основной кнопки и переехал вниз
+                панели (последний элемент блока действий): secondary-стиль —
+                прозрачный фон, тонкая рамка, без свечения. */}
+            <button
+              onClick={handleResetUser}
+              className="btn-action-full btn-action-secondary"
+              style={{ marginTop: '12px' }}
+            >
+              <span className="fit-btn-m">Сброс</span>
+            </button>
           </div>
         </NeonReveal>
       )}

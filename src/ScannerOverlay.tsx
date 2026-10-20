@@ -66,9 +66,26 @@ export default function ScannerOverlay({ validate, onResult, onError, onCancel }
         onResult(id);
       };
 
+      // v17.6: параметры камеры для чтения «экран-в-экран» (куратор снимает
+      // экран другого телефона): больше кадров, квадратный кадр, непрерывный
+      // автофокус и компенсация бликов — терпимость к муару и слабому свету.
+      const config = {
+        fps: 20,                                    // вдвое чаще кадров
+        qrbox: { width: 240, height: 240 },         // чуть больше зона поиска
+        aspectRatio: 1,                             // квадратный кадр под QR
+        disableFlip: true,                          // не тратить кадры на переворот
+        supportedMediaTypes: ['video'],             // явно видео, не audio
+      };
+      const cameraConstraints = {
+        facingMode: { ideal: 'environment' },
+        width:  { ideal: 1280 }, height: { ideal: 1280 },
+        focusMode: 'continuous',                    // ключевое: непрерывный автофокус
+        exposureMode: 'continuous',                 // компенсация бликов экрана
+      };
+
       hq.start(
-        { facingMode: 'environment' },
-        { fps: 10, qrbox: { width: 220, height: 220 } },
+        cameraConstraints,
+        config,
         onDecoded,
         () => {}
       ).then(() => {
@@ -107,6 +124,9 @@ export default function ScannerOverlay({ validate, onResult, onError, onCancel }
         
         <div className="qr-frame" style={{ width: 'min(100%, 280px)', aspectRatio: '1/1', marginInline: 'auto' }}>
           <div id="scanner-video" className="overflow-hidden" style={{ width: '100%', height: '100%' }}></div>
+          {/* v17.6: визуальная подсказка — бирюзовая линия-видоискатель помогает
+              инстинктивно держать телефон параллельно монитору */}
+          <div className="scan-viewline" aria-hidden="true"></div>
         </div>
 
         <p className="fit-flow text-center" style={{ fontSize: 'clamp(10px, 2.8vw, 11px)', color: '#B9B0E6', lineHeight: 1.3 }}>
