@@ -13,15 +13,15 @@
         padding: 0;
         width: 100%;
         height: 100%;
-        overflow-x: hidden;
-        overscroll-behavior-y: none; /* v17.6-mobile-fix: нет pull-to-refresh/bounce */
+        overflow: hidden; /* v17.6-mobile-fix-v2: документ не скроллится */
+        overscroll-behavior: none; /* нет pull-to-refresh/bounce */
       }
       body {
         font-family: 'Grafmassa', sans-serif;
-        /* v17.6-mobile-fix: градиент «ночное небо» рисует fixed-слой
-           .bg-layer (position:fixed вместо background-attachment — на iOS
-           attachment не работает, фон двигался при скролле). Здесь только
-           базовый цвет до монтирования React. */
+        /* v17.6-mobile-fix-v2: фирменный градиент рисует #root (background,
+           position:relative); fixed-слой .bg-layer удален — он отрывается
+           на iOS при инерции скролла. Здесь только базовый цвет до
+           монтирования React / под прозрачными слоями. */
         background: #120F38;
       }
     </style>
