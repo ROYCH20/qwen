@@ -125,16 +125,20 @@ function AppContent() {
   // Loading state с скелетонами
   if (loading) {
     return (
-      <div className="min-h-screen bg-night-sky crt-scanlines relative">
-        <div className="bg-layer" />
+      // v17.6-mobile-fix-v2: .bg-layer (position:fixed) УДАЛЕН — fixed-слой
+      // отрывается на iOS при инерции скролла. Фон рисует #root (background,
+      // position:relative); .bg-night-sky дублирует градиент на этом экране.
+      <div className="h-full bg-night-sky crt-scanlines relative app-frame">
         <PerspectiveGrid />
         <BlinkingSquares />
         <div className="bg-lens" />
         <div className="vignette-strong" />
         <FilmGrain />
+        {/* v17.6-mobile-fix-v2: .overlay-shell (relative flex-ребенок) +
+            единственный скроллящийся .screen-container внутри */}
         <div className="overlay-shell" style={{ zIndex: 10 }}>
-          <div className="w-full max-w-[430px] mx-auto">
-            <div className="crt-frame min-h-screen p-4">
+          <div className="screen-container w-full max-w-[430px] mx-auto">
+            <div className="crt-frame p-4">
               <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', paddingTop: '24px' }}>
                 {/* Скелетон заголовка */}
                 <div className="skeleton-box">
@@ -164,16 +168,17 @@ function AppContent() {
   // Error state
   if (error) {
     return (
-      <div className="min-h-screen bg-night-sky crt-scanlines relative">
-        <div className="bg-layer" />
+      <div className="h-full bg-night-sky crt-scanlines relative app-frame">
         <PerspectiveGrid />
         <BlinkingSquares />
         <div className="bg-lens" />
         <div className="vignette-strong" />
         <FilmGrain />
+        {/* v17.6-mobile-fix-v2: тот же паттерн — overlay-shell в потоке,
+            скролл только у .screen-container */}
         <div className="overlay-shell" style={{ zIndex: 10 }}>
-          <div className="w-full max-w-[430px] mx-auto">
-            <div className="crt-frame min-h-screen flex items-center justify-center p-4">
+          <div className="screen-container w-full max-w-[430px] mx-auto">
+            <div className="crt-frame flex items-center justify-center p-4" style={{ minHeight: '100%' }}>
               <div className="hud-box" style={{ width: '100%' }}>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
                   <p className="fit-flow text-center" style={{ fontSize: 'clamp(14px, 4vw, 16px)', lineHeight: 1.4 }}>
@@ -196,18 +201,19 @@ function AppContent() {
   }
 
   return (
-    <div className="min-h-screen bg-night-sky crt-scanlines relative app-frame">
-      {/* Фоновые слои */}
-      <div className="bg-layer" />
+    <div className="h-full bg-night-sky crt-scanlines relative app-frame">
+      {/* Фоновые слои. v17.6-mobile-fix-v2: .bg-layer (fixed) УДАЛЕН — фон
+          рисует #root; декоративные fixed-слои вне потока скролла безопасны. */}
       <PerspectiveGrid />
       <BlinkingSquares />
       <div className="bg-lens" />
       <div className="vignette-strong" />
       <FilmGrain />
 
-      <div className="w-full max-w-[430px] min-h-screen mx-auto relative" style={{ zIndex: 10 }}>
+      {/* Единственный скроллящийся элемент приложения (flex:1 + min-height:0) */}
+      <div className="screen-container w-full max-w-[430px] mx-auto relative" style={{ zIndex: 10 }}>
         {/* CRT-рамка */}
-        <div className="crt-frame min-h-screen">
+        <div className="crt-frame" style={{ minHeight: '100%' }}>
           {/* Контент с анимацией перехода */}
           <AnimatePresence mode="wait">
             <motion.div

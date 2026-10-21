@@ -38,47 +38,14 @@
 /* ═══════════════════════════════════════════
    ФОН СТРАНИЦЫ
    ═══════════════════════════════════════════ */
-/* v17.6-mobile-fix: фирменный градиент «ночное небо» вынесен в отдельный
-   fixed-слой .bg-layer (первый ребёнок .app-frame). position:fixed вместо
-   background-attachment:fixed — на iOS Safari attachment не работает, фон
-   двигался при скролле и ломал layout при появлении address bar.
-   Градиент НЕ переносится на body::before, чтобы не конфликтовать с
-   .crt-scanlines::after (сканлайны CRT — единственные пользователи ::after
-   на этом элементе). Цвета/слои — палитра без изменений (С8 стиль цел). */
-.bg-layer {
-  position: fixed;
-  inset: 0;
-  z-index: -1;
-  background:
-    radial-gradient(1px 1px at 10% 15%, rgba(255,255,255,.7), transparent),
-    radial-gradient(1px 1px at 25% 40%, rgba(255,255,255,.5), transparent),
-    radial-gradient(1.5px 1.5px at 45% 10%, rgba(255,255,255,.8), transparent),
-    radial-gradient(1px 1px at 60% 30%, rgba(255,255,255,.4), transparent),
-    radial-gradient(1px 1px at 75% 55%, rgba(255,255,255,.6), transparent),
-    radial-gradient(1.5px 1.5px at 85% 20%, rgba(255,255,255,.7), transparent),
-    radial-gradient(1px 1px at 15% 70%, rgba(255,255,255,.5), transparent),
-    radial-gradient(1px 1px at 35% 85%, rgba(255,255,255,.4), transparent),
-    radial-gradient(1.5px 1.5px at 55% 65%, rgba(255,255,255,.6), transparent),
-    radial-gradient(1px 1px at 90% 80%, rgba(255,255,255,.5), transparent),
-    radial-gradient(1px 1px at 5% 90%, rgba(255,255,255,.4), transparent),
-    radial-gradient(1.5px 1.5px at 30% 50%, rgba(255,255,255,.5), transparent),
-    radial-gradient(1px 1px at 50% 25%, rgba(255,255,255,.6), transparent),
-    linear-gradient(180deg,
-      #120F38 0%,
-      #1a1550 15%,
-      #221D5E 30%,
-      #2d2670 45%,
-      #37307F 55%,
-      #4a4399 65%,
-      #6C63C9 75%,
-      #8E86E4 82%,
-      #B78FF2 89%,
-      #DFB7EF 95%,
-      #F79BE3 100%);
-  pointer-events: none;
-  will-change: transform; /* GPU-акселерация для iOS */
-}
-
+/* v17.6-mobile-fix-v2: фиксированный слой .bg-layer УДАЛЕН — fixed-слой
+   внутри скроллящегося контейнера отрывается на iOS при инерции скролла
+   (баг WebKit). Фирменный градиент «ночное небо» теперь рисуется как
+   background СВОЙСТВО #root (position:relative, см. блок «БАЗА»). Тот же
+   градиент оставлен как класс .bg-night-sky для промежуточных экранов
+   App.tsx (loading/error), которые тоже являются потомками #root и
+   скроллят только свой внутренний .screen-container. Цвета/слои — палитра
+   без изменений (стиль цел). */
 .bg-night-sky {
   background:
     radial-gradient(1px 1px at 10% 15%, rgba(255,255,255,.7), transparent),
@@ -106,7 +73,10 @@
       #B78FF2 89%,
       #DFB7EF 95%,
       #F79BE3 100%);
-  background-attachment: fixed;
+  /* v17.6-mobile-fix-v2: attachment:fixed убран — на iOS он не работает и
+     давал отрыв фона; сам градиент теперь дублируется на #root (см. БАЗА),
+     поэтому слой рисуется локально и не скроллится. */
+  background-attachment: local;
 }
 
 /* ═══════════════════════════════════════════
@@ -123,33 +93,59 @@
     hyphens: none;
   }
 
-  html, body {
+  /* v17.6-mobile-fix-v2: АРХИТЕКТУРНЫЙ фикс прыгающего фона на iOS/Android.
+     document/html/body/#root НИКОГДА не скроллятся: height:100% + жесткий
+     overflow:hidden. Скроллится ТОЛЬКО внутренний .screen-container.
+     Фон рисуется как background-свойство #root (position:relative), а НЕ
+     position:fixed слой — fixed-слой отрывается при инерции WebKit. */
+  html, body, #root {
+    height: 100%;
     margin: 0;
     padding: 0;
     width: 100%;
-    overflow-x: hidden;
-    overscroll-behavior-y: none; /* предотвращает pull-to-refresh и bounce */
+    overflow: hidden !important;   /* ЖЕСТКИЙ ЗАПРЕТ скролла на этих уровнях */
+    overscroll-behavior: none !important; /* запрет bounce/pull-to-refresh */
+    touch-action: manipulation;    /* ускоряет tap, убирает double-tap zoom */
   }
 
-  /* v17.6-mobile-fix: height/width Tailwind-утилит min-h-screen/h-screen
-     (используются в App.tsx на .app-frame, #root и crt-контейнерах)
-     переназначаются на динамическую --app-height — реальную видимую высоту
-     без адресной строки/клавиатуры. dvh — fallback для старых браузеров,
-     пока JS не установил переменную. */
-  .min-h-screen { min-height: var(--app-height, 100dvh); }
-  .h-screen    { height: var(--app-height, 100dvh); }
+  /* ФОН — СВОЙСТВО #root, НЕ ОТДЕЛЬНЫЙ СЛОЙ. Тот же фирменный градиент
+     «ночное небо» + звездная пыль из палитры (С8 стиль цел). */
+  #root {
+    position: relative;
+    background:
+      radial-gradient(1px 1px at 10% 15%, rgba(255,255,255,.7), transparent),
+      radial-gradient(1px 1px at 25% 40%, rgba(255,255,255,.5), transparent),
+      radial-gradient(1.5px 1.5px at 45% 10%, rgba(255,255,255,.8), transparent),
+      radial-gradient(1px 1px at 60% 30%, rgba(255,255,255,.4), transparent),
+      radial-gradient(1px 1px at 75% 55%, rgba(255,255,255,.6), transparent),
+      radial-gradient(1.5px 1.5px at 85% 20%, rgba(255,255,255,.7), transparent),
+      radial-gradient(1px 1px at 15% 70%, rgba(255,255,255,.5), transparent),
+      radial-gradient(1px 1px at 35% 85%, rgba(255,255,255,.4), transparent),
+      radial-gradient(1.5px 1.5px at 55% 65%, rgba(255,255,255,.6), transparent),
+      radial-gradient(1px 1px at 90% 80%, rgba(255,255,255,.5), transparent),
+      radial-gradient(1px 1px at 5% 90%, rgba(255,255,255,.4), transparent),
+      radial-gradient(1.5px 1.5px at 30% 50%, rgba(255,255,255,.5), transparent),
+      radial-gradient(1px 1px at 50% 25%, rgba(255,255,255,.6), transparent),
+      linear-gradient(180deg,
+        #120F38 0%,
+        #1a1550 15%,
+        #221D5E 30%,
+        #2d2670 45%,
+        #37307F 55%,
+        #4a4399 65%,
+        #6C63C9 75%,
+        #8E86E4 82%,
+        #B78FF2 89%,
+        #DFB7EF 95%,
+        #F79BE3 100%) no-repeat center center / cover;
+  }
 
   body {
     font-family: 'Grafmassa', sans-serif !important;
     color: var(--c-text);
-    /* v17.6-mobile-fix: фирменный градиент «ночное небо» перенесён в
-       отдельный fixed-слой .bg-layer (первый ребёнок контейнеров App.tsx).
-       На iOS Safari background-attachment:fixed не работает — фон двигался
-       при скролле и layout ломался при схлопывании address bar. Здесь
-       остаётся только базовый цвет под layer. */
+    /* Базовый цвет до монтирования React / под прозрачными слоями. */
     background: #120F38;
     -webkit-font-smoothing: antialiased;
-    overscroll-behavior: none;
   }
 
   input, button, textarea, select {
@@ -1192,8 +1188,13 @@
 }
 
 /* Оверлейный фундамент */
+/* v17.6-mobile-fix-v2: .overlay-shell больше НЕ position:fixed — fixed-контейнер
+   с переполнением на iOS порождает «прыжки» фона при инерции. Теперь это обычный
+   flex-ребенок .app-frame (height:100%), а скроллит только свой внутренний
+   .screen-container (flex:1 + min-height:0). */
 .overlay-shell {
-  position: fixed;
+  position: relative;
+  height: 100%;
   inset: 0;
   display: flex;
   flex-direction: column;
@@ -1289,10 +1290,38 @@
 }
 
 /* Safe-area для нижних пилюль */
+/* v17.6-mobile-fix-v2: .app-frame — корневой экран приложения. НЕ скроллится
+   (overflow:hidden), растягивается на 100% #root через flex-колонку. Скролл
+   делегирован единственному внутреннему .screen-container. */
 .app-frame {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;            /* снова запрещаем скролл здесь */
+  position: relative;
   padding-top: env(safe-area-inset-top);
   padding-bottom: env(safe-area-inset-bottom);
 }
+
+/* v17.6-mobile-fix-v2: ЕДИНСТВЕННЫЙ скроллящийся элемент приложения.
+   min-height:0 КРИТИЧНО для flexbox — позволяет ребенку сжиматься внутри
+   .app-frame и не распирать документ. html/body/#root при этом всегда
+   overflow:hidden → фон на #root физически не может оторваться при инерции. */
+.screen-container {
+  flex: 1 1 auto;
+  min-height: 0;               /* КРИТИЧНО для flexbox */
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch; /* плавная инерция iOS */
+  scrollbar-width: thin;             /* Firefox */
+  scrollbar-color: rgba(111,227,236,.3) transparent;
+}
+
+/* Эстетика WebKit: тонкий бирюзовый скроллбар только внутри контента */
+.screen-container::-webkit-scrollbar { width: 4px; }
+.screen-container::-webkit-scrollbar-thumb {
+  background: rgba(111,227,236,.3); border-radius: 2px; }
 
 .bottom-pill {
   margin-bottom: max(20px, env(safe-area-inset-bottom));
@@ -1300,10 +1329,6 @@
 
 .flex > *, .grid > * {
   min-width: 0;
-}
-
-.app-frame, #root {
-  overflow-x: clip;
 }
 
 /* ═══════════════════════════════════════════
