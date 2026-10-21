@@ -523,7 +523,7 @@
   box-shadow: 0 0 22px rgba(111, 227, 236, .28), inset 0 1px 0 rgba(255, 255, 255, .4);
 }
 
-.btn-action-full .fit-btn-m { color: #1A1642; } /* тёмный текст внутри пилюли, без glow */
+.btn-action-full .fit-btn-m { color: #1A1642; } /* темный текст внутри пилюли, без glow */
 .btn-action-full:disabled { opacity: 0.4; cursor: not-allowed; }
 
 /* Secondary-вариант («Сброс»): прозрачный фон, тонкая рамка, без свечения */
@@ -557,14 +557,14 @@
   background: #F5F2FF;    /* дублируем светлый фон здесь */
   border-radius: 12px;    /* скругление сохраняем (фирменный стиль) */
   overflow: hidden;       /* подрезаем subpixel-вылеты */
-  flex-shrink: 0;         /* grid/flex-родитель не сожмёт нас */
+  flex-shrink: 0;         /* grid/flex-родитель не сожмет нас */
   contain: layout paint style; /* изолируем рендер от внешних стилей */
 }
 
 .stable-qr-svg {
   display: block;
   width: 256px !important;
-  height: 256px !important; /* жёсткий override против растяжения */
+  height: 256px !important; /* жесткий override против растяжения */
   color-scheme: only light; /* принудительно светлый режим для SVG */
   mix-blend-mode: normal !important; /* отключаем любой blend от родителя */
   isolation: isolate;       /* новый stacking context */

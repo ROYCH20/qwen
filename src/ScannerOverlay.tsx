@@ -23,22 +23,28 @@ export default function ScannerOverlay({ validate, onResult, onError, onCancel }
   };
 
   useEffect(() => {
+    // v17.6-diag: диагностика молчаливого отказа старта камеры
+    console.log('[Scanner] mount, waiting for video node');
     cancelledRef.current = false;
     let hq: Html5Qrcode | null = null;
 
     const begin = () => {
       if (cancelledRef.current) return;
       
-      const element = document.getElementById('scanner-video');
-      if (!element) {
+      const el = document.getElementById('scanner-video'); // id сверен с JSX (п.1.3): <div id="scanner-video">
+      if (!el) {
+        console.warn('[Scanner] element #scanner-video NOT FOUND, retrying...');
         requestAnimationFrame(begin);
         return;
       }
+      console.log('[Scanner] found element, starting Html5Qrcode...', el.id);
 
-      hq = new Html5Qrcode('scanner-video');
+      hq = new Html5Qrcode(el.id);
       hqRef.current = hq;
 
       const handleStartError = (err: any) => {
+        // v17.6-diag: раньше ошибка могла проглатываться — теперь видна всегда
+        console.error('[Scanner] start FAILED:', err?.name, err?.message);
         if (cancelledRef.current) return;
         stopSafe();
         if (err && (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError')) {
@@ -49,6 +55,8 @@ export default function ScannerOverlay({ validate, onResult, onError, onCancel }
       };
 
       const onDecoded = (raw: string) => {
+        // v17.6-diag: фиксируем сырой текст декода до validate
+        console.log('[Scanner] decoded raw text:', raw);
         if (cancelledRef.current) return;
         if (timeoutRef.current !== null) {
           clearTimeout(timeoutRef.current);
@@ -83,12 +91,17 @@ export default function ScannerOverlay({ validate, onResult, onError, onCancel }
         exposureMode: 'continuous',                 // компенсация бликов экрана
       };
 
+      // v17.6-diag: логируем фактические constraints/config непосредственно перед start()
+      console.log('[Scanner] calling start with constraints', cameraConstraints);
+
       hq.start(
         cameraConstraints,
         config,
         onDecoded,
         () => {}
       ).then(() => {
+        // v17.6-diag: старт успешен — таймер 10с активирован
+        console.log('[Scanner] start() resolved OK, arming 10s timeout');
         if (cancelledRef.current) return;
         timeoutRef.current = window.setTimeout(() => {
           if (cancelledRef.current) return;
