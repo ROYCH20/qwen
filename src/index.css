@@ -38,6 +38,47 @@
 /* ═══════════════════════════════════════════
    ФОН СТРАНИЦЫ
    ═══════════════════════════════════════════ */
+/* v17.6-mobile-fix: фирменный градиент «ночное небо» вынесен в отдельный
+   fixed-слой .bg-layer (первый ребёнок .app-frame). position:fixed вместо
+   background-attachment:fixed — на iOS Safari attachment не работает, фон
+   двигался при скролле и ломал layout при появлении address bar.
+   Градиент НЕ переносится на body::before, чтобы не конфликтовать с
+   .crt-scanlines::after (сканлайны CRT — единственные пользователи ::after
+   на этом элементе). Цвета/слои — палитра без изменений (С8 стиль цел). */
+.bg-layer {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background:
+    radial-gradient(1px 1px at 10% 15%, rgba(255,255,255,.7), transparent),
+    radial-gradient(1px 1px at 25% 40%, rgba(255,255,255,.5), transparent),
+    radial-gradient(1.5px 1.5px at 45% 10%, rgba(255,255,255,.8), transparent),
+    radial-gradient(1px 1px at 60% 30%, rgba(255,255,255,.4), transparent),
+    radial-gradient(1px 1px at 75% 55%, rgba(255,255,255,.6), transparent),
+    radial-gradient(1.5px 1.5px at 85% 20%, rgba(255,255,255,.7), transparent),
+    radial-gradient(1px 1px at 15% 70%, rgba(255,255,255,.5), transparent),
+    radial-gradient(1px 1px at 35% 85%, rgba(255,255,255,.4), transparent),
+    radial-gradient(1.5px 1.5px at 55% 65%, rgba(255,255,255,.6), transparent),
+    radial-gradient(1px 1px at 90% 80%, rgba(255,255,255,.5), transparent),
+    radial-gradient(1px 1px at 5% 90%, rgba(255,255,255,.4), transparent),
+    radial-gradient(1.5px 1.5px at 30% 50%, rgba(255,255,255,.5), transparent),
+    radial-gradient(1px 1px at 50% 25%, rgba(255,255,255,.6), transparent),
+    linear-gradient(180deg,
+      #120F38 0%,
+      #1a1550 15%,
+      #221D5E 30%,
+      #2d2670 45%,
+      #37307F 55%,
+      #4a4399 65%,
+      #6C63C9 75%,
+      #8E86E4 82%,
+      #B78FF2 89%,
+      #DFB7EF 95%,
+      #F79BE3 100%);
+  pointer-events: none;
+  will-change: transform; /* GPU-акселерация для iOS */
+}
+
 .bg-night-sky {
   background:
     radial-gradient(1px 1px at 10% 15%, rgba(255,255,255,.7), transparent),
@@ -86,40 +127,27 @@
     margin: 0;
     padding: 0;
     width: 100%;
-    min-height: 100vh;
     overflow-x: hidden;
+    overscroll-behavior-y: none; /* предотвращает pull-to-refresh и bounce */
   }
+
+  /* v17.6-mobile-fix: height/width Tailwind-утилит min-h-screen/h-screen
+     (используются в App.tsx на .app-frame, #root и crt-контейнерах)
+     переназначаются на динамическую --app-height — реальную видимую высоту
+     без адресной строки/клавиатуры. dvh — fallback для старых браузеров,
+     пока JS не установил переменную. */
+  .min-h-screen { min-height: var(--app-height, 100dvh); }
+  .h-screen    { height: var(--app-height, 100dvh); }
 
   body {
     font-family: 'Grafmassa', sans-serif !important;
     color: var(--c-text);
-    background:
-      radial-gradient(1px 1px at 10% 15%, rgba(255,255,255,.7), transparent),
-      radial-gradient(1px 1px at 25% 40%, rgba(255,255,255,.5), transparent),
-      radial-gradient(1.5px 1.5px at 45% 10%, rgba(255,255,255,.8), transparent),
-      radial-gradient(1px 1px at 60% 30%, rgba(255,255,255,.4), transparent),
-      radial-gradient(1px 1px at 75% 55%, rgba(255,255,255,.6), transparent),
-      radial-gradient(1.5px 1.5px at 85% 20%, rgba(255,255,255,.7), transparent),
-      radial-gradient(1px 1px at 15% 70%, rgba(255,255,255,.5), transparent),
-      radial-gradient(1px 1px at 35% 85%, rgba(255,255,255,.4), transparent),
-      radial-gradient(1.5px 1.5px at 55% 65%, rgba(255,255,255,.6), transparent),
-      radial-gradient(1px 1px at 90% 80%, rgba(255,255,255,.5), transparent),
-      radial-gradient(1px 1px at 5% 90%, rgba(255,255,255,.4), transparent),
-      radial-gradient(1.5px 1.5px at 30% 50%, rgba(255,255,255,.5), transparent),
-      radial-gradient(1px 1px at 50% 25%, rgba(255,255,255,.6), transparent),
-      linear-gradient(180deg,
-        #120F38 0%,
-        #1a1550 15%,
-        #221D5E 30%,
-        #2d2670 45%,
-        #37307F 55%,
-        #4a4399 65%,
-        #6C63C9 75%,
-        #8E86E4 82%,
-        #B78FF2 89%,
-        #DFB7EF 95%,
-        #F79BE3 100%);
-    background-attachment: fixed;
+    /* v17.6-mobile-fix: фирменный градиент «ночное небо» перенесён в
+       отдельный fixed-слой .bg-layer (первый ребёнок контейнеров App.tsx).
+       На iOS Safari background-attachment:fixed не работает — фон двигался
+       при скролле и layout ломался при схлопывании address bar. Здесь
+       остаётся только базовый цвет под layer. */
+    background: #120F38;
     -webkit-font-smoothing: antialiased;
     overscroll-behavior: none;
   }

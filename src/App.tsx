@@ -126,6 +126,7 @@ function AppContent() {
   if (loading) {
     return (
       <div className="min-h-screen bg-night-sky crt-scanlines relative">
+        <div className="bg-layer" />
         <PerspectiveGrid />
         <BlinkingSquares />
         <div className="bg-lens" />
@@ -164,6 +165,7 @@ function AppContent() {
   if (error) {
     return (
       <div className="min-h-screen bg-night-sky crt-scanlines relative">
+        <div className="bg-layer" />
         <PerspectiveGrid />
         <BlinkingSquares />
         <div className="bg-lens" />
@@ -196,6 +198,7 @@ function AppContent() {
   return (
     <div className="min-h-screen bg-night-sky crt-scanlines relative app-frame">
       {/* Фоновые слои */}
+      <div className="bg-layer" />
       <PerspectiveGrid />
       <BlinkingSquares />
       <div className="bg-lens" />
