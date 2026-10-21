@@ -12,6 +12,9 @@ export default function ScannerOverlay({ validate, onResult, onError, onCancel }
   const hqRef = useRef<Html5Qrcode | null>(null);
   const timeoutRef = useRef<number | null>(null);
   const cancelledRef = useRef(false);
+  // v17.6-hotfix: страховки для таймера 10с и флага успешного декода
+  const timerStartedRef = useRef(false);
+  const decodedOnceRef = useRef(false);
 
   const stopSafe = () => {
     try {
@@ -23,28 +26,22 @@ export default function ScannerOverlay({ validate, onResult, onError, onCancel }
   };
 
   useEffect(() => {
-    // v17.6-diag: диагностика молчаливого отказа старта камеры
-    console.log('[Scanner] mount, waiting for video node');
     cancelledRef.current = false;
-    let hq: Html5Qrcode | null = null;
+    timerStartedRef.current = false;
+    decodedOnceRef.current = false;
 
     const begin = () => {
       if (cancelledRef.current) return;
-      
-      const el = document.getElementById('scanner-video'); // id сверен с JSX (п.1.3): <div id="scanner-video">
+
+      const el = document.getElementById('scanner-video'); // id сверен с JSX: <div id="scanner-video">
       if (!el) {
+        // без этой ветки молчаливый ретрай был неотличим от зависания
         console.warn('[Scanner] element #scanner-video NOT FOUND, retrying...');
         requestAnimationFrame(begin);
         return;
       }
-      console.log('[Scanner] found element, starting Html5Qrcode...', el.id);
-
-      hq = new Html5Qrcode(el.id);
-      hqRef.current = hq;
 
       const handleStartError = (err: any) => {
-        // v17.6-diag: раньше ошибка могла проглатываться — теперь видна всегда
-        console.error('[Scanner] start FAILED:', err?.name, err?.message);
         if (cancelledRef.current) return;
         stopSafe();
         if (err && (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError')) {
@@ -55,14 +52,14 @@ export default function ScannerOverlay({ validate, onResult, onError, onCancel }
       };
 
       const onDecoded = (raw: string) => {
-        // v17.6-diag: фиксируем сырой текст декода до validate
         console.log('[Scanner] decoded raw text:', raw);
         if (cancelledRef.current) return;
+        decodedOnceRef.current = true;
         if (timeoutRef.current !== null) {
           clearTimeout(timeoutRef.current);
           timeoutRef.current = null;
         }
-        
+
         const id = validate(raw);
         if (id == null) {
           stopSafe();
@@ -74,41 +71,52 @@ export default function ScannerOverlay({ validate, onResult, onError, onCancel }
         onResult(id);
       };
 
-      // v17.6: параметры камеры для чтения «экран-в-экран» (куратор снимает
-      // экран другого телефона): больше кадров, квадратный кадр, непрерывный
-      // автофокус и компенсация бликов — терпимость к муару и слабому свету.
-      const config = {
-        fps: 20,                                    // вдвое чаще кадров
-        qrbox: { width: 240, height: 240 },         // чуть больше зона поиска
-        aspectRatio: 1,                             // квадратный кадр под QR
-        disableFlip: true,                          // не тратить кадры на переворот
-        supportedMediaTypes: ['video'],             // явно видео, не audio
-      };
-      const cameraConstraints = {
-        facingMode: { ideal: 'environment' },
-        width:  { ideal: 1280 }, height: { ideal: 1280 },
-        focusMode: 'continuous',                    // ключевое: непрерывный автофокус
-        exposureMode: 'continuous',                 // компенсация бликов экрана
-      };
+      // --- v17.6-hotfix НАЧАЛО ЗАМЕНЫ ---
+      // Корень бага: html5-qrcode некорректно обрабатывает сложные constraints
+      // (focusMode/exposureMode/width/height как объекты {ideal}) и возвращает
+      // пустую ошибку ('undefined undefined'). Лечим упрощением до базовых
+      // параметров + улучшенным логированием.
+      const simpleConstraints = { facingMode: 'environment' }; // Только базовое ограничение!
+      const scanConfig = { fps: 10, qrbox: { width: 200, height: 200 } }; // Стандартная конфигурация
 
-      // v17.6-diag: логируем фактические constraints/config непосредственно перед start()
-      console.log('[Scanner] calling start with constraints', cameraConstraints);
+      console.log('[Scanner] Starting with SIMPLE constraints:', simpleConstraints);
 
-      hq.start(
-        cameraConstraints,
-        config,
+      hqRef.current = new Html5Qrcode('scanner-video');
+
+      hqRef.current.start(
+        simpleConstraints,
+        scanConfig,
         onDecoded,
-        () => {}
+        () => { /* noop per-frame error */ }
       ).then(() => {
-        // v17.6-diag: старт успешен — таймер 10с активирован
-        console.log('[Scanner] start() resolved OK, arming 10s timeout');
-        if (cancelledRef.current) return;
-        timeoutRef.current = window.setTimeout(() => {
+        console.log('[Scanner] Camera started successfully.');
+        // Здесь запускаем таймер 10с (если он еще не запущен)
+        if (!timerStartedRef.current) {
+          timerStartedRef.current = true;
+          timeoutRef.current = setTimeout(() => {
+            timeoutRef.current = null;
+            if (!decodedOnceRef.current && !cancelledRef.current) {
+              stopSafe();
+              onError('timeout');
+            }
+          }, 10_000);
+        }
+      }).catch((err) => {
+        // Улучшенный логгер ошибки
+        console.error('[Scanner] Start failed details:', err);
+        console.error('[Scanner] Error name:', err?.name);
+        console.error('[Scanner] Error message:', err?.message);
+
+        // Если err пустой или неизвестный тип — считаем его 'unavailable'
+        if (!err || !err.name) {
           if (cancelledRef.current) return;
           stopSafe();
-          onError('timeout');
-        }, 10000);
-      }).catch(handleStartError);
+          onError('unavailable');
+        } else {
+          handleStartError(err); // Используем существующий обработчик для известных типов
+        }
+      });
+      // --- v17.6-hotfix КОНЕЦ ЗАМЕНЫ ---
     };
 
     begin();
