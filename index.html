@@ -14,11 +14,15 @@
         width: 100%;
         height: 100%;
         overflow-x: hidden;
+        overscroll-behavior-y: none; /* v17.6-mobile-fix: нет pull-to-refresh/bounce */
       }
       body {
         font-family: 'Grafmassa', sans-serif;
-        background: linear-gradient(180deg, #120F38 0%, #221D5E 30%, #37307F 55%, #6C63C9 75%, #B78FF2 89%, #F79BE3 100%);
-        background-attachment: fixed;
+        /* v17.6-mobile-fix: градиент «ночное небо» рисует fixed-слой
+           .bg-layer (position:fixed вместо background-attachment — на iOS
+           attachment не работает, фон двигался при скролле). Здесь только
+           базовый цвет до монтирования React. */
+        background: #120F38;
       }
     </style>
   </head>
