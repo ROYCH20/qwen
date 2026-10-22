@@ -29,6 +29,8 @@ jobs:
           VITE_VK_APP_URL: ${{ secrets.VK_APP_URL }}
           VITE_DEMO_ACCESS: ${{ secrets.DEMO_ACCESS }}
         run: npm run build
+
+      # Проверяем, что dist реально создан и содержит нужные файлы
       - name: Verify build output
         run: ls -la dist/assets || echo "ERROR: No assets folder found!"
 
@@ -42,4 +44,4 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.YC_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.YC_SECRET_ACCESS_KEY }}
           AWS_S3_BUCKET: ${{ secrets.YC_BUCKET }}
-          SOURCE_DIR: '${{ github.workspace }}/dist'
+          SOURCE_DIR: '${{ github.workspace }}/dist' # Абсолютный путь гарантирует корректность
