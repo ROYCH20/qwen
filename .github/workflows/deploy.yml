@@ -30,30 +30,26 @@ jobs:
           VITE_DEMO_ACCESS: ${{ secrets.DEMO_ACCESS }}
         run: npm run build
 
-      # Шаг 1: Загружаем файлы
-      - name: Sync dist to Yandex Bucket
-        uses: jakejarvis/s3-sync-action@master
-        with:
-          args: --delete
-        env:
-          AWS_S3_ENDPOINT: https://storage.yandexcloud.net
-          AWS_S3_REGION: ru-central1
-          AWS_ACCESS_KEY_ID: ${{ secrets.YC_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.YC_SECRET_ACCESS_KEY }}
-          AWS_S3_BUCKET: ${{ secrets.YC_BUCKET }}
-          SOURCE_DIR: './dist'
-
-      # Шаг 2: Явно открываем доступ ко всем файлам (Fix for 403/404 errors)
-      - name: Set Public Read Access recursively
+      # Используем стандартный aws-cli для максимальной надежности
+      - name: Configure AWS Credentials for Yandex
         run: |
-          pip install awscli
-          export AWS_ACCESS_KEY_ID=${{ secrets.YC_ACCESS_KEY_ID }}
-          export AWS_SECRET_ACCESS_KEY=${{ secrets.YC_SECRET_ACCESS_KEY }}
-          export AWS_DEFAULT_REGION=ru-central1
+          mkdir -p ~/.aws
+          echo "[default]" > ~/.aws/config
+          echo "region = ru-central1" >> ~/.aws/config
+          echo "endpoint_url = https://storage.yandexcloud.net" >> ~/.aws/config
           
-          echo "Setting public-read ACL for all objects in bucket..."
-          aws s3api list-objects-v2 \
-            --bucket ${{ secrets.YC_BUCKET }} \
-            --endpoint-url https://storage.yandexcloud.net \
-            --query "Contents[].Key" \
-            --output text | xargs -I {} sh -c 'echo "Publicizing: {}"; aws s3api put-object-acl --bucket ${{ secrets.YC_BUCKET }} --key "{}" --acl public-read --endpoint-url https://storage.yandexcloud.net'
+          echo "[default]" > ~/.aws/credentials
+          echo "aws_access_key_id = ${YC_ACCESS_KEY_ID}" >> ~/.aws/credentials
+          echo "aws_secret_access_key = ${YC_SECRET_ACCESS_KEY}" >> ~/.aws/credentials
+        env:
+          YC_ACCESS_KEY_ID: ${{ secrets.YC_ACCESS_KEY_ID }}
+          YC_SECRET_ACCESS_KEY: ${{ secrets.YC_SECRET_ACCESS_KEY }}
+
+      - name: Sync dist folder to Bucket
+        run: |
+          echo "Starting sync..."
+          aws s3 sync ./dist s3://${{ secrets.YC_BUCKET }} \
+            --delete \
+            --no-progress \
+            --exclude ".git/*" \
+            --acl public-read
