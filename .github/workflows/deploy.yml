@@ -29,15 +29,17 @@ jobs:
           VITE_VK_APP_URL: ${{ secrets.VK_APP_URL }}
           VITE_DEMO_ACCESS: ${{ secrets.DEMO_ACCESS }}
         run: npm run build
-      
+      - name: Verify build output
+        run: ls -la dist/assets || echo "ERROR: No assets folder found!"
+
       - name: Sync dist to Yandex Bucket
         uses: jakejarvis/s3-sync-action@master
         with:
-          args: --delete
+          args: --delete --acl public-read
         env:
           AWS_S3_ENDPOINT: https://storage.yandexcloud.net
           AWS_S3_REGION: ru-central1
           AWS_ACCESS_KEY_ID: ${{ secrets.YC_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.YC_SECRET_ACCESS_KEY }}
           AWS_S3_BUCKET: ${{ secrets.YC_BUCKET }}
-          SOURCE_DIR: ./dist
+          SOURCE_DIR: '${{ github.workspace }}/dist'
