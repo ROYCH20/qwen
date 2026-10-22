@@ -30,27 +30,14 @@ jobs:
           VITE_DEMO_ACCESS: ${{ secrets.DEMO_ACCESS }}
         run: npm run build
       
-      - name: Configure AWS CLI for Yandex S3
-        run: |
-          pip install awscli
-          mkdir -p ~/.aws
-          cat > ~/.aws/config <<EOF
-[default]
-region = ru-central1
-endpoint_url = https://storage.yandexcloud.net
-EOF
-          cat > ~/.aws/credentials <<EOF
-[default]
-aws_access_key_id = ${YC_ACCESS_KEY_ID}
-aws_secret_access_key = ${YC_SECRET_ACCESS_KEY}
-EOF
-        env:
-          YC_ACCESS_KEY_ID: ${{ secrets.YC_ACCESS_KEY_ID }}
-          YC_SECRET_ACCESS_KEY: ${{ secrets.YC_SECRET_ACCESS_KEY }}
-      
       - name: Sync dist to Yandex Bucket
-        run: |
-          aws s3 sync ./dist s3://${{ secrets.YC_BUCKET }} \
-            --delete \
-            --no-progress \
-            --exclude ".git/*"
+        uses: jakejarvis/s3-sync-action@master
+        with:
+          args: --delete
+        env:
+          AWS_S3_ENDPOINT: https://storage.yandexcloud.net
+          AWS_S3_REGION: ru-central1
+          AWS_ACCESS_KEY_ID: ${{ secrets.YC_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.YC_SECRET_ACCESS_KEY }}
+          AWS_S3_BUCKET: ${{ secrets.YC_BUCKET }}
+          SOURCE_DIR: ./dist
