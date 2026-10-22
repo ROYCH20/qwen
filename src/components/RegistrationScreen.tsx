@@ -59,7 +59,7 @@ export default function RegistrationScreen({ onLogin }: Props) {
 
         {/* Ссылка на политику конфиденциальности */}
         <div className="text-center" style={{ marginTop: '16px' }}>
-          <a href="/privacy.html" style={{ fontSize: '10px', color: '#B9B0E6', textDecoration: 'underline' }}>
+          <a href="./privacy.html" style={{ fontSize: '10px', color: '#B9B0E6', textDecoration: 'underline' }}>
             Политика конфиденциальности
           </a>
         </div>
