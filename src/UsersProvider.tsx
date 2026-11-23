@@ -29,6 +29,9 @@ interface UsersContextType {
   resetUserPoints: (id: string) => Promise<boolean>; // v17.6: точечный сброс одного участника к базовым 300
   bindVkId: (userId: string, vkId: number) => Promise<void>;
   retry: () => void;
+  // v17.8: session persistence — сохранение/восстановление currentUserId в localStorage
+  saveSession: (userId: string | null) => void;
+  restoreSession: () => string | null;
 }
 
 const UsersContext = createContext<UsersContextType | null>(null);
@@ -82,12 +85,18 @@ export function UsersProvider({ children }: { children: React.ReactNode }) {
     const client = supabase;
 
     // Subscribe to realtime changes
+    // v17.8-диагностика: явный лог подписки + лог каждого события.
+    // Silent-catch вокруг subscribe() отсутствует (его и не было); ошибки
+    // статуса подписки выводятся через console.error вместо проглатывания.
+    console.log('[Realtime] Subscribing to channel users-live...');
     const channel = client
       .channel('users-live')
       .on(
         'postgres_changes',
         { event: '*', schema: 'public', table: 'users' },
         (payload) => {
+          // v17.8: диагностика получения событий (UPDATE P001 и т.п.)
+          console.log('[Realtime] Event received:', payload.eventType, (payload.new as any)?.id ?? (payload.old as any)?.id);
           if (payload.eventType === 'INSERT') {
             const newUser = payload.new as any;
             const normalizedUser = {
@@ -95,7 +104,7 @@ export function UsersProvider({ children }: { children: React.ReactNode }) {
               full_name: normalizeYo(newUser.full_name),
               grp: newUser.grp ? normalizeYo(newUser.grp) : newUser.grp
             };
-            setUsers((prev) => [...prev, normalizedUser]);
+            setUsers((prev) => [...prev.filter((u) => u.id !== normalizedUser.id), normalizedUser]);
           } else if (payload.eventType === 'UPDATE') {
             const updatedUser = payload.new as any;
             const normalizedUser = {
@@ -111,12 +120,33 @@ export function UsersProvider({ children }: { children: React.ReactNode }) {
           }
         }
       )
-      .subscribe();
+      .subscribe((status) => {
+        // v17.8: без silent-catch — статусы подписки видны в консоли.
+        if (status === 'CHANNEL_ERROR' || status === 'TIMED_OUT' || status === 'CLOSED') {
+          console.error('[Realtime] Subscription error, status:', status);
+        } else {
+          console.log('[Realtime] Subscription status:', status);
+        }
+      });
 
     return () => {
       client.removeChannel(channel);
     };
   }, [fetchUsers]);
+
+  // ═══════════════════════════════════════════
+  // v17.8: SESSION PERSISTENCE
+  // Сохраняем currentUserId в localStorage при любом успешном login/logout,
+  // читаем его до маршрутизации и восстанавливаем сессию автоматически.
+  // ═══════════════════════════════════════════
+  const saveSession = useCallback((userId: string | null) => {
+    if (userId) localStorage.setItem('posvyat_uid', userId);
+    else localStorage.removeItem('posvyat_uid');
+  }, []);
+
+  const restoreSession = useCallback((): string | null => {
+    return localStorage.getItem('posvyat_uid');
+  }, []);
 
   const getUserById = useCallback(
     (id: string): User | null => {
@@ -314,6 +344,8 @@ export function UsersProvider({ children }: { children: React.ReactNode }) {
     resetUserPoints,
     bindVkId,
     retry,
+    saveSession,
+    restoreSession,
   };
 
   return <UsersContext.Provider value={value}>{children}</UsersContext.Provider>;
